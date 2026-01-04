@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>PeerJS File Transfer</title>
+<script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+
+<style>
+body { font-family: Arial; padding: 20px; }
+input, button { width: 100%; padding: 8px; margin: 6px 0; }
+.box { border: 1px solid #ccc; padding: 10px; margin-top: 10px; }
+progress { width: 100%; height: 20px; }
+</style>
+</head>
+<body>
+
+<h2>📁 PeerJS File Transfer</h2>
+
+<div class="box">
+<b>Your Peer ID:</b>
+<h3 id="myId">Generating...</h3>
+</div>
+
+<div class="box">
+<input id="remoteId" placeholder="Enter Receiver Peer ID">
+<input type="file" id="fileInput">
+<button onclick="sendFile()">Send File</button>
+</div>
+
+<div class="box">
+<b>Progress:</b>
+<progress id="progress" value="0" max="100"></progress>
+<p id="status"></p>
+</div>
+
+<script>
+const CHUNK_SIZE = 64 * 1024; // 64KB
+let receivedChunks = [];
+let receivedSize = 0;
+let fileMeta = null;
+
+function easyId() {
+  return "P2P" + Math.floor(1000 + Math.random() * 9000);
+}
+
+const peer = new Peer(easyId());
+
+peer.on('open', id => {
+  document.getElementById('myId').innerText = id;
+});
+
+peer.on('connection', conn => {
+  conn.on('data', data => {
+
+    if (data.type === 'meta') {
+      fileMeta = data;
+      receivedChunks = [];
+      receivedSize = 0;
+      document.getElementById('status').innerText = "Receiving...";
+    }
+
+    if (data.type === 'chunk') {
+      receivedChunks.push(data.chunk);
+      receivedSize += data.chunk.byteLength;
+
+      const percent = Math.floor((receivedSize / fileMeta.size) * 100);
+      document.getElementById('progress').value = percent;
+    }
+
+    if (data.type === 'end') {
+      const blob = new Blob(receivedChunks);
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = fileMeta.name;
+      a.click();
+      document.getElementById('status').innerText = "Download complete";
+    }
+  });
+});
+
+function sendFile() {
+  const remoteId = document.getElementById('remoteId').value;
+  const file = document.getElementById('fileInput').files[0];
+  if (!remoteId || !file) return alert("Missing Peer ID or File");
+
+  const conn = peer.connect(remoteId);
+  conn.on('open', () => {
+
+    conn.send({ type: 'meta', name: file.name, size: file.size });
+
+    let offset = 0;
+    const reader = new FileReader();
+
+    reader.onload = e => {
+      conn.send({ type: 'chunk', chunk: e.target.result });
+      offset += e.target.result.byteLength;
+
+      const percent = Math.floor((offset / file.size) * 100);
+      document.getElementById('progress').value = percent;
+      document.getElementById('status').innerText = "Sending... " + percent + "%";
+
+      if (offset < file.size) readSlice(offset);
+      else {
+        conn.send({ type: 'end' });
+        document.getElementById('status').innerText = "Send complete";
+      }
+    };
+
+    function readSlice(o) {
+      const slice = file.slice(o, o + CHUNK_SIZE);
+      reader.readAsArrayBuffer(slice);
+    }
+
+    readSlice(0);
+  });
+}
+</script>
+
+</body>
+</html>
+
