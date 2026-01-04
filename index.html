@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🚀 Rocket Share</title>
+    <title>🚀 Cube Share</title>
     <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
     <style>
         /* Reset & Base */
@@ -673,7 +673,7 @@
             
             <div class="status">
                 <div class="status-dot" id="statusDot"></div>
-                <span id="statusText">Connecting to network...</span>
+                <span id="statusText">Connecting to PeerJS Cloud...</span>
             </div>
         </div>
         
@@ -733,18 +733,21 @@
         
         <!-- Log -->
         <div class="log" id="transferLog">
-            <div class="log-item">[System] Ready for file transfer</div>
+            <div class="log-item">[System] Initializing connection to PeerJS Cloud...</div>
         </div>
     </div>
 
     <script>
-        // Initialize
+        // Initialize variables
         let peer = null;
         let connection = null;
         let selectedFiles = [];
         let isSending = false;
         let isPaused = false;
         let currentTransfer = null;
+        let receivingFile = null;
+        let receivedChunks = [];
+        let currentRocketPercent = 0;
         
         // Initialize on load
         document.addEventListener('DOMContentLoaded', function() {
@@ -769,48 +772,97 @@
             }
         }
         
-        // Initialize PeerJS
+        // Initialize PeerJS with CLOUD SERVER
         function initializePeer() {
-            const simpleId = "RS-" + Math.floor(10000 + Math.random() * 90000);
+            const simpleId = "CS-" + Math.floor(10000 + Math.random() * 90000);
             
+            // Using PeerJS Cloud Server for reliable connections
             peer = new Peer(simpleId, {
-                debug: 0
+                debug: 2, // Set to 2 for warnings and errors, 3 for all logs
+                host: '0.peerjs.com', // Official PeerJS cloud server
+                port: 443,
+                path: '/',
+                secure: true,
+                config: {
+                    'iceServers': [
+                        { urls: 'stun:stun.l.google.com:19302' },
+                        { urls: 'stun:global.stun.twilio.com:3478' },
+                        { 
+                            urls: 'turn:numb.viagenie.ca',
+                            credential: 'muazkh',
+                            username: 'webrtc@live.com'
+                        }
+                    ]
+                }
             });
             
+            // Peer event handlers
             peer.on('open', function(id) {
+                console.log('✅ Connected to PeerJS Cloud with ID:', id);
                 document.getElementById('myId').textContent = id;
-                updateStatus(true, 'Connected & Ready');
-                addLog('🛰️ Connected with ID: ' + id);
+                updateStatus(true, '✅ Connected to PeerJS Cloud');
+                addLog(`✅ Connected to PeerJS Cloud with ID: ${id}`);
             });
             
             peer.on('error', function(err) {
-                console.error('Peer error:', err);
-                updateStatus(false, 'Connection Error');
-                addLog('❌ Error: ' + err.type);
+                console.error('❌ PeerJS Error:', err);
+                
+                let errorMessage = 'Connection Error';
+                switch(err.type) {
+                    case 'peer-unavailable':
+                        errorMessage = 'Peer not found';
+                        break;
+                    case 'network':
+                        errorMessage = 'Network error';
+                        break;
+                    case 'server-error':
+                        errorMessage = 'Server error - retrying...';
+                        // Auto-reconnect after 3 seconds
+                        setTimeout(initializePeer, 3000);
+                        break;
+                    case 'browser-incompatible':
+                        errorMessage = 'Browser not supported. Use Chrome/Firefox';
+                        break;
+                    default:
+                        errorMessage = err.type;
+                }
+                
+                updateStatus(false, `❌ ${errorMessage}`);
+                addLog(`❌ Error: ${errorMessage}`);
             });
             
+            // Handle incoming connections
             peer.on('connection', function(conn) {
+                console.log('📡 Incoming connection from:', conn.peer);
                 connection = conn;
                 setupConnection(conn);
-                addLog('📡 Incoming connection from: ' + conn.peer);
+                addLog(`📡 Incoming connection from: ${conn.peer}`);
             });
         }
         
         // Setup connection
         function setupConnection(conn) {
             conn.on('open', function() {
-                updateStatus(true, 'Connected to peer');
-                addLog('✅ Connection established');
+                console.log('✅ Connection opened with peer');
+                updateStatus(true, '✅ Connected to peer');
+                addLog('✅ Peer connection established');
             });
             
             conn.on('data', function(data) {
+                console.log('📨 Received data:', data.type);
                 handleIncomingData(data);
             });
             
             conn.on('close', function() {
+                console.log('🔌 Connection closed');
                 addLog('🔌 Connection closed');
                 updateStatus(false, 'Disconnected');
                 connection = null;
+            });
+            
+            conn.on('error', function(err) {
+                console.error('❌ Connection error:', err);
+                addLog(`❌ Connection error: ${err.message || err.type}`);
             });
         }
         
@@ -825,6 +877,9 @@
                     break;
                 case 'file_end':
                     finishReceivingFile(data);
+                    break;
+                case 'cancel':
+                    handleTransferCancel();
                     break;
             }
         }
@@ -858,6 +913,9 @@
                 selectedFiles = Array.from(e.dataTransfer.files);
                 updateFileList();
             });
+            
+            // Auto-focus receiver ID input
+            document.getElementById('receiverId').focus();
         }
         
         // Update file list
@@ -882,7 +940,7 @@
                             <div class="file-name">${file.name}</div>
                             <div class="file-size">${formatSize(file.size)}</div>
                         </div>
-                        <button class="remove-btn" onclick="removeFile(${index})">
+                        <button class="remove-btn" onclick="removeFile(${index})" title="Remove file">
                             ✕
                         </button>
                     </div>
@@ -915,16 +973,25 @@
             const receiverId = document.getElementById('receiverId').value.trim();
             
             if (!receiverId) {
-                alert('Please enter receiver ID');
+                alert('⚠️ Please enter receiver ID');
+                document.getElementById('receiverId').focus();
                 return;
             }
             
             if (selectedFiles.length === 0) {
-                alert('Please select files');
+                alert('⚠️ Please select files');
                 return;
             }
             
+            // Validate receiver ID format
+            if (!receiverId.startsWith('CS-')) {
+                if (!confirm(`Receiver ID "${receiverId}" doesn't look like a Cube Share ID.\nContinue anyway?`)) {
+                    return;
+                }
+            }
+            
             // Connect to receiver
+            addLog(`🔗 Connecting to ${receiverId}...`);
             connection = peer.connect(receiverId);
             setupConnection(connection);
             
@@ -934,34 +1001,50 @@
                 updateRocket(0, 'Launching...');
                 addLog('🚀 Launching transfer...');
                 
-                // Send all files
-                for (let i = 0; i < selectedFiles.length; i++) {
-                    if (isPaused) {
-                        await waitForResume();
+                try {
+                    // Send all files
+                    for (let i = 0; i < selectedFiles.length; i++) {
+                        if (isPaused) {
+                            await waitForResume();
+                        }
+                        
+                        await sendFile(selectedFiles[i], i + 1, selectedFiles.length);
                     }
                     
-                    await sendFile(selectedFiles[i], i + 1, selectedFiles.length);
+                    addLog('✅ All files delivered successfully!');
+                    updateRocket(100, 'Mission Complete!');
+                    updateStatus(true, 'Transfer Complete');
+                    
+                } catch (error) {
+                    console.error('❌ Transfer error:', error);
+                    addLog(`❌ Transfer failed: ${error.message}`);
+                    updateStatus(false, 'Transfer Failed');
+                } finally {
+                    isSending = false;
+                    updateControls(false);
+                    selectedFiles = [];
+                    updateFileList();
+                    
+                    // Reset rocket after 3 seconds
+                    setTimeout(() => {
+                        updateRocket(0, 'Ready for launch...');
+                    }, 3000);
                 }
-                
-                addLog('✅ All files delivered successfully!');
-                updateRocket(100, 'Mission Complete!');
-                updateStatus(true, 'Transfer Complete');
+            });
+            
+            connection.on('error', function(err) {
+                console.error('❌ Connection error:', err);
+                addLog(`❌ Failed to connect: ${err.message || err.type}`);
+                alert(`Failed to connect to ${receiverId}\nCheck the ID and try again.`);
                 isSending = false;
                 updateControls(false);
-                selectedFiles = [];
-                updateFileList();
-                
-                // Reset rocket after 3 seconds
-                setTimeout(() => {
-                    updateRocket(0, 'Ready for launch...');
-                }, 3000);
             });
         }
         
         // Send single file
         async function sendFile(file, current, total) {
-            return new Promise((resolve) => {
-                addLog(`📤 Launching: ${file.name}`);
+            return new Promise((resolve, reject) => {
+                addLog(`📤 Sending: ${file.name} (${current}/${total})`);
                 
                 // Send file info
                 connection.send({
@@ -969,11 +1052,12 @@
                     name: file.name,
                     size: file.size,
                     current: current,
-                    total: total
+                    total: total,
+                    timestamp: Date.now()
                 });
                 
                 let offset = 0;
-                const chunkSize = 64 * 1024;
+                const chunkSize = 64 * 1024; // 64KB chunks
                 const reader = new FileReader();
                 
                 reader.onload = async function(e) {
@@ -981,37 +1065,47 @@
                         await waitForResume();
                     }
                     
-                    const chunk = e.target.result;
-                    
-                    // Send chunk
-                    connection.send({
-                        type: 'chunk',
-                        data: chunk,
-                        offset: offset,
-                        total: file.size
-                    });
-                    
-                    offset += chunk.byteLength;
-                    
-                    // Update rocket progress
-                    const percent = Math.round((offset / file.size) * 100);
-                    updateRocket(percent, `Transferring: ${file.name}`);
-                    
-                    // Animate rocket
-                    animateRocket(percent);
-                    
-                    if (offset < file.size) {
-                        readNextChunk();
-                    } else {
-                        // File complete
+                    try {
+                        const chunk = e.target.result;
+                        
+                        // Send chunk
                         connection.send({
-                            type: 'file_end',
-                            name: file.name
+                            type: 'chunk',
+                            data: chunk,
+                            offset: offset,
+                            total: file.size,
+                            fileId: file.name + '_' + Date.now()
                         });
                         
-                        addLog(`✅ Delivered: ${file.name}`);
-                        resolve();
+                        offset += chunk.byteLength;
+                        
+                        // Update rocket progress
+                        const percent = Math.round((offset / file.size) * 100);
+                        updateRocket(percent, `Transferring: ${file.name}`);
+                        
+                        // Animate rocket
+                        animateRocket(percent);
+                        
+                        if (offset < file.size) {
+                            readNextChunk();
+                        } else {
+                            // File complete
+                            connection.send({
+                                type: 'file_end',
+                                name: file.name,
+                                size: file.size
+                            });
+                            
+                            addLog(`✅ Sent: ${file.name}`);
+                            resolve();
+                        }
+                    } catch (error) {
+                        reject(error);
                     }
+                };
+                
+                reader.onerror = function() {
+                    reject(new Error('Failed to read file'));
                 };
                 
                 function readNextChunk() {
@@ -1024,19 +1118,28 @@
         }
         
         // Receiving functions
-        let receivingFile = null;
-        let receivedChunks = [];
-        
         function startReceivingFile(data) {
             receivingFile = {
                 name: data.name,
                 size: data.size,
-                received: 0
+                received: 0,
+                current: data.current,
+                total: data.total,
+                startTime: Date.now()
             };
             
             receivedChunks = [];
+            
+            // Ask for confirmation for large files
+            if (data.size > 100 * 1024 * 1024) { // 100MB
+                if (!confirm(`Receive file "${data.name}" (${formatSize(data.size)})?`)) {
+                    connection.send({ type: 'cancel' });
+                    return;
+                }
+            }
+            
             updateRocket(0, `Incoming: ${data.name}`);
-            addLog(`📥 Receiving: ${data.name}`);
+            addLog(`📥 Receiving: ${data.name} (${formatSize(data.size)})`);
         }
         
         function receiveChunk(data) {
@@ -1053,6 +1156,14 @@
             
             // Update markers
             updateMarkers(percent);
+            
+            // Calculate and display speed
+            const elapsed = (Date.now() - receivingFile.startTime) / 1000;
+            if (elapsed > 1) {
+                const speed = receivingFile.received / elapsed;
+                document.getElementById('rocketStatus').textContent = 
+                    `Receiving: ${receivingFile.name} (${formatSize(speed)}/s)`;
+            }
         }
         
         function finishReceivingFile(data) {
@@ -1066,20 +1177,33 @@
             const a = document.createElement('a');
             a.href = url;
             a.download = receivingFile.name;
+            document.body.appendChild(a);
             a.click();
+            document.body.removeChild(a);
             
             // Clean up
             setTimeout(() => URL.revokeObjectURL(url), 1000);
             
-            addLog(`✅ Downloaded: ${receivingFile.name}`);
+            const totalTime = (Date.now() - receivingFile.startTime) / 1000;
+            const speed = receivingFile.size / totalTime;
+            
+            addLog(`✅ Downloaded: ${receivingFile.name} (${formatSize(speed)}/s)`);
             updateRocket(100, 'Download Complete!');
             
-            // Reset
+            // Reset after delay
             setTimeout(() => {
                 receivingFile = null;
                 receivedChunks = [];
                 updateRocket(0, 'Ready for launch...');
             }, 2000);
+        }
+        
+        function handleTransferCancel() {
+            addLog('❌ Transfer cancelled by sender');
+            updateRocket(0, 'Transfer Cancelled');
+            updateStatus(false, 'Transfer Cancelled');
+            receivingFile = null;
+            receivedChunks = [];
         }
         
         // Control functions
@@ -1103,6 +1227,7 @@
         function cancelTransfer() {
             if (confirm('Abort transfer?')) {
                 if (connection) {
+                    connection.send({ type: 'cancel' });
                     connection.close();
                 }
                 
@@ -1126,23 +1251,29 @@
             });
         }
         
-        // Rocket animation
-        let currentRocketPercent = 0;
-        
+        // Rocket animation functions
         function updateRocket(percent, message) {
             currentRocketPercent = percent;
-            document.getElementById('rocketProgress').style.width = percent + '%';
-            document.getElementById('rocket').style.left = percent + '%';
-            document.getElementById('rocketPercent').textContent = percent + '%';
-            document.getElementById('rocketStatus').textContent = message;
+            const rocketProgress = document.getElementById('rocketProgress');
+            const rocket = document.getElementById('rocket');
             
-            // Update markers
-            updateMarkers(percent);
+            if (rocketProgress && rocket) {
+                rocketProgress.style.width = percent + '%';
+                rocket.style.left = percent + '%';
+                document.getElementById('rocketPercent').textContent = percent + '%';
+                document.getElementById('rocketStatus').textContent = message;
+                
+                // Update markers
+                updateMarkers(percent);
+            }
         }
         
         function animateRocket(percent) {
             const rocket = document.getElementById('rocket');
-            rocket.style.transform = `translate(-50%, -50%) scale(${1 + Math.sin(Date.now() / 100) * 0.1})`;
+            if (rocket) {
+                const scale = 1 + Math.sin(Date.now() / 100) * 0.1;
+                rocket.style.transform = `translate(-50%, -50%) scale(${scale})`;
+            }
         }
         
         function updateMarkers(percent) {
@@ -1160,8 +1291,28 @@
         // UI Helper functions
         function copyMyId() {
             const id = document.getElementById('myId').textContent;
+            if (id === 'Generating...') {
+                alert('Please wait for ID to generate');
+                return;
+            }
+            
             navigator.clipboard.writeText(id).then(() => {
-                const btn = document.querySelector('.glass-btn');
+                const btn = document.querySelector('#myId').nextElementSibling;
+                const original = btn.innerHTML;
+                btn.innerHTML = '✅ Copied!';
+                setTimeout(() => btn.innerHTML = original, 2000);
+                addLog('📋 ID copied to clipboard');
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = id;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                const btn = document.querySelector('#myId').nextElementSibling;
                 const original = btn.innerHTML;
                 btn.innerHTML = '✅ Copied!';
                 setTimeout(() => btn.innerHTML = original, 2000);
@@ -1170,20 +1321,23 @@
         }
         
         function formatSize(bytes) {
-            if (bytes < 1024) return bytes + ' B';
-            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
-            if (bytes < 1024 * 1024 * 1024) return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
-            return (bytes / (1024 * 1024 * 1024)).toFixed(1) + ' GB';
+            if (bytes === 0) return '0 B';
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
         }
         
         function updateStatus(connected, message) {
             const dot = document.getElementById('statusDot');
             const text = document.getElementById('statusText');
             
-            text.textContent = message;
-            dot.className = 'status-dot';
-            if (connected) {
-                dot.classList.add('connected');
+            if (dot && text) {
+                text.textContent = message;
+                dot.className = 'status-dot';
+                if (connected) {
+                    dot.classList.add('connected');
+                }
             }
         }
         
@@ -1195,14 +1349,24 @@
         
         function addLog(message) {
             const log = document.getElementById('transferLog');
+            if (!log) return;
+            
             const item = document.createElement('div');
             item.className = 'log-item';
-            item.textContent = `[${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}] ${message}`;
+            
+            const time = new Date().toLocaleTimeString([], { 
+                hour: '2-digit', 
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            
+            item.textContent = `[${time}] ${message}`;
             
             log.appendChild(item);
             log.scrollTop = log.scrollHeight;
             
-            if (log.children.length > 10) {
+            // Keep last 20 messages
+            if (log.children.length > 20) {
                 log.removeChild(log.firstChild);
             }
         }
@@ -1213,6 +1377,15 @@
                 animateRocket(currentRocketPercent);
             }
         }, 100);
+        
+        // Auto-refresh connection if it fails
+        setInterval(() => {
+            if (peer && peer.disconnected) {
+                console.log('♻️ Attempting to reconnect...');
+                addLog('♻️ Attempting to reconnect...');
+                initializePeer();
+            }
+        }, 10000); // Check every 10 seconds
     </script>
 </body>
 </html>
