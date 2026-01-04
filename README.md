@@ -1,217 +1,203 @@
 
-# 🚀 Cube File’s Share
 
-**Cube File’s Share** is a modern, fast, and secure **peer-to-peer (P2P) file sharing web app** built with **WebRTC**.
-It allows users to transfer files **directly between devices** without uploading to any server — **no compression, no size limits, no middleman**.
+# 🚀 Cube Share – Peer-to-Peer File Transfer
 
-🔐 **Your files stay private.**
-⚡ **Transfers are lightning fast.**
-🎨 **UI is clean, modern, and beautiful.**
+**Cube Share** is a fast, secure, and modern **peer-to-peer (P2P) file sharing web app** that lets you send files **directly between browsers** using WebRTC — no uploads, no size limits, and no middleman servers.
 
----
+It features a **glass-morphism UI**, **animated rocket progress**, and works seamlessly across devices.
 
-## 🌐 Live Demo
-
-👉 **Try it here:**
-🔗 [https://shinchanchan.github.io/file_share/](https://shinchanchan.github.io/file_share/)
+🌐 **Live Demo:**
+👉 [https://shinchanchan.github.io/file_share/](https://shinchanchan.github.io/file_share/)
 
 ---
 
-## ✨ Key Features
+## 🛡️ Badges
 
-* ✅ **True P2P Transfer** (WebRTC DataChannel)
-* ✅ **Zero Server Storage** (no uploads, no tracking)
-* ✅ **Original Quality Preserved** (bit-perfect transfer)
-* ✅ **Glass-morphism UI** with space theme
-* ✅ **Rocket Progress Animation 🚀**
-* ✅ **Multiple File Transfer**
-* ✅ **Drag & Drop Support**
-* ✅ **Clipboard Copy for Peer ID**
-* ✅ **Real-time Activity Logs**
-* ✅ **Pause / Resume Transfers**
-* ✅ **Cross-Platform Support** (Desktop & Mobile)
-* ✅ **No Login / No Signup**
+[![Hosted on GitHub Pages](https://img.shields.io/badge/Hosted%20on-GitHub%20Pages-blue?logo=github)](https://shinchanchan.github.io/file_share/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Powered by PeerJS](https://img.shields.io/badge/Powered%20by-PeerJS-blue)](https://peerjs.com/)
 
 ---
 
-## 🖼️ Screenshots
+## ✨ Features
 
-| Home Screen                                                            | Transfer in Progress                                                                |
-| ---------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| ![UI](https://via.placeholder.com/400x250/0f0c29/ffffff?text=Glass+UI) | ![Progress](https://via.placeholder.com/400x250/302b63/ffffff?text=Rocket+Progress) |
-
----
-
-## 🚀 How to Use (3 Simple Steps)
-
-### 1️⃣ Get Your Peer ID
-
-* Open the app
-* Copy your auto-generated ID (example: `P2P-4821`)
-* Share it with the sender
-
-### 2️⃣ Send Files
-
-* Enter the receiver’s Peer ID
-* Select files (or drag & drop)
-* Click **🚀 Launch Transfer**
-
-### 3️⃣ Receive Files
-
-* Stay connected
-* Files download automatically
-* Track progress with rocket animation
+* 🚀 **Direct P2P Transfer** – Browser-to-browser file sharing
+* 🔒 **No Server Storage** – Files never touch any backend server
+* 🎨 **Glass-Morphism UI** – Modern frosted glass design
+* 📊 **Rocket Progress Animation** – Live animated transfer status
+* 📁 **Multiple File Support**
+* 🖱️ **Drag & Drop Upload**
+* 🆔 **One-Click Peer ID Copy**
+* 📜 **Real-Time Activity Logs**
+* ⏸️ **Pause / Resume Transfer**
+* 📱 **Cross-Platform Support** (Desktop & Mobile)
+* ❌ **No Login / No Registration**
 
 ---
 
-## 🧑‍💻 Quick Start (Developers)
+## 🧭 How It Works
+
+```
+Sender Browser  ── WebRTC (Direct Transfer) ──► Receiver Browser
+        │
+        └── PeerJS Server (only for connection setup)
+```
+
+1. PeerJS helps peers discover each other
+2. WebRTC creates a secure direct connection
+3. Files are sent in small chunks
+4. Receiver reassembles files automatically
+
+✔️ **Files are encrypted by WebRTC**
+✔️ **No data is stored anywhere**
+
+---
+
+## 🚀 Getting Started
+
+### 👤 For Users (3 Simple Steps)
+
+1. **Open the App**
+
+   * Visit [https://shinchanchan.github.io/file_share/](https://shinchanchan.github.io/file_share/)
+   * Copy your generated Peer ID
+
+2. **Send Files**
+
+   * Enter the receiver’s Peer ID
+   * Select or drag files
+   * Click **🚀 Launch Transfer**
+
+3. **Receive Files**
+
+   * Share your Peer ID
+   * Files download automatically
+
+---
+
+### 👨‍💻 For Developers
 
 ```bash
-# Clone repository
+# Clone the repository
 git clone https://github.com/shinchanchan/file_share.git
 
-# Enter directory
+# Go to project folder
 cd file_share
 
-# Run locally (any HTTP server)
+# Run a local server
 python3 -m http.server 8000
-# or
+# OR
 npx serve .
+# OR
+php -S localhost:8000
 ```
 
-Then open:
-
-```
-http://localhost:8000
-```
+Open 👉 `http://localhost:8000`
 
 ---
 
-## 🗂️ Project Structure
+## 📁 Project Structure
 
 ```
 file_share/
-├── index.html        # Complete app (HTML + CSS + JS)
-├── README.md         # Documentation
-├── LICENSE           # MIT License
-└── .github/          # GitHub workflows (optional)
+├── index.html   # Complete app (HTML + CSS + JS)
+├── README.md
+├── LICENSE
+└── .gitignore
 ```
 
-📌 **Single-file architecture**
-All UI, logic, and WebRTC handling live inside `index.html`.
+> ⚡ Entire application runs from a **single HTML file**
 
 ---
 
 ## 🛠️ Tech Stack
 
-| Technology           | Usage                |
-| -------------------- | -------------------- |
-| HTML5                | Structure            |
-| CSS3                 | Glass UI, animations |
-| JavaScript (Vanilla) | App logic            |
-| PeerJS               | WebRTC abstraction   |
-| WebRTC               | P2P data transfer    |
-| GitHub Pages         | Free hosting         |
+| Technology   | Usage                 |
+| ------------ | --------------------- |
+| HTML5        | App structure         |
+| CSS3         | Glass UI & animations |
+| JavaScript   | App logic             |
+| WebRTC       | P2P communication     |
+| PeerJS       | WebRTC abstraction    |
+| GitHub Pages | Hosting               |
 
 ---
 
-## 🔍 How It Works
+## 🌐 Browser Support
 
-```
-Sender Browser
-      ↓
-WebRTC DataChannel (Direct P2P)
-      ↓
-Receiver Browser
-
-PeerJS Server → Only for signaling (no file data)
-```
-
-* PeerJS helps peers discover each other
-* Files transfer **directly browser-to-browser**
-* Files are sent as **binary chunks**
-* Receiver reassembles chunks → original file
-
-✔ No compression
-✔ No re-encoding
-✔ No quality loss
+| Browser         | Support       |
+| --------------- | ------------- |
+| Chrome          | ✅ Recommended |
+| Firefox         | ✅             |
+| Edge            | ✅             |
+| Safari          | ⚠️ Limited    |
+| Mobile Browsers | ✅             |
 
 ---
 
-## 🌍 Browser Support
+## 🔍 Troubleshooting
 
-| Browser         | Support                          |
-| --------------- | -------------------------------- |
-| Chrome          | ✅ Recommended                    |
-| Edge            | ✅ Fully supported                |
-| Firefox         | ✅ Fully supported                |
-| Safari          | ⚠️ Limited (WebRTC restrictions) |
-| Mobile Browsers | ✅ Supported                      |
-
-> Best experience: **Chrome / Edge**
+| Issue              | Solution                        |
+| ------------------ | ------------------------------- |
+| Connection error   | Refresh page / re-enter Peer ID |
+| Slow speed         | Depends on network              |
+| Files not received | Ensure both peers are online    |
+| Rocket not moving  | Refresh browser                 |
 
 ---
 
-## 🧯 Troubleshooting
+## 🔒 Privacy & Security
 
-| Issue             | Solution                       |
-| ----------------- | ------------------------------ |
-| Connection failed | Refresh page, re-check Peer ID |
-| Slow speed        | Depends on network quality     |
-| Safari issues     | Try Chrome / Firefox           |
-| Transfer stuck    | Keep screen awake, reload app  |
+* ❌ No file storage
+* ❌ No user tracking
+* ❌ No login data
+* ✅ WebRTC encrypted transfer
+* ✅ Direct browser-to-browser sharing
 
 ---
 
+### Planned
 
-### Contribution Ideas
+* 🔐 End-to-End Encryption
+* 📈 Speed Indicator
+* 👁️ File Preview
+* 📷 QR Code Sharing
+* 🔄 Resume Failed Transfers
+* 🖥️ Electron Desktop App
 
-* 🔐 End-to-end encryption
-* 📷 QR code peer connect
-* 📁 Folder transfer
-* 📊 Speed meter
-* 🔁 Resume broken transfers
+---
+
+## 📞 Contact & Support
+
+* 📧 **Email:** [vallarasucse200118@gmail.com](mailto:vallarasucse200118@gmail.com)
+* 🐞 **Issues:** [https://github.com/shinchanchan/file_share/issues](https://github.com/shinchanchan/file_share/issues)
+* 🌐 **Live Demo:** [https://shinchanchan.github.io/file_share/](https://shinchanchan.github.io/file_share/)
 
 ---
 
 ## 📄 License
 
 Licensed under the **MIT License**
-
-✔ Commercial use
-✔ Modification
-✔ Distribution
-✔ Private use
-
-See [`LICENSE`](LICENSE) for details.
+Free for personal & commercial use.
 
 ---
 
-## 🔗 Related Projects
+## ⭐ Support the Project
 
-* 🔗 [https://peerjs.com/](https://peerjs.com/)
-* 🔗 [https://sharedrop.io/](https://sharedrop.io/)
-* 🔗 [https://webtorrent.io/](https://webtorrent.io/)
+If you like this project:
 
----
-
-## 📬 Contact
-
-* 📧 Email: **[vallarasucse200118@gmail.com](mailto:vallarasucse200118@gmail.com)**
-* 🐛 Issues: [https://github.com/shinchanchan/file_share/issues](https://github.com/shinchanchan/file_share/issues)
-* 🌐 Live Demo: [https://shinchanchan.github.io/file_share/](https://shinchanchan.github.io/file_share/)
+* ⭐ Star the repo
+* 🔁 Share with friends
+* 🐛 Report issues
+* 💡 Suggest features
 
 ---
 
 <div align="center">
 
-### ⭐ If you like this project, give it a star!
+**Made with ❤️ by vallarasucse200118@gmail.com**
 
-**Made with ❤️ by vallarasu**
-
-[⭐ Star Repo](https://github.com/shinchanchan/file_share) •
-[🚀 Live Demo](https://shinchanchan.github.io/file_share/) •
-[📧 Contact](mailto:vallarasucse200118@gmail.com)
+🚀 *Transfer files at the speed of a rocket*
 
 </div>
 
