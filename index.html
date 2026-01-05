@@ -46,123 +46,6 @@
             overflow: hidden;
         }
 
-        /* Modal Loading Overlay */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(10px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-        }
-
-        .modal-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        /* Circular Loading Animation */
-        .circular-loader {
-            width: 120px;
-            height: 120px;
-            position: relative;
-        }
-
-        .circular-loader .loader-bg {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            border: 4px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .circular-loader .loader-progress {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            border: 4px solid transparent;
-            border-top: 4px solid #667eea;
-            border-right: 4px solid #764ba2;
-            animation: spin 1.5s linear infinite;
-        }
-
-        .circular-loader .loader-progress-inner {
-            position: absolute;
-            width: 80%;
-            height: 80%;
-            top: 10%;
-            left: 10%;
-            border-radius: 50%;
-            border: 3px solid transparent;
-            border-bottom: 3px solid #2ed573;
-            border-left: 3px solid #1e90ff;
-            animation: spin-reverse 1s linear infinite;
-        }
-
-        .circular-loader .loader-center {
-            position: absolute;
-            width: 40px;
-            height: 40px;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 14px;
-            font-weight: bold;
-            box-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
-        }
-
-        .loader-text {
-            color: white;
-            text-align: center;
-            margin-top: 20px;
-            font-size: 18px;
-            font-weight: 500;
-        }
-
-        .loader-subtext {
-            color: rgba(255, 255, 255, 0.6);
-            text-align: center;
-            margin-top: 10px;
-            font-size: 14px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        @keyframes spin-reverse {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(-360deg); }
-        }
-
-        /* Pulse animation for center */
-        @keyframes pulse {
-            0%, 100% { 
-                transform: translate(-50%, -50%) scale(1);
-                box-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
-            }
-            50% { 
-                transform: translate(-50%, -50%) scale(1.1);
-                box-shadow: 0 0 30px rgba(102, 126, 234, 0.8);
-            }
-        }
-
         /* Animated Background Elements */
         .container-bg {
             position: absolute;
@@ -747,11 +630,6 @@
             .controls {
                 grid-template-columns: 1fr;
             }
-            
-            .circular-loader {
-                width: 100px;
-                height: 100px;
-            }
         }
 
         /* Glow Effect */
@@ -768,21 +646,6 @@
     </style>
 </head>
 <body>
-    <!-- Modal Loading Overlay -->
-    <div class="modal-overlay" id="loadingModal">
-        <div class="modal-content">
-            <div class="circular-loader">
-                <div class="loader-bg"></div>
-                <div class="loader-progress"></div>
-                <div class="loader-progress-inner"></div>
-                <div class="loader-center" id="loaderPercent">0%</div>
-            </div>
-            <div class="loader-text" id="loaderText">Initializing...</div>
-            <div class="loader-subtext" id="loaderSubtext">Connecting to Cube Share Network</div>
-        </div>
-    </div>
-
-    <!-- Main Container -->
     <div class="glass-container">
         <div class="container-bg">
             <div class="bg-circle"></div>
@@ -889,51 +752,9 @@
         // Initialize on load
         document.addEventListener('DOMContentLoaded', function() {
             createStars();
-            showLoading('Connecting to Cube Share', 'Initializing PeerJS connection...');
             initializePeer();
             setupEventListeners();
         });
-        
-        // Show loading modal
-        function showLoading(text, subtext, percent = 0) {
-            const modal = document.getElementById('loadingModal');
-            const loaderText = document.getElementById('loaderText');
-            const loaderSubtext = document.getElementById('loaderSubtext');
-            const loaderPercent = document.getElementById('loaderPercent');
-            
-            loaderText.textContent = text;
-            loaderSubtext.textContent = subtext;
-            loaderPercent.textContent = percent + '%';
-            modal.classList.add('active');
-            
-            // Animate center pulse
-            loaderPercent.style.animation = 'pulse 1s infinite';
-        }
-        
-        // Update loading modal
-        function updateLoading(percent, text = null, subtext = null) {
-            const loaderPercent = document.getElementById('loaderPercent');
-            const loaderText = document.getElementById('loaderText');
-            const loaderSubtext = document.getElementById('loaderSubtext');
-            
-            loaderPercent.textContent = percent + '%';
-            
-            if (text) loaderText.textContent = text;
-            if (subtext) loaderSubtext.textContent = subtext;
-            
-            // Update pulse animation based on percent
-            if (percent >= 100) {
-                loaderPercent.style.animation = 'pulse 0.5s infinite';
-            }
-        }
-        
-        // Hide loading modal
-        function hideLoading(delay = 300) {
-            setTimeout(() => {
-                const modal = document.getElementById('loadingModal');
-                modal.classList.remove('active');
-            }, delay);
-        }
         
         // Create stars for background
         function createStars() {
@@ -954,15 +775,6 @@
         // Initialize PeerJS with CLOUD SERVER
         function initializePeer() {
             const simpleId = "CS-" + Math.floor(10000 + Math.random() * 90000);
-            
-            // Simulate connection progress
-            let progress = 0;
-            const progressInterval = setInterval(() => {
-                progress += 10;
-                if (progress <= 50) {
-                    updateLoading(progress, 'Connecting to Cube Share', 'Establishing connection...');
-                }
-            }, 200);
             
             // Using PeerJS Cloud Server for reliable connections
             peer = new Peer(simpleId, {
@@ -987,19 +799,6 @@
             // Peer event handlers
             peer.on('open', function(id) {
                 console.log('✅ Connected to PeerJS Cloud with ID:', id);
-                clearInterval(progressInterval);
-                
-                // Animate to 100%
-                updateLoading(80, 'Connected!', 'Finalizing setup...');
-                
-                setTimeout(() => {
-                    updateLoading(100, 'Ready!', 'Cube Share is ready to use');
-                    
-                    setTimeout(() => {
-                        hideLoading();
-                    }, 1000);
-                }, 500);
-                
                 document.getElementById('myId').textContent = id;
                 updateStatus(true, '✅ Connected to PeerJS Cloud');
                 addLog(`✅ Connected to PeerJS Cloud with ID: ${id}`);
@@ -1007,7 +806,6 @@
             
             peer.on('error', function(err) {
                 console.error('❌ PeerJS Error:', err);
-                clearInterval(progressInterval);
                 
                 let errorMessage = 'Connection Error';
                 switch(err.type) {
@@ -1029,14 +827,8 @@
                         errorMessage = err.type;
                 }
                 
-                updateLoading(100, 'Connection Error', errorMessage);
                 updateStatus(false, `❌ ${errorMessage}`);
                 addLog(`❌ Error: ${errorMessage}`);
-                
-                // Hide loading after showing error
-                setTimeout(() => {
-                    hideLoading();
-                }, 2000);
             });
             
             // Handle incoming connections
@@ -1044,13 +836,7 @@
                 console.log('📡 Incoming connection from:', conn.peer);
                 connection = conn;
                 setupConnection(conn);
-                
-                showLoading('Incoming Connection', `Connecting to ${conn.peer}...`, 50);
                 addLog(`📡 Incoming connection from: ${conn.peer}`);
-                
-                setTimeout(() => {
-                    hideLoading();
-                }, 1000);
             });
         }
         
@@ -1204,21 +990,12 @@
                 }
             }
             
-            // Show loading modal
-            showLoading('Connecting to Receiver', 'Establishing P2P connection...', 20);
-            
             // Connect to receiver
             addLog(`🔗 Connecting to ${receiverId}...`);
             connection = peer.connect(receiverId);
             setupConnection(connection);
             
             connection.on('open', async function() {
-                updateLoading(50, 'Connected!', 'Preparing file transfer...');
-                
-                setTimeout(() => {
-                    hideLoading();
-                }, 500);
-                
                 isSending = true;
                 updateControls(true);
                 updateRocket(0, 'Launching...');
@@ -1234,21 +1011,12 @@
                         await sendFile(selectedFiles[i], i + 1, selectedFiles.length);
                     }
                     
-                    // Show completion loading
-                    showLoading('Transfer Complete!', 'All files delivered successfully', 100);
-                    setTimeout(() => hideLoading(), 1500);
-                    
                     addLog('✅ All files delivered successfully!');
                     updateRocket(100, 'Mission Complete!');
                     updateStatus(true, 'Transfer Complete');
                     
                 } catch (error) {
                     console.error('❌ Transfer error:', error);
-                    
-                    // Show error loading
-                    showLoading('Transfer Failed', error.message, 100);
-                    setTimeout(() => hideLoading(), 2000);
-                    
                     addLog(`❌ Transfer failed: ${error.message}`);
                     updateStatus(false, 'Transfer Failed');
                 } finally {
@@ -1266,11 +1034,6 @@
             
             connection.on('error', function(err) {
                 console.error('❌ Connection error:', err);
-                
-                // Show error loading
-                showLoading('Connection Failed', `Failed to connect to ${receiverId}`, 100);
-                setTimeout(() => hideLoading(), 2000);
-                
                 addLog(`❌ Failed to connect: ${err.message || err.type}`);
                 alert(`Failed to connect to ${receiverId}\nCheck the ID and try again.`);
                 isSending = false;
@@ -1323,11 +1086,6 @@
                         // Animate rocket
                         animateRocket(percent);
                         
-                        // Update loading modal if this is the first file
-                        if (current === 1 && offset === chunk.byteLength) {
-                            updateLoading(60, 'Transferring Files', `Sending: ${file.name}`);
-                        }
-                        
                         if (offset < file.size) {
                             readNextChunk();
                         } else {
@@ -1372,19 +1130,12 @@
             
             receivedChunks = [];
             
-            // Show receiving loading
-            showLoading('Receiving File', `Preparing to receive: ${data.name}`, 30);
-            
             // Ask for confirmation for large files
             if (data.size > 100 * 1024 * 1024) { // 100MB
-                hideLoading();
-                setTimeout(() => {
-                    if (!confirm(`Receive file "${data.name}" (${formatSize(data.size)})?`)) {
-                        connection.send({ type: 'cancel' });
-                        return;
-                    }
-                    showLoading('Receiving File', `Receiving: ${data.name}`, 30);
-                }, 100);
+                if (!confirm(`Receive file "${data.name}" (${formatSize(data.size)})?`)) {
+                    connection.send({ type: 'cancel' });
+                    return;
+                }
             }
             
             updateRocket(0, `Incoming: ${data.name}`);
@@ -1398,9 +1149,6 @@
             receivingFile.received += data.data.byteLength;
             
             const percent = Math.round((receivingFile.received / receivingFile.size) * 100);
-            
-            // Update loading modal
-            updateLoading(30 + (percent * 0.7), 'Receiving File', `Downloading: ${receivingFile.name}`);
             
             // Update rocket
             updateRocket(percent, `Receiving: ${receivingFile.name}`);
@@ -1420,9 +1168,6 @@
         
         function finishReceivingFile(data) {
             if (!receivingFile) return;
-            
-            // Show completion loading
-            updateLoading(100, 'Download Complete!', 'Saving file...');
             
             // Combine chunks and save file
             const blob = new Blob(receivedChunks);
@@ -1445,20 +1190,15 @@
             addLog(`✅ Downloaded: ${receivingFile.name} (${formatSize(speed)}/s)`);
             updateRocket(100, 'Download Complete!');
             
-            // Hide loading after delay
+            // Reset after delay
             setTimeout(() => {
-                hideLoading();
-                
                 receivingFile = null;
                 receivedChunks = [];
                 updateRocket(0, 'Ready for launch...');
-            }, 1000);
+            }, 2000);
         }
         
         function handleTransferCancel() {
-            showLoading('Transfer Cancelled', 'Transfer was cancelled by sender', 100);
-            setTimeout(() => hideLoading(), 2000);
-            
             addLog('❌ Transfer cancelled by sender');
             updateRocket(0, 'Transfer Cancelled');
             updateStatus(false, 'Transfer Cancelled');
@@ -1477,22 +1217,15 @@
                 btn.classList.add('glass-btn', 'success');
                 addLog('⏸️ Transfer paused');
                 updateRocket(currentRocketPercent, 'PAUSED');
-                
-                // Show pause loading
-                showLoading('Transfer Paused', 'Click Resume to continue', currentRocketPercent);
             } else {
                 btn.innerHTML = '⏸️ Pause';
                 btn.classList.remove('success');
                 addLog('▶️ Transfer resumed');
-                hideLoading();
             }
         }
         
         function cancelTransfer() {
             if (confirm('Abort transfer?')) {
-                // Show cancellation loading
-                showLoading('Cancelling Transfer', 'Aborting file transfer...', 100);
-                
                 if (connection) {
                     connection.send({ type: 'cancel' });
                     connection.close();
@@ -1504,10 +1237,6 @@
                 updateRocket(0, 'Transfer Aborted');
                 addLog('❌ Transfer aborted');
                 updateStatus(false, 'Transfer Cancelled');
-                
-                setTimeout(() => {
-                    hideLoading();
-                }, 1000);
             }
         }
         
@@ -1654,7 +1383,6 @@
             if (peer && peer.disconnected) {
                 console.log('♻️ Attempting to reconnect...');
                 addLog('♻️ Attempting to reconnect...');
-                showLoading('Reconnecting', 'Re-establishing connection...', 50);
                 initializePeer();
             }
         }, 10000); // Check every 10 seconds
