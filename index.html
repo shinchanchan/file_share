@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>🚀 Rocket Share</title>
+    <title>🚀 Cube Share</title>
     <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -17,8 +17,8 @@
         }
 
         :root {
-            --primary: #6366f1;
-            --primary-dark: #4f46e5;
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
             --secondary: #8b5cf6;
             --accent: #06b6d4;
             --success: #10b981;
@@ -31,7 +31,8 @@
             --text-secondary: #94a3b8;
             --border: #475569;
             --shadow: rgba(0, 0, 0, 0.4);
-            --gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            --gradient: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            --cube-gradient: linear-gradient(135deg, #3b82f6, #06b6d4, #8b5cf6);
         }
 
         body {
@@ -66,7 +67,7 @@
         /* App Header */
         .app-header {
             padding: 24px 20px;
-            background: var(--gradient);
+            background: var(--cube-gradient);
             position: relative;
             overflow: hidden;
         }
@@ -100,12 +101,13 @@
             width: 44px;
             height: 44px;
             background: rgba(255, 255, 255, 0.2);
-            border-radius: 14px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 24px;
             backdrop-filter: blur(10px);
+            animation: float 3s ease-in-out infinite;
         }
 
         .logo-text {
@@ -177,7 +179,7 @@
             left: 0;
             right: 0;
             height: 3px;
-            background: var(--gradient);
+            background: var(--cube-gradient);
         }
 
         .card-header {
@@ -190,7 +192,7 @@
         .card-icon {
             width: 48px;
             height: 48px;
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
             border-radius: 14px;
             display: flex;
             align-items: center;
@@ -229,7 +231,7 @@
             font-size: 20px;
             font-weight: 600;
             word-break: break-all;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            background: var(--cube-gradient);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -315,7 +317,7 @@
         .input-field:focus {
             outline: none;
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
         }
 
         .input-field::placeholder {
@@ -338,7 +340,7 @@
 
         .upload-area.active {
             border-color: var(--primary);
-            background: rgba(99, 102, 241, 0.1);
+            background: rgba(59, 130, 246, 0.1);
             transform: translateY(-2px);
         }
 
@@ -364,111 +366,6 @@
         .upload-subtext {
             font-size: 14px;
             color: var(--text-secondary);
-        }
-
-        /* Compression Settings */
-        .compression-settings {
-            background: rgba(15, 23, 42, 0.6);
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 20px;
-            border: 1px solid var(--border);
-        }
-
-        .compression-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 16px;
-        }
-
-        .compression-title {
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--text);
-        }
-
-        .compression-toggle {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .toggle-switch {
-            position: relative;
-            width: 50px;
-            height: 26px;
-        }
-
-        .toggle-checkbox {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .toggle-slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: var(--border);
-            transition: .4s;
-            border-radius: 34px;
-        }
-
-        .toggle-slider:before {
-            position: absolute;
-            content: "";
-            height: 18px;
-            width: 18px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
-
-        .toggle-checkbox:checked + .toggle-slider {
-            background-color: var(--primary);
-        }
-
-        .toggle-checkbox:checked + .toggle-slider:before {
-            transform: translateX(24px);
-        }
-
-        .compression-options {
-            display: none;
-            margin-top: 16px;
-            animation: fadeIn 0.3s ease;
-        }
-
-        .compression-options.show {
-            display: block;
-        }
-
-        .quality-slider {
-            width: 100%;
-            margin: 16px 0;
-        }
-
-        .quality-label {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-            font-size: 14px;
-        }
-
-        .quality-value {
-            color: var(--primary);
-            font-weight: 600;
-        }
-
-        .compression-info {
-            font-size: 13px;
-            color: var(--text-secondary);
-            margin-top: 12px;
         }
 
         /* File List */
@@ -512,7 +409,7 @@
         .file-icon {
             width: 44px;
             height: 44px;
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
             border-radius: 12px;
             display: flex;
             align-items: center;
@@ -591,7 +488,7 @@
         .progress-value {
             font-size: 24px;
             font-weight: 700;
-            background: var(--gradient);
+            background: var(--cube-gradient);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -608,7 +505,7 @@
 
         .progress-fill {
             height: 100%;
-            background: var(--gradient);
+            background: var(--cube-gradient);
             border-radius: 4px;
             width: 0%;
             transition: width 0.3s ease;
@@ -669,13 +566,13 @@
         }
 
         .btn-primary {
-            background: var(--gradient);
+            background: var(--cube-gradient);
             color: white;
         }
 
         .btn-primary:hover:not(:disabled) {
             transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.4);
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
         }
 
         .btn-success {
@@ -759,7 +656,7 @@
             right: 24px;
             width: 64px;
             height: 64px;
-            background: var(--gradient);
+            background: var(--cube-gradient);
             border-radius: 20px;
             display: flex;
             align-items: center;
@@ -767,7 +664,7 @@
             color: white;
             font-size: 24px;
             cursor: pointer;
-            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.4);
             z-index: 100;
             transform: translateY(100px);
             opacity: 0;
@@ -838,7 +735,7 @@
 
         .modal-header {
             padding: 24px;
-            background: var(--gradient);
+            background: var(--cube-gradient);
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -899,7 +796,7 @@
 
         .circular-fill {
             fill: none;
-            stroke: url(#gradient);
+            stroke: url(#cube-gradient);
             stroke-width: 10;
             stroke-linecap: round;
             stroke-dasharray: 565;
@@ -918,7 +815,7 @@
         .circular-percent {
             font-size: 36px;
             font-weight: 700;
-            background: var(--gradient);
+            background: var(--cube-gradient);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -948,9 +845,9 @@
             }
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
         }
 
         /* Mobile Optimizations */
@@ -1171,7 +1068,7 @@
         }
 
         .notification.info .notification-icon {
-            background: rgba(99, 102, 241, 0.1);
+            background: rgba(59, 130, 246, 0.1);
             color: var(--primary);
         }
 
@@ -1190,10 +1087,10 @@
             <div class="header-content">
                 <div class="logo">
                     <div class="logo-icon">
-                        <i class="fas fa-rocket"></i>
+                        <i class="fas fa-cube"></i>
                     </div>
                     <div class="logo-text">
-                        <h1 class="app-title">Rocket Share</h1>
+                        <h1 class="app-title">Cube Share</h1>
                         <div class="app-subtitle">Peer-to-Peer File Transfer</div>
                     </div>
                 </div>
@@ -1277,33 +1174,6 @@
                     <input type="text" class="input-field" id="receiverId" placeholder="Enter receiver's share ID">
                 </div>
 
-                <!-- Compression Settings -->
-                <div class="compression-settings">
-                    <div class="compression-header">
-                        <div class="compression-title">
-                            <i class="fas fa-compress-alt"></i> Compression
-                        </div>
-                        <div class="compression-toggle">
-                            <span style="font-size: 14px; color: var(--text-secondary);">Auto</span>
-                            <label class="toggle-switch">
-                                <input type="checkbox" class="toggle-checkbox" id="compressionToggle" checked>
-                                <span class="toggle-slider"></span>
-                            </label>
-                        </div>
-                    </div>
-                    
-                    <div class="compression-options" id="compressionOptions">
-                        <div class="quality-label">
-                            <span>Video Quality:</span>
-                            <span class="quality-value" id="qualityValue">Medium</span>
-                        </div>
-                        <input type="range" min="1" max="10" value="5" class="quality-slider" id="qualitySlider">
-                        <div class="compression-info">
-                            <i class="fas fa-info-circle"></i> Reduces file size for faster transfer
-                        </div>
-                    </div>
-                </div>
-
                 <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
                     <div class="upload-icon">
                         <i class="fas fa-cloud-upload-alt"></i>
@@ -1321,7 +1191,7 @@
                 </div>
 
                 <button class="btn btn-success" id="sendBtn" onclick="initiateSend()" disabled>
-                    <i class="fas fa-rocket"></i> Launch Transfer
+                    <i class="fas fa-cube"></i> Start Transfer
                 </button>
             </div>
 
@@ -1386,8 +1256,9 @@
                 <div class="circular-progress">
                     <svg class="circular-svg">
                         <defs>
-                            <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                                <stop offset="0%" stop-color="#6366f1" />
+                            <linearGradient id="cube-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" stop-color="#3b82f6" />
+                                <stop offset="50%" stop-color="#06b6d4" />
                                 <stop offset="100%" stop-color="#8b5cf6" />
                             </linearGradient>
                         </defs>
@@ -1438,8 +1309,8 @@
             </div>
             <div class="modal-content">
                 <div class="help-section">
-                    <h3><i class="fas fa-rocket"></i> How It Works</h3>
-                    <p>Rocket Share enables direct file transfers between devices using WebRTC technology. No files are uploaded to servers.</p>
+                    <h3><i class="fas fa-cube"></i> How It Works</h3>
+                    <p>Cube Share enables direct file transfers between devices using WebRTC technology. Files are transferred byte-for-byte without any compression or quality loss.</p>
                 </div>
 
                 <div class="help-section">
@@ -1447,7 +1318,7 @@
                     <ul class="step-list">
                         <li>Share your ID with the receiver</li>
                         <li>Enter receiver's ID and select files</li>
-                        <li>Tap "Launch Transfer" to begin</li>
+                        <li>Tap "Start Transfer" to begin</li>
                         <li>Receiver gets download notification</li>
                         <li>Track progress in real-time</li>
                     </ul>
@@ -1460,8 +1331,8 @@
                 </div>
 
                 <div class="help-section">
-                    <h3><i class="fas fa-compress-alt"></i> Compression</h3>
-                    <p>Video files are automatically compressed to reduce size for faster transfers. You can adjust the quality in settings.</p>
+                    <h3><i class="fas fa-file"></i> File Transfer</h3>
+                    <p>All files are transferred exactly as they are - no compression, no quality reduction. Original quality and file size are preserved.</p>
                 </div>
 
                 <div class="help-section">
@@ -1518,14 +1389,6 @@
             lastUpdate: null
         };
         
-        // Compression settings
-        let compressionSettings = {
-            enabled: true,
-            videoQuality: 0.5, // 0.1 to 1.0
-            maxWidth: 1280,
-            maxHeight: 720
-        };
-        
         // Cloud PeerJS Configuration
         const PEER_CONFIG = {
             host: '0.peerjs.com',
@@ -1557,7 +1420,6 @@
         document.addEventListener('DOMContentLoaded', function() {
             initializePeer();
             setupEventListeners();
-            setupCompressionControls();
             updateStatus('peerStatus', false);
             updateStatus('relayStatus', false);
         });
@@ -1565,7 +1427,7 @@
         // Initialize PeerJS
         function initializePeer() {
             try {
-                const simpleId = "RS-" + Math.floor(10000 + Math.random() * 90000);
+                const simpleId = "CUBE-" + Math.floor(10000 + Math.random() * 90000);
                 
                 peer = new Peer(simpleId, PEER_CONFIG);
                 
@@ -1615,7 +1477,7 @@
             }
         }
         
-        // Handle incoming connection - FIXED: Added missing setupConnection function
+        // Handle incoming connection
         function handleIncomingConnection(conn) {
             connection = conn;
             setupIncomingConnection(conn);
@@ -1697,67 +1559,6 @@
             });
         }
         
-        // Setup compression controls
-        function setupCompressionControls() {
-            const toggle = document.getElementById('compressionToggle');
-            const slider = document.getElementById('qualitySlider');
-            const options = document.getElementById('compressionOptions');
-            
-            // Show/hide compression options
-            toggle.addEventListener('change', function() {
-                compressionSettings.enabled = this.checked;
-                if (this.checked) {
-                    options.classList.add('show');
-                } else {
-                    options.classList.remove('show');
-                }
-            });
-            
-            // Quality slider
-            slider.addEventListener('input', function() {
-                const value = parseInt(this.value);
-                let qualityText = '';
-                let quality = 0.1;
-                
-                switch(value) {
-                    case 1:
-                    case 2:
-                        qualityText = 'Low';
-                        quality = 0.2;
-                        break;
-                    case 3:
-                    case 4:
-                        qualityText = 'Medium-Low';
-                        quality = 0.4;
-                        break;
-                    case 5:
-                    case 6:
-                        qualityText = 'Medium';
-                        quality = 0.6;
-                        break;
-                    case 7:
-                    case 8:
-                        qualityText = 'Medium-High';
-                        quality = 0.8;
-                        break;
-                    case 9:
-                    case 10:
-                        qualityText = 'High';
-                        quality = 1.0;
-                        break;
-                }
-                
-                document.getElementById('qualityValue').textContent = qualityText;
-                compressionSettings.videoQuality = quality;
-            });
-            
-            // Initialize with default values
-            toggle.checked = compressionSettings.enabled;
-            if (compressionSettings.enabled) {
-                options.classList.add('show');
-            }
-        }
-        
         function handleFileSelect(e) {
             selectedFiles = Array.from(e.target.files);
             updateFileList();
@@ -1789,7 +1590,7 @@
             
             selectedFiles.forEach((file, index) => {
                 totalSize += file.size;
-                const fileIcon = getFileIcon(file.type);
+                const fileIcon = getFileIcon(file.type || '');
                 
                 html += `
                     <div class="file-item">
@@ -1801,7 +1602,7 @@
                             <div class="file-details">
                                 <span class="file-size">${formatSize(file.size)}</span>
                                 <span>•</span>
-                                <span>${file.type || 'Unknown type'}</span>
+                                <span>${file.type || 'File'}</span>
                             </div>
                         </div>
                         <button class="remove-btn" onclick="removeFile(${index})">
@@ -1816,10 +1617,10 @@
                 html += `
                     <div class="file-item" style="background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.3);">
                         <div class="file-icon" style="color: var(--success);">
-                            <i class="fas fa-rocket"></i>
+                            <i class="fas fa-cube"></i>
                         </div>
                         <div class="file-info">
-                            <div class="file-name">Ready to launch ${selectedFiles.length} files</div>
+                            <div class="file-name">Ready to transfer ${selectedFiles.length} files</div>
                             <div class="file-details">
                                 <span class="file-size">${formatSize(totalSize)} total</span>
                             </div>
@@ -1833,6 +1634,8 @@
         }
         
         function getFileIcon(mimeType) {
+            // Fixed: Check if mimeType is defined before using includes
+            if (!mimeType) return 'fas fa-file';
             if (mimeType.includes('image')) return 'fas fa-image';
             if (mimeType.includes('video')) return 'fas fa-video';
             if (mimeType.includes('audio')) return 'fas fa-music';
@@ -1870,7 +1673,7 @@
             startTransfer(receiverId);
         }
         
-        // Start transfer
+        // Start transfer - NO COMPRESSION, exact file transfer
         async function startTransfer(receiverId) {
             try {
                 connection = peer.connect(receiverId, { reliable: true });
@@ -1887,7 +1690,7 @@
                     
                     addLog('Starting transfer...');
                     
-                    // Process and send all files
+                    // Send all files EXACTLY as they are
                     for (let i = 0; i < selectedFiles.length; i++) {
                         if (isPaused) {
                             await waitForResume();
@@ -1896,7 +1699,7 @@
                         const file = selectedFiles[i];
                         document.getElementById('currentFile').textContent = file.name;
                         
-                        await sendFile(file);
+                        await sendFileExactly(file);
                     }
                     
                     addLog('Transfer complete!');
@@ -1921,30 +1724,17 @@
             }
         }
         
-        // Process and send file with compression
-        async function sendFile(file) {
+        // Send file EXACTLY as it is - no compression
+        async function sendFileExactly(file) {
             return new Promise(async (resolve) => {
                 try {
-                    let processedFile = file;
-                    let processedSize = file.size;
-                    
-                    // Check if compression is enabled and file is video
-                    if (compressionSettings.enabled && file.type.includes('video')) {
-                        addLog(`Compressing video: ${file.name}`);
-                        processedFile = await compressVideo(file);
-                        processedSize = processedFile.size;
-                        
-                        const reduction = ((file.size - processedSize) / file.size * 100).toFixed(1);
-                        addLog(`Compressed: ${reduction}% size reduction`);
-                    }
-                    
-                    // Send file info
+                    // Send file info - NO COMPRESSION
                     connection.send({
                         type: 'file_start',
                         name: file.name,
-                        size: processedSize,
-                        mime: file.type,
-                        originalSize: file.size
+                        size: file.size,
+                        mime: file.type || 'application/octet-stream',
+                        compressed: false
                     });
                     
                     let offset = 0;
@@ -1971,14 +1761,14 @@
                         // Update progress
                         const now = Date.now();
                         if (now - transferStats.lastUpdate > 500) {
-                            const percent = Math.round((offset / processedSize) * 100);
+                            const percent = Math.round((offset / file.size) * 100);
                             updateProgress(percent, `Sending: ${file.name}`);
                             updateSpeed();
                             updateCircularProgress(percent);
                             transferStats.lastUpdate = now;
                         }
                         
-                        if (offset < processedSize) {
+                        if (offset < file.size) {
                             readNextChunk();
                         } else {
                             // File complete
@@ -1987,13 +1777,13 @@
                                 name: file.name
                             });
                             
-                            addLog(`Sent: ${file.name}`);
+                            addLog(`Sent: ${file.name} (${formatSize(file.size)})`);
                             resolve();
                         }
                     };
                     
                     function readNextChunk() {
-                        const slice = processedFile.slice(offset, offset + chunkSize);
+                        const slice = file.slice(offset, offset + chunkSize);
                         reader.readAsArrayBuffer(slice);
                     }
                     
@@ -2004,66 +1794,6 @@
                     addLog(`Failed to send: ${file.name}`);
                     resolve(); // Continue with next file
                 }
-            });
-        }
-        
-        // Video compression function
-        async function compressVideo(file) {
-            return new Promise((resolve, reject) => {
-                if (!file.type.includes('video')) {
-                    resolve(file);
-                    return;
-                }
-                
-                const video = document.createElement('video');
-                const canvas = document.createElement('canvas');
-                const ctx = canvas.getContext('2d');
-                
-                video.preload = 'metadata';
-                
-                video.onloadedmetadata = function() {
-                    // Calculate new dimensions
-                    let width = video.videoWidth;
-                    let height = video.videoHeight;
-                    
-                    if (width > compressionSettings.maxWidth || height > compressionSettings.maxHeight) {
-                        const scale = Math.min(
-                            compressionSettings.maxWidth / width,
-                            compressionSettings.maxHeight / height
-                        );
-                        width = Math.floor(width * scale);
-                        height = Math.floor(height * scale);
-                    }
-                    
-                    canvas.width = width;
-                    canvas.height = height;
-                    
-                    // Draw video frame to canvas
-                    video.currentTime = 0;
-                    
-                    video.onseeked = function() {
-                        ctx.drawImage(video, 0, 0, width, height);
-                        
-                        // Convert canvas to compressed video (simplified - in production use MediaRecorder)
-                        canvas.toBlob(function(blob) {
-                            if (blob) {
-                                const compressedFile = new File([blob], file.name, {
-                                    type: 'video/mp4',
-                                    lastModified: Date.now()
-                                });
-                                resolve(compressedFile);
-                            } else {
-                                resolve(file); // Fallback to original
-                            }
-                        }, 'video/mp4', compressionSettings.videoQuality);
-                    };
-                };
-                
-                video.onerror = function() {
-                    resolve(file); // Fallback to original file
-                };
-                
-                video.src = URL.createObjectURL(file);
             });
         }
         
@@ -2089,15 +1819,15 @@
             receivingFile = {
                 name: data.name,
                 size: data.size,
-                mime: data.mime,
-                originalSize: data.originalSize || data.size,
+                mime: data.mime || 'application/octet-stream',
+                compressed: data.compressed || false,
                 received: 0,
                 startTime: Date.now()
             };
             
             receivedChunks = [];
             
-            addLog(`Receiving: ${data.name}`);
+            addLog(`Receiving: ${data.name} (${formatSize(data.size)})`);
             showProgressModal();
             document.getElementById('currentFile').textContent = data.name;
             updateProgress(0, `Receiving: ${data.name}`);
@@ -2120,7 +1850,7 @@
         function finishReceivingFile(data) {
             if (!receivingFile) return;
             
-            // Create file
+            // Create file EXACTLY as sent
             const blob = new Blob(receivedChunks, { type: receivingFile.mime });
             const url = URL.createObjectURL(blob);
             
@@ -2129,10 +1859,11 @@
                 id: Date.now(),
                 name: receivingFile.name,
                 size: receivingFile.size,
-                originalSize: receivingFile.originalSize,
+                mime: receivingFile.mime,
                 url: url,
-                date: new Date().toLocaleTimeString(),
-                downloaded: false
+                date: new Date().toLocaleString(),
+                downloaded: false,
+                compressed: receivingFile.compressed
             };
             
             downloads.push(download);
@@ -2141,7 +1872,7 @@
             // Trigger download
             triggerDownload(download);
             
-            addLog(`Received: ${receivingFile.name}`);
+            addLog(`Received: ${receivingFile.name} (${formatSize(receivingFile.size)})`);
             updateProgress(100, 'Download Complete!');
             
             setTimeout(() => {
@@ -2161,11 +1892,8 @@
             
             download.downloaded = true;
             
-            // Show compression info if applicable
-            if (download.originalSize && download.originalSize > download.size) {
-                const reduction = ((download.originalSize - download.size) / download.originalSize * 100).toFixed(1);
-                showNotification(`Video compressed: ${reduction}% size reduction`, 'info');
-            }
+            // Show notification
+            showNotification(`Downloaded: ${download.name}`, 'success');
             
             // Clean up after some time
             setTimeout(() => {
@@ -2284,19 +2012,17 @@
             } else {
                 let html = '';
                 downloads.forEach((download, index) => {
-                    const sizeInfo = download.originalSize && download.originalSize > download.size 
-                        ? `${formatSize(download.size)} (Compressed from ${formatSize(download.originalSize)})`
-                        : formatSize(download.size);
+                    const fileIcon = getFileIcon(download.mime || '');
                     
                     html += `
                         <div class="file-item" style="margin-bottom: 12px;">
                             <div class="file-icon">
-                                <i class="${getFileIcon(download.mime)}"></i>
+                                <i class="${fileIcon}"></i>
                             </div>
                             <div class="file-info">
                                 <div class="file-name">${download.name}</div>
                                 <div class="file-details">
-                                    <span class="file-size">${sizeInfo}</span>
+                                    <span class="file-size">${formatSize(download.size)}</span>
                                     <span>•</span>
                                     <span>${download.date}</span>
                                 </div>
