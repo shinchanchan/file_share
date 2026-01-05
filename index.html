@@ -238,6 +238,42 @@
             margin-bottom: 16px;
         }
 
+        /* Share Buttons */
+        .share-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .share-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            color: white;
+        }
+
+        .share-btn.copy {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+
+        .share-btn.link {
+            background: linear-gradient(135deg, var(--accent), var(--success));
+        }
+
+        .share-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
         /* Status Indicators */
         .status-indicators {
             display: grid;
@@ -322,6 +358,56 @@
 
         .input-field::placeholder {
             color: var(--text-secondary);
+        }
+
+        /* Auto-fill Message */
+        .auto-fill-message {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 12px;
+            padding: 12px 16px;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .auto-fill-icon {
+            color: var(--primary);
+            font-size: 16px;
+        }
+
+        .auto-fill-text {
+            flex: 1;
+            font-size: 14px;
+            color: var(--text);
+        }
+
+        .clear-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .clear-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text);
         }
 
         /* File Upload Area */
@@ -937,6 +1023,10 @@
             .circular-percent {
                 font-size: 32px;
             }
+            
+            .share-buttons {
+                grid-template-columns: 1fr;
+            }
         }
 
         /* Touch-friendly adjustments */
@@ -954,47 +1044,6 @@
             .remove-btn:active {
                 transform: scale(0.98);
             }
-        }
-
-        /* Help Content */
-        .help-section {
-            margin-bottom: 24px;
-        }
-
-        .help-section h3 {
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--text);
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .help-section p {
-            color: var(--text-secondary);
-            margin-bottom: 12px;
-            font-size: 14px;
-        }
-
-        .step-list {
-            list-style: none;
-            padding-left: 0;
-        }
-
-        .step-list li {
-            padding: 10px 0 10px 32px;
-            position: relative;
-            color: var(--text-secondary);
-            font-size: 14px;
-        }
-
-        .step-list li::before {
-            content: '→';
-            position: absolute;
-            left: 0;
-            color: var(--primary);
-            font-weight: bold;
         }
 
         /* Connection Info */
@@ -1077,6 +1126,64 @@
             font-size: 14px;
             color: var(--text);
         }
+
+        /* Transfer Warning */
+        .transfer-warning {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 20px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .transfer-warning.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .warning-content {
+            background: var(--surface);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 400px;
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+
+        .warning-icon {
+            font-size: 48px;
+            color: var(--warning);
+            margin-bottom: 20px;
+        }
+
+        .warning-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--text);
+        }
+
+        .warning-message {
+            color: var(--text-secondary);
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .warning-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
     </style>
 </head>
 <body>
@@ -1151,9 +1258,15 @@
                 <div class="id-display">
                     <div class="id-label">Share this ID with sender</div>
                     <div class="id-value" id="myId">Generating...</div>
-                    <button class="btn btn-primary" onclick="copyMyId()">
-                        <i class="fas fa-copy"></i> Copy ID
-                    </button>
+                    
+                    <div class="share-buttons">
+                        <button class="share-btn copy" onclick="copyMyId()">
+                            <i class="fas fa-copy"></i> Copy ID
+                        </button>
+                        <button class="share-btn link" onclick="generateShareLink()">
+                            <i class="fas fa-link"></i> Share Link
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -1171,7 +1284,20 @@
                         <i class="fas fa-user"></i>
                         <span>Receiver's ID</span>
                     </div>
-                    <input type="text" class="input-field" id="receiverId" placeholder="Enter receiver's share ID">
+                    <input type="text" class="input-field" id="receiverId" placeholder="Enter receiver's share ID or paste link">
+                    
+                    <!-- Auto-fill message (hidden by default) -->
+                    <div class="auto-fill-message" id="autoFillMessage" style="display: none;">
+                        <div class="auto-fill-icon">
+                            <i class="fas fa-magic"></i>
+                        </div>
+                        <div class="auto-fill-text" id="autoFillText">
+                            Receiver ID auto-filled from link
+                        </div>
+                        <button class="clear-btn" onclick="clearAutoFill()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
                 </div>
 
                 <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
@@ -1300,6 +1426,68 @@
         </div>
     </div>
 
+    <!-- Share Link Modal -->
+    <div class="modal-overlay" id="shareModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Share Your ID</div>
+                <button class="modal-close" onclick="hideShareModal()">&times;</button>
+            </div>
+            <div class="modal-content">
+                <div style="margin-bottom: 20px;">
+                    <div class="input-label" style="margin-bottom: 10px;">
+                        <i class="fas fa-link"></i>
+                        <span>Share this link with your friend:</span>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" class="input-field" id="shareLinkInput" readonly style="flex: 1;">
+                        <button class="icon-btn" onclick="copyShareLink()" title="Copy link">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 20px; display:none;">
+                    <div class="input-label" style="margin-bottom: 10px;">
+                        <i class="fas fa-qrcode"></i>
+                        <span>Or scan this QR code:</span>
+                    </div>
+                    <div style="background: white; padding: 20px; border-radius: 12px; display: inline-block;">
+                        <canvas id="qrCodeCanvas" width="200" height="200"></canvas>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <div class="input-label" style="margin-bottom: 10px;">
+                        <i class="fas fa-share-alt"></i>
+                        <span>Share via:</span>
+                    </div>
+                    <div class="share-buttons">
+                        <button class="share-btn copy" onclick="shareViaWhatsApp()">
+                            <i class="fab fa-whatsapp"></i> WhatsApp
+                        </button>
+                        <button class="share-btn link" onclick="shareViaTelegram()">
+                            <i class="fab fa-telegram"></i> Telegram
+                        </button>
+                    </div>
+                </div>
+                
+                <div style="background: rgba(15, 23, 42, 0.6); border-radius: 12px; padding: 15px; margin-top: 20px;">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                        <i class="fas fa-info-circle" style="color: var(--primary);"></i>
+                        <span style="font-size: 14px; font-weight: 500; color: var(--text);">How it works:</span>
+                    </div>
+                    <ul style="margin: 0; padding-left: 20px; color: var(--text-secondary); font-size: 13px;">
+                        <li>Your friend clicks the link</li>
+                        <li>Their receiver ID field auto-fills with your ID</li>
+                        <li>They select files and start transfer</li>
+                        <li>Files are sent directly to you</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Help Modal -->
     <div class="modal-overlay" id="helpModal">
         <div class="modal">
@@ -1308,41 +1496,50 @@
                 <button class="modal-close" onclick="hideHelp()">&times;</button>
             </div>
             <div class="modal-content">
-                <div class="help-section">
-                    <h3><i class="fas fa-cube"></i> How It Works</h3>
-                    <p>Cube Share enables direct file transfers between devices using WebRTC technology. Files are transferred byte-for-byte without any compression or quality loss.</p>
+                <div style="margin-bottom: 24px;">
+                    <h3 style="font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                        <i class="fas fa-cube"></i> How It Works
+                    </h3>
+                    <p style="color: var(--text-secondary); margin-bottom: 12px; font-size: 14px;">
+                        Cube Share enables direct file transfers between devices using WebRTC technology. Files are transferred byte-for-byte without any compression or quality loss.
+                    </p>
                 </div>
 
-                <div class="help-section">
-                    <h3><i class="fas fa-bolt"></i> Quick Start</h3>
-                    <ul class="step-list">
-                        <li>Share your ID with the receiver</li>
-                        <li>Enter receiver's ID and select files</li>
-                        <li>Tap "Start Transfer" to begin</li>
-                        <li>Receiver gets download notification</li>
-                        <li>Track progress in real-time</li>
+                <div style="margin-bottom: 24px;">
+                    <h3 style="font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                        <i class="fas fa-bolt"></i> Quick Start
+                    </h3>
+                    <ul style="list-style: none; padding-left: 0;">
+                        <li style="padding: 10px 0 10px 32px; position: relative; color: var(--text-secondary); font-size: 14px;">
+                            <span style="position: absolute; left: 0; color: var(--primary); font-weight: bold;">→</span>
+                            Share your ID with the receiver
+                        </li>
+                        <li style="padding: 10px 0 10px 32px; position: relative; color: var(--text-secondary); font-size: 14px;">
+                            <span style="position: absolute; left: 0; color: var(--primary); font-weight: bold;">→</span>
+                            Enter receiver's ID and select files
+                        </li>
+                        <li style="padding: 10px 0 10px 32px; position: relative; color: var(--text-secondary); font-size: 14px;">
+                            <span style="position: absolute; left: 0; color: var(--primary); font-weight: bold;">→</span>
+                            Tap "Start Transfer" to begin
+                        </li>
+                        <li style="padding: 10px 0 10px 32px; position: relative; color: var(--text-secondary); font-size: 14px;">
+                            <span style="position: absolute; left: 0; color: var(--primary); font-weight: bold;">→</span>
+                            Receiver gets download notification
+                        </li>
+                        <li style="padding: 10px 0 10px 32px; position: relative; color: var(--text-secondary); font-size: 14px;">
+                            <span style="position: absolute; left: 0; color: var(--primary); font-weight: bold;">→</span>
+                            Track progress in real-time
+                        </li>
                     </ul>
                 </div>
 
-                <div class="help-section">
-                    <h3><i class="fas fa-wifi"></i> Connection Types</h3>
-                    <p><strong>Direct:</strong> Devices connect directly when on same network</p>
-                    <p><strong>TURN Relay:</strong> Uses relay server when direct connection fails</p>
-                </div>
-
-                <div class="help-section">
-                    <h3><i class="fas fa-file"></i> File Transfer</h3>
-                    <p>All files are transferred exactly as they are - no compression, no quality reduction. Original quality and file size are preserved.</p>
-                </div>
-
-                <div class="help-section">
-                    <h3><i class="fas fa-lightbulb"></i> Tips</h3>
-                    <ul class="step-list">
-                        <li>Keep app open during transfers</li>
-                        <li>Use stable internet connection</li>
-                        <li>Monitor connection type indicator</li>
-                        <li>Check downloads by tapping the download icon</li>
-                    </ul>
+                <div style="margin-bottom: 24px;">
+                    <h3 style="font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                        <i class="fas fa-link"></i> Share Link Feature
+                    </h3>
+                    <p style="color: var(--text-secondary); margin-bottom: 12px; font-size: 14px;">
+                        Generate a shareable link with your ID embedded. When your friend opens the link, their receiver ID field automatically fills with your ID.
+                    </p>
                 </div>
 
                 <button class="btn btn-primary" onclick="hideHelp()" style="margin-top: 20px;">
@@ -1371,8 +1568,32 @@
         </div>
     </div>
 
+    <!-- Transfer Warning Modal -->
+    <div class="transfer-warning" id="transferWarning">
+        <div class="warning-content">
+            <div class="warning-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <div class="warning-title">Transfer in Progress!</div>
+            <div class="warning-message" id="warningMessage">
+                A file transfer is currently in progress. If you leave this page, the transfer will be interrupted and cannot be resumed.
+            </div>
+            <div class="warning-buttons">
+                <button class="btn btn-secondary" onclick="stayOnPage()">
+                    <i class="fas fa-times"></i> Stay
+                </button>
+                <button class="btn btn-danger" onclick="leavePage()">
+                    <i class="fas fa-sign-out-alt"></i> Leave
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Notification System -->
     <div id="notificationContainer"></div>
+
+    <!-- QR Code Library -->
+    <!--script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script-->
 
     <script>
         // Global variables
@@ -1388,6 +1609,9 @@
             speed: 0,
             lastUpdate: null
         };
+        
+        // Store whether we have a pending URL parameter
+        let hasAutoFilled = false;
         
         // Cloud PeerJS Configuration
         const PEER_CONFIG = {
@@ -1418,11 +1642,137 @@
         
         // Initialize on load
         document.addEventListener('DOMContentLoaded', function() {
+            // Check for URL parameters first
+            checkUrlParameters();
+            
+            // Initialize peer connection
             initializePeer();
+            
+            // Setup event listeners
             setupEventListeners();
+            
+            // Update status indicators
             updateStatus('peerStatus', false);
             updateStatus('relayStatus', false);
+            
+            // Prevent page refresh during transfer
+            setupPageProtection();
         });
+        
+        // Check URL parameters for auto-fill
+        function checkUrlParameters() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const peerId = urlParams.get('peer');
+            
+            if (peerId && peerId.trim() !== '') {
+                // Auto-fill the receiver ID field
+                document.getElementById('receiverId').value = peerId.trim();
+                
+                // Show auto-fill message
+                const message = document.getElementById('autoFillMessage');
+                const messageText = document.getElementById('autoFillText');
+                
+                messageText.textContent = `Receiver ID auto-filled from link: ${peerId.substring(0, 12)}...`;
+                message.style.display = 'flex';
+                
+                hasAutoFilled = true;
+                
+                // Add log entry
+                addLog(`Auto-filled receiver ID from link`);
+                
+                // Scroll to input field
+                setTimeout(() => {
+                    document.getElementById('receiverId').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 500);
+            }
+        }
+        
+        // Clear auto-fill
+        function clearAutoFill() {
+            document.getElementById('receiverId').value = '';
+            document.getElementById('autoFillMessage').style.display = 'none';
+            hasAutoFilled = false;
+        }
+        
+        // Generate shareable link
+        function generateShareLink() {
+            const myId = document.getElementById('myId').textContent;
+            
+            if (myId === 'Generating...') {
+                showNotification('Please wait for ID generation', 'error');
+                return;
+            }
+            
+            // Create shareable link
+            const currentUrl = window.location.origin + window.location.pathname;
+            const shareUrl = `${currentUrl}?peer=${encodeURIComponent(myId)}`;
+            
+            // Update modal input
+            document.getElementById('shareLinkInput').value = shareUrl;
+            
+            // Generate QR code
+            //generateQRCode(shareUrl);
+            
+            // Show modal
+            showShareModal();
+        }
+        
+        // Show share modal
+        function showShareModal() {
+            document.getElementById('shareModal').classList.add('active');
+        }
+        
+        // Hide share modal
+        function hideShareModal() {
+            document.getElementById('shareModal').classList.remove('active');
+        }
+        
+        // Copy share link
+        function copyShareLink() {
+            const shareLink = document.getElementById('shareLinkInput').value;
+            navigator.clipboard.writeText(shareLink).then(() => {
+                showNotification('Link copied to clipboard!', 'success');
+            });
+        }
+        
+        // Generate QR code
+        function generateQRCode(text) {
+            try {
+                const canvas = document.getElementById('qrCodeCanvas');
+                QRCode.toCanvas(canvas, text, {
+                    width: 200,
+                    margin: 2,
+                    color: {
+                        dark: '#1e293b',
+                        light: '#ffffff'
+                    }
+                }, function(error) {
+                    if (error) {
+                        console.error('QR Code generation error:', error);
+                    }
+                });
+            } catch (error) {
+                console.error('QR Code error:', error);
+            }
+        }
+        
+        // Share via WhatsApp
+        function shareViaWhatsApp() {
+            const shareLink = document.getElementById('shareLinkInput').value;
+            const message = `Send me files via Cube Share: ${shareLink}`;
+            const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
+            
+            window.open(whatsappUrl, '_blank');
+        }
+        
+        // Share via Telegram
+        function shareViaTelegram() {
+            const shareLink = document.getElementById('shareLinkInput').value;
+            const message = `Send me files via Cube Share: ${shareLink}`;
+            const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(shareLink)}&text=${encodeURIComponent('Send me files via Cube Share')}`;
+            
+            window.open(telegramUrl, '_blank');
+        }
         
         // Initialize PeerJS
         function initializePeer() {
@@ -1475,6 +1825,69 @@
                 console.error('Failed to initialize:', error);
                 showNotification('Failed to initialize', 'error');
             }
+        }
+        
+        // Setup page protection to prevent accidental refresh
+        function setupPageProtection() {
+            // Warn before leaving during transfer
+            window.addEventListener('beforeunload', function(e) {
+                if (isSending || (connection && connection.open)) {
+                    e.preventDefault();
+                    e.returnValue = 'A file transfer is in progress. Are you sure you want to leave?';
+                    
+                    // Show custom warning modal
+                    showTransferWarning();
+                    return e.returnValue;
+                }
+            });
+            
+            // Prevent back button during transfer
+            window.addEventListener('popstate', function(e) {
+                if (isSending || (connection && connection.open)) {
+                    e.preventDefault();
+                    showTransferWarning();
+                }
+            });
+        }
+        
+        // Show transfer warning modal
+        function showTransferWarning() {
+            const warning = document.getElementById('transferWarning');
+            const message = document.getElementById('warningMessage');
+            
+            if (isSending) {
+                message.textContent = 'A file transfer is currently in progress. If you leave this page, the transfer will be interrupted and cannot be resumed.';
+            } else if (connection && connection.open) {
+                message.textContent = 'You are connected to a peer. Leaving this page will disconnect you.';
+            }
+            
+            warning.classList.add('active');
+        }
+        
+        // Stay on page
+        function stayOnPage() {
+            document.getElementById('transferWarning').classList.remove('active');
+        }
+        
+        // Leave page (user confirms)
+        function leavePage() {
+            document.getElementById('transferWarning').classList.remove('active');
+            
+            // Allow the page to unload
+            isSending = false;
+            if (connection) {
+                connection.close();
+                connection = null;
+            }
+            
+            // Remove the beforeunload handler temporarily
+            const tempHandler = window.onbeforeunload;
+            window.onbeforeunload = null;
+            
+            // Go back or reload
+            setTimeout(() => {
+                window.history.back();
+            }, 100);
         }
         
         // Handle incoming connection
@@ -1556,6 +1969,34 @@
             
             uploadArea.addEventListener('touchend', function() {
                 this.classList.remove('active');
+            });
+            
+            // Handle paste in receiver ID field (for links)
+            document.getElementById('receiverId').addEventListener('paste', function(e) {
+                setTimeout(() => {
+                    const pastedText = this.value;
+                    // Check if pasted text looks like a URL with peer parameter
+                    if (pastedText.includes('?peer=') || pastedText.includes('peer=')) {
+                        try {
+                            let url;
+                            // Try to parse as URL
+                            if (!pastedText.startsWith('http')) {
+                                url = new URL('https://' + pastedText);
+                            } else {
+                                url = new URL(pastedText);
+                            }
+                            
+                            const peerParam = url.searchParams.get('peer');
+                            if (peerParam) {
+                                this.value = peerParam;
+                                showNotification('Extracted peer ID from link', 'info');
+                                addLog('Extracted peer ID from pasted link');
+                            }
+                        } catch (error) {
+                            // Not a valid URL, continue normally
+                        }
+                    }
+                }, 10);
             });
         }
         
@@ -2169,15 +2610,6 @@
                 refreshConnection();
             }
         }, 30000);
-        
-        // Prevent accidental refresh
-        window.addEventListener('beforeunload', function(e) {
-            if (isSending) {
-                e.preventDefault();
-                e.returnValue = 'File transfer in progress. Are you sure you want to leave?';
-                return e.returnValue;
-            }
-        });
     </script>
 </body>
 </html>
