@@ -29,355 +29,6 @@
             overflow-x: hidden;
         }
 
-        /* Help Button */
-        .help-btn {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            width: 50px;
-            height: 50px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 24px;
-            cursor: pointer;
-            z-index: 100;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-            transition: all 0.3s ease;
-            border: none;
-        }
-
-        .help-btn:hover {
-            transform: scale(1.1) rotate(15deg);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
-        }
-
-        /* Modal Progress View */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.9);
-            backdrop-filter: blur(10px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-        }
-
-        .modal-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        /* Big Circular Progress */
-        .big-circular-progress {
-            position: relative;
-            width: 300px;
-            height: 300px;
-        }
-
-        .big-circular-bg {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            border: 10px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .big-circular-fill {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            border: 10px solid transparent;
-            border-top: 10px solid #667eea;
-            border-right: 10px solid #764ba2;
-            border-bottom: 10px solid #2ed573;
-            border-left: 10px solid #1e90ff;
-            clip-path: polygon(0 0, 50% 0, 50% 100%, 0 100%);
-            transform: rotate(45deg);
-            transition: all 0.3s ease;
-        }
-
-        .big-circular-inner {
-            position: absolute;
-            width: 220px;
-            height: 220px;
-            top: 40px;
-            left: 40px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 50%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 30px;
-        }
-
-        .big-percent {
-            font-size: 48px;
-            font-weight: 700;
-            background: linear-gradient(135deg, #667eea, #2ed573);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            margin-bottom: 10px;
-        }
-
-        .big-status {
-            color: white;
-            font-size: 18px;
-            font-weight: 500;
-            margin-bottom: 5px;
-        }
-
-        .big-substatus {
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 14px;
-        }
-
-        .big-file-info {
-            position: absolute;
-            bottom: -60px;
-            left: 0;
-            right: 0;
-            text-align: center;
-        }
-
-        .big-file-name {
-            color: white;
-            font-size: 16px;
-            font-weight: 500;
-            margin-bottom: 5px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 300px;
-        }
-
-        .big-file-size {
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 14px;
-        }
-
-        .big-transfer-info {
-            position: absolute;
-            top: -80px;
-            left: 0;
-            right: 0;
-            text-align: center;
-        }
-
-        .big-speed {
-            color: #2ed573;
-            font-size: 20px;
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
-
-        .big-time {
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 14px;
-        }
-
-        .big-controls {
-            position: absolute;
-            top: -150px;
-            left: 0;
-            right: 0;
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-        }
-
-        .big-control-btn {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            border: none;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            font-size: 20px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-        }
-
-        .big-control-btn:hover {
-            transform: scale(1.1);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
-        }
-
-        .big-control-btn.danger {
-            background: linear-gradient(135deg, #ff4757 0%, #ff6348 100%);
-        }
-
-        /* Help Modal */
-        .help-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.9);
-            backdrop-filter: blur(10px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1001;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-        }
-
-        .help-modal.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .help-content {
-            width: 90%;
-            max-width: 600px;
-            max-height: 80vh;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(20px);
-            border-radius: 20px;
-            padding: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-            overflow-y: auto;
-        }
-
-        .help-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-
-        .help-title {
-            color: white;
-            font-size: 28px;
-            font-weight: 700;
-            background: linear-gradient(135deg, #667eea, #2ed573);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-
-        .close-help {
-            background: none;
-            border: none;
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 30px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .close-help:hover {
-            color: white;
-            transform: scale(1.1);
-        }
-
-        .help-section {
-            margin-bottom: 25px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 15px;
-            padding: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .help-section-title {
-            color: white;
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .help-step {
-            display: flex;
-            align-items: flex-start;
-            gap: 15px;
-            margin-bottom: 15px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .help-step:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-            padding-bottom: 0;
-        }
-
-        .step-number {
-            width: 30px;
-            height: 30px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 600;
-            flex-shrink: 0;
-        }
-
-        .step-content {
-            flex: 1;
-        }
-
-        .step-title {
-            color: white;
-            font-size: 16px;
-            font-weight: 500;
-            margin-bottom: 5px;
-        }
-
-        .step-desc {
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 14px;
-            line-height: 1.5;
-        }
-
-        .help-tip {
-            background: rgba(46, 213, 115, 0.1);
-            border-left: 4px solid #2ed573;
-            padding: 15px;
-            border-radius: 8px;
-            margin: 20px 0;
-        }
-
-        .tip-title {
-            color: #2ed573;
-            font-weight: 600;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .tip-content {
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 14px;
-            line-height: 1.5;
-        }
-
         /* Glass Container */
         .glass-container {
             width: 100%;
@@ -393,6 +44,123 @@
             padding: 35px;
             position: relative;
             overflow: hidden;
+        }
+
+        /* Modal Loading Overlay */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Circular Loading Animation */
+        .circular-loader {
+            width: 120px;
+            height: 120px;
+            position: relative;
+        }
+
+        .circular-loader .loader-bg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .circular-loader .loader-progress {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 4px solid transparent;
+            border-top: 4px solid #667eea;
+            border-right: 4px solid #764ba2;
+            animation: spin 1.5s linear infinite;
+        }
+
+        .circular-loader .loader-progress-inner {
+            position: absolute;
+            width: 80%;
+            height: 80%;
+            top: 10%;
+            left: 10%;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            border-bottom: 3px solid #2ed573;
+            border-left: 3px solid #1e90ff;
+            animation: spin-reverse 1s linear infinite;
+        }
+
+        .circular-loader .loader-center {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
+        }
+
+        .loader-text {
+            color: white;
+            text-align: center;
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        .loader-subtext {
+            color: rgba(255, 255, 255, 0.6);
+            text-align: center;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes spin-reverse {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(-360deg); }
+        }
+
+        /* Pulse animation for center */
+        @keyframes pulse {
+            0%, 100% { 
+                transform: translate(-50%, -50%) scale(1);
+                box-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
+            }
+            50% { 
+                transform: translate(-50%, -50%) scale(1.1);
+                box-shadow: 0 0 30px rgba(102, 126, 234, 0.8);
+            }
         }
 
         /* Animated Background Elements */
@@ -980,24 +748,9 @@
                 grid-template-columns: 1fr;
             }
             
-            .big-circular-progress {
-                width: 250px;
-                height: 250px;
-            }
-            
-            .big-circular-inner {
-                width: 180px;
-                height: 180px;
-                top: 35px;
-                left: 35px;
-            }
-            
-            .big-percent {
-                font-size: 36px;
-            }
-            
-            .help-content {
-                padding: 20px;
+            .circular-loader {
+                width: 100px;
+                height: 100px;
             }
         }
 
@@ -1015,123 +768,17 @@
     </style>
 </head>
 <body>
-    <!-- Help Button -->
-    <button class="help-btn" onclick="showHelp()">?</button>
-
-    <!-- Big Progress Modal -->
-    <div class="modal-overlay" id="progressModal">
-        <div class="big-circular-progress">
-            <div class="big-circular-bg"></div>
-            <div class="big-circular-fill" id="bigCircularFill"></div>
-            <div class="big-circular-inner">
-                <div class="big-percent" id="bigPercent">0%</div>
-                <div class="big-status" id="bigStatus">Connecting...</div>
-                <div class="big-substatus" id="bigSubstatus">Initializing transfer</div>
+    <!-- Modal Loading Overlay -->
+    <div class="modal-overlay" id="loadingModal">
+        <div class="modal-content">
+            <div class="circular-loader">
+                <div class="loader-bg"></div>
+                <div class="loader-progress"></div>
+                <div class="loader-progress-inner"></div>
+                <div class="loader-center" id="loaderPercent">0%</div>
             </div>
-            <div class="big-transfer-info">
-                <div class="big-speed" id="bigSpeed">0 MB/s</div>
-                <div class="big-time" id="bigTime">Estimating...</div>
-            </div>
-            <div class="big-file-info">
-                <div class="big-file-name" id="bigFileName">No file selected</div>
-                <div class="big-file-size" id="bigFileSize">0 MB / 0 MB</div>
-            </div>
-            <div class="big-controls">
-                <button class="big-control-btn" onclick="togglePauseModal()" id="bigPauseBtn">
-                    ⏸️
-                </button>
-                <button class="big-control-btn danger" onclick="cancelTransferModal()">
-                    ✖️
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Help Modal -->
-    <div class="help-modal" id="helpModal">
-        <div class="help-content">
-            <div class="help-header">
-                <div class="help-title">🚀 Cube Share Guide</div>
-                <button class="close-help" onclick="hideHelp()">&times;</button>
-            </div>
-            
-            <div class="help-section">
-                <div class="help-section-title">📱 How to Use</div>
-                
-                <div class="help-step">
-                    <div class="step-number">1</div>
-                    <div class="step-content">
-                        <div class="step-title">Get Your ID</div>
-                        <div class="step-desc">Wait for your unique ID to be generated. Share this ID with the person who wants to send you files.</div>
-                    </div>
-                </div>
-                
-                <div class="help-step">
-                    <div class="step-number">2</div>
-                    <div class="step-content">
-                        <div class="step-title">Send Files</div>
-                        <div class="step-desc">Enter receiver's ID, select files (drag & drop or click to browse), and click "Launch Transfer".</div>
-                    </div>
-                </div>
-                
-                <div class="help-step">
-                    <div class="step-number">3</div>
-                    <div class="step-content">
-                        <div class="step-title">Receive Files</div>
-                        <div class="step-desc">Just share your ID. When someone connects, you'll automatically receive files with a progress indicator.</div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="help-section">
-                <div class="help-section-title">⚡ Features</div>
-                
-                <div class="help-step">
-                    <div class="step-number">🚀</div>
-                    <div class="step-content">
-                        <div class="step-title">Big File Support</div>
-                        <div class="step-desc">Transfer files of any size - from small documents to large videos (GBs supported).</div>
-                    </div>
-                </div>
-                
-                <div class="help-step">
-                    <div class="step-number">🔄</div>
-                    <div class="step-content">
-                        <div class="step-title">Real-time Progress</div>
-                        <div class="step-desc">Beautiful circular progress indicator with speed and time estimates.</div>
-                    </div>
-                </div>
-                
-                <div class="help-step">
-                    <div class="step-number">⏸️</div>
-                    <div class="step-content">
-                        <div class="step-title">Pause & Resume</div>
-                        <div class="step-desc">Pause large transfers anytime and resume later without losing progress.</div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="help-tip">
-                <div class="tip-title">💡 Pro Tips</div>
-                <div class="tip-content">
-                    • Keep the browser tab open during transfers<br>
-                    • Use wired internet for large files (>1GB)<br>
-                    • Close other bandwidth-heavy applications<br>
-                    • For best results, both users should be on the same network<br>
-                    • The app works best in Chrome or Firefox
-                </div>
-            </div>
-            
-            <div class="help-section">
-                <div class="help-section-title">⚠️ Troubleshooting</div>
-                <div class="step-desc" style="color: rgba(255,255,255,0.7); line-height: 1.6;">
-                    • If connection fails, check both users' internet<br>
-                    • Make sure firewall allows WebRTC connections<br>
-                    • Refresh the page if ID doesn't generate<br>
-                    • For large files, ensure enough disk space<br>
-                    • Use the pause feature if internet is slow
-                </div>
-            </div>
+            <div class="loader-text" id="loaderText">Initializing...</div>
+            <div class="loader-subtext" id="loaderSubtext">Connecting to Cube Share Network</div>
         </div>
     </div>
 
@@ -1177,7 +824,7 @@
             <div class="upload-zone" onclick="document.getElementById('fileInput').click()">
                 <div class="upload-icon">📁</div>
                 <div class="upload-text">Select Files to Launch</div>
-                <div class="upload-subtext">Click or drag & drop files here (Supports GBs!)</div>
+                <div class="upload-subtext">Click or drag & drop files here</div>
                 <input type="file" id="fileInput" multiple style="display: none;">
             </div>
             
@@ -1239,20 +886,54 @@
         let receivedChunks = [];
         let currentRocketPercent = 0;
         
-        // Big file transfer variables
-        let transferStartTime = null;
-        let lastProgressTime = null;
-        let lastProgressSize = 0;
-        let currentFileIndex = 0;
-        let totalFilesSize = 0;
-        let transferredSize = 0;
-        
         // Initialize on load
         document.addEventListener('DOMContentLoaded', function() {
             createStars();
+            showLoading('Connecting to Cube Share', 'Initializing PeerJS connection...');
             initializePeer();
             setupEventListeners();
         });
+        
+        // Show loading modal
+        function showLoading(text, subtext, percent = 0) {
+            const modal = document.getElementById('loadingModal');
+            const loaderText = document.getElementById('loaderText');
+            const loaderSubtext = document.getElementById('loaderSubtext');
+            const loaderPercent = document.getElementById('loaderPercent');
+            
+            loaderText.textContent = text;
+            loaderSubtext.textContent = subtext;
+            loaderPercent.textContent = percent + '%';
+            modal.classList.add('active');
+            
+            // Animate center pulse
+            loaderPercent.style.animation = 'pulse 1s infinite';
+        }
+        
+        // Update loading modal
+        function updateLoading(percent, text = null, subtext = null) {
+            const loaderPercent = document.getElementById('loaderPercent');
+            const loaderText = document.getElementById('loaderText');
+            const loaderSubtext = document.getElementById('loaderSubtext');
+            
+            loaderPercent.textContent = percent + '%';
+            
+            if (text) loaderText.textContent = text;
+            if (subtext) loaderSubtext.textContent = subtext;
+            
+            // Update pulse animation based on percent
+            if (percent >= 100) {
+                loaderPercent.style.animation = 'pulse 0.5s infinite';
+            }
+        }
+        
+        // Hide loading modal
+        function hideLoading(delay = 300) {
+            setTimeout(() => {
+                const modal = document.getElementById('loadingModal');
+                modal.classList.remove('active');
+            }, delay);
+        }
         
         // Create stars for background
         function createStars() {
@@ -1270,89 +951,18 @@
             }
         }
         
-        // Show big progress modal
-        function showProgressModal() {
-            const modal = document.getElementById('progressModal');
-            modal.classList.add('active');
-        }
-        
-        // Hide big progress modal
-        function hideProgressModal() {
-            const modal = document.getElementById('progressModal');
-            modal.classList.remove('active');
-        }
-        
-        // Update big circular progress
-        function updateBigProgress(percent, fileInfo = null) {
-            const fill = document.getElementById('bigCircularFill');
-            const percentEl = document.getElementById('bigPercent');
-            const statusEl = document.getElementById('bigStatus');
-            const subStatusEl = document.getElementById('bigSubstatus');
-            
-            // Update fill rotation (0-360 degrees)
-            const degrees = (percent * 360) / 100;
-            fill.style.transform = `rotate(${degrees}deg)`;
-            
-            percentEl.textContent = `${Math.round(percent)}%`;
-            
-            if (fileInfo) {
-                statusEl.textContent = fileInfo.status || 'Transferring...';
-                subStatusEl.textContent = fileInfo.subStatus || '';
-                
-                if (fileInfo.fileName) {
-                    document.getElementById('bigFileName').textContent = fileInfo.fileName;
-                }
-                
-                if (fileInfo.currentSize && fileInfo.totalSize) {
-                    document.getElementById('bigFileSize').textContent = 
-                        `${formatSize(fileInfo.currentSize)} / ${formatSize(fileInfo.totalSize)}`;
-                }
-            }
-        }
-        
-        // Update transfer speed and time
-        function updateTransferStats(currentSize, totalSize) {
-            if (!transferStartTime) return;
-            
-            const now = Date.now();
-            const elapsedSeconds = (now - transferStartTime) / 1000;
-            
-            // Calculate speed
-            if (lastProgressTime && currentSize > lastProgressSize) {
-                const timeDiff = (now - lastProgressTime) / 1000;
-                const sizeDiff = currentSize - lastProgressSize;
-                const speed = sizeDiff / timeDiff;
-                
-                document.getElementById('bigSpeed').textContent = `${formatSize(speed)}/s`;
-                
-                // Estimate remaining time
-                if (speed > 0) {
-                    const remainingSize = totalSize - currentSize;
-                    const remainingSeconds = remainingSize / speed;
-                    document.getElementById('bigTime').textContent = 
-                        formatTime(remainingSeconds);
-                }
-            }
-            
-            lastProgressTime = now;
-            lastProgressSize = currentSize;
-        }
-        
-        // Show help modal
-        function showHelp() {
-            const modal = document.getElementById('helpModal');
-            modal.classList.add('active');
-        }
-        
-        // Hide help modal
-        function hideHelp() {
-            const modal = document.getElementById('helpModal');
-            modal.classList.remove('active');
-        }
-        
         // Initialize PeerJS with CLOUD SERVER
         function initializePeer() {
             const simpleId = "CS-" + Math.floor(10000 + Math.random() * 90000);
+            
+            // Simulate connection progress
+            let progress = 0;
+            const progressInterval = setInterval(() => {
+                progress += 10;
+                if (progress <= 50) {
+                    updateLoading(progress, 'Connecting to Cube Share', 'Establishing connection...');
+                }
+            }, 200);
             
             // Using PeerJS Cloud Server for reliable connections
             peer = new Peer(simpleId, {
@@ -1377,6 +987,19 @@
             // Peer event handlers
             peer.on('open', function(id) {
                 console.log('✅ Connected to PeerJS Cloud with ID:', id);
+                clearInterval(progressInterval);
+                
+                // Animate to 100%
+                updateLoading(80, 'Connected!', 'Finalizing setup...');
+                
+                setTimeout(() => {
+                    updateLoading(100, 'Ready!', 'Cube Share is ready to use');
+                    
+                    setTimeout(() => {
+                        hideLoading();
+                    }, 1000);
+                }, 500);
+                
                 document.getElementById('myId').textContent = id;
                 updateStatus(true, '✅ Connected to PeerJS Cloud');
                 addLog(`✅ Connected to PeerJS Cloud with ID: ${id}`);
@@ -1384,6 +1007,7 @@
             
             peer.on('error', function(err) {
                 console.error('❌ PeerJS Error:', err);
+                clearInterval(progressInterval);
                 
                 let errorMessage = 'Connection Error';
                 switch(err.type) {
@@ -1405,8 +1029,14 @@
                         errorMessage = err.type;
                 }
                 
+                updateLoading(100, 'Connection Error', errorMessage);
                 updateStatus(false, `❌ ${errorMessage}`);
                 addLog(`❌ Error: ${errorMessage}`);
+                
+                // Hide loading after showing error
+                setTimeout(() => {
+                    hideLoading();
+                }, 2000);
             });
             
             // Handle incoming connections
@@ -1415,15 +1045,12 @@
                 connection = conn;
                 setupConnection(conn);
                 
-                // Show progress modal for incoming transfer
-                showProgressModal();
-                updateBigProgress(0, {
-                    status: 'Incoming Connection',
-                    subStatus: `From: ${conn.peer}`,
-                    fileName: 'Waiting for file info...'
-                });
-                
+                showLoading('Incoming Connection', `Connecting to ${conn.peer}...`, 50);
                 addLog(`📡 Incoming connection from: ${conn.peer}`);
+                
+                setTimeout(() => {
+                    hideLoading();
+                }, 1000);
             });
         }
         
@@ -1445,11 +1072,6 @@
                 addLog('🔌 Connection closed');
                 updateStatus(false, 'Disconnected');
                 connection = null;
-                
-                // Hide progress modal after delay
-                setTimeout(() => {
-                    hideProgressModal();
-                }, 2000);
             });
             
             conn.on('error', function(err) {
@@ -1508,14 +1130,6 @@
             
             // Auto-focus receiver ID input
             document.getElementById('receiverId').focus();
-            
-            // Close modals with ESC key
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape') {
-                    hideProgressModal();
-                    hideHelp();
-                }
-            });
         }
         
         // Update file list
@@ -1590,18 +1204,8 @@
                 }
             }
             
-            // Calculate total size for progress
-            totalFilesSize = selectedFiles.reduce((sum, file) => sum + file.size, 0);
-            transferredSize = 0;
-            
-            // Show progress modal
-            showProgressModal();
-            updateBigProgress(0, {
-                status: 'Connecting to Receiver',
-                subStatus: 'Establishing P2P connection...',
-                fileName: `${selectedFiles.length} files selected`,
-                totalSize: totalFilesSize
-            });
+            // Show loading modal
+            showLoading('Connecting to Receiver', 'Establishing P2P connection...', 20);
             
             // Connect to receiver
             addLog(`🔗 Connecting to ${receiverId}...`);
@@ -1609,25 +1213,20 @@
             setupConnection(connection);
             
             connection.on('open', async function() {
-                updateBigProgress(10, {
-                    status: 'Connected!',
-                    subStatus: 'Preparing file transfer...'
-                });
+                updateLoading(50, 'Connected!', 'Preparing file transfer...');
+                
+                setTimeout(() => {
+                    hideLoading();
+                }, 500);
                 
                 isSending = true;
                 updateControls(true);
                 updateRocket(0, 'Launching...');
                 addLog('🚀 Launching transfer...');
                 
-                // Start transfer timer
-                transferStartTime = Date.now();
-                lastProgressTime = transferStartTime;
-                lastProgressSize = 0;
-                
                 try {
                     // Send all files
                     for (let i = 0; i < selectedFiles.length; i++) {
-                        currentFileIndex = i;
                         if (isPaused) {
                             await waitForResume();
                         }
@@ -1635,30 +1234,20 @@
                         await sendFile(selectedFiles[i], i + 1, selectedFiles.length);
                     }
                     
-                    // Update progress to complete
-                    updateBigProgress(100, {
-                        status: 'Transfer Complete!',
-                        subStatus: 'All files delivered successfully',
-                        currentSize: totalFilesSize,
-                        totalSize: totalFilesSize
-                    });
+                    // Show completion loading
+                    showLoading('Transfer Complete!', 'All files delivered successfully', 100);
+                    setTimeout(() => hideLoading(), 1500);
                     
                     addLog('✅ All files delivered successfully!');
                     updateRocket(100, 'Mission Complete!');
                     updateStatus(true, 'Transfer Complete');
                     
-                    // Hide modal after delay
-                    setTimeout(() => {
-                        hideProgressModal();
-                    }, 3000);
-                    
                 } catch (error) {
                     console.error('❌ Transfer error:', error);
                     
-                    updateBigProgress(currentRocketPercent, {
-                        status: 'Transfer Failed',
-                        subStatus: error.message
-                    });
+                    // Show error loading
+                    showLoading('Transfer Failed', error.message, 100);
+                    setTimeout(() => hideLoading(), 2000);
                     
                     addLog(`❌ Transfer failed: ${error.message}`);
                     updateStatus(false, 'Transfer Failed');
@@ -1678,19 +1267,14 @@
             connection.on('error', function(err) {
                 console.error('❌ Connection error:', err);
                 
-                updateBigProgress(100, {
-                    status: 'Connection Failed',
-                    subStatus: `Failed to connect to ${receiverId}`
-                });
+                // Show error loading
+                showLoading('Connection Failed', `Failed to connect to ${receiverId}`, 100);
+                setTimeout(() => hideLoading(), 2000);
                 
                 addLog(`❌ Failed to connect: ${err.message || err.type}`);
                 alert(`Failed to connect to ${receiverId}\nCheck the ID and try again.`);
                 isSending = false;
                 updateControls(false);
-                
-                setTimeout(() => {
-                    hideProgressModal();
-                }, 2000);
             });
         }
         
@@ -1698,14 +1282,6 @@
         async function sendFile(file, current, total) {
             return new Promise((resolve, reject) => {
                 addLog(`📤 Sending: ${file.name} (${current}/${total})`);
-                
-                // Update progress for new file
-                updateBigProgress(transferredSize / totalFilesSize * 100, {
-                    status: `Sending File ${current}/${total}`,
-                    subStatus: 'Preparing...',
-                    fileName: file.name,
-                    totalSize: file.size
-                });
                 
                 // Send file info
                 connection.send({
@@ -1718,7 +1294,7 @@
                 });
                 
                 let offset = 0;
-                const chunkSize = 256 * 1024; // 256KB chunks for better performance
+                const chunkSize = 64 * 1024; // 64KB chunks
                 const reader = new FileReader();
                 
                 reader.onload = async function(e) {
@@ -1739,29 +1315,18 @@
                         });
                         
                         offset += chunk.byteLength;
-                        transferredSize += chunk.byteLength;
                         
-                        // Update progress
-                        const filePercent = Math.round((offset / file.size) * 100);
-                        const totalPercent = Math.round((transferredSize / totalFilesSize) * 100);
-                        
-                        // Update big progress
-                        updateBigProgress(totalPercent, {
-                            status: `Sending: ${file.name}`,
-                            subStatus: `File ${current}/${total} - ${filePercent}%`,
-                            fileName: file.name,
-                            currentSize: offset,
-                            totalSize: file.size
-                        });
-                        
-                        // Update transfer stats
-                        updateTransferStats(transferredSize, totalFilesSize);
-                        
-                        // Update rocket
-                        updateRocket(totalPercent, `Transferring: ${file.name}`);
+                        // Update rocket progress
+                        const percent = Math.round((offset / file.size) * 100);
+                        updateRocket(percent, `Transferring: ${file.name}`);
                         
                         // Animate rocket
-                        animateRocket(totalPercent);
+                        animateRocket(percent);
+                        
+                        // Update loading modal if this is the first file
+                        if (current === 1 && offset === chunk.byteLength) {
+                            updateLoading(60, 'Transferring Files', `Sending: ${file.name}`);
+                        }
                         
                         if (offset < file.size) {
                             readNextChunk();
@@ -1807,29 +1372,18 @@
             
             receivedChunks = [];
             
-            // Update progress modal
-            updateBigProgress(0, {
-                status: 'Receiving File',
-                subStatus: `File ${data.current}/${data.total}`,
-                fileName: data.name,
-                totalSize: data.size
-            });
+            // Show receiving loading
+            showLoading('Receiving File', `Preparing to receive: ${data.name}`, 30);
             
             // Ask for confirmation for large files
-            if (data.size > 500 * 1024 * 1024) { // 500MB
-                hideProgressModal();
+            if (data.size > 100 * 1024 * 1024) { // 100MB
+                hideLoading();
                 setTimeout(() => {
                     if (!confirm(`Receive file "${data.name}" (${formatSize(data.size)})?`)) {
                         connection.send({ type: 'cancel' });
                         return;
                     }
-                    showProgressModal();
-                    updateBigProgress(0, {
-                        status: 'Receiving File',
-                        subStatus: `File ${data.current}/${data.total}`,
-                        fileName: data.name,
-                        totalSize: data.size
-                    });
+                    showLoading('Receiving File', `Receiving: ${data.name}`, 30);
                 }, 100);
             }
             
@@ -1845,17 +1399,8 @@
             
             const percent = Math.round((receivingFile.received / receivingFile.size) * 100);
             
-            // Update big progress
-            updateBigProgress(percent, {
-                status: 'Receiving File',
-                subStatus: `Downloading...`,
-                fileName: receivingFile.name,
-                currentSize: receivingFile.received,
-                totalSize: receivingFile.size
-            });
-            
-            // Update transfer stats
-            updateTransferStats(receivingFile.received, receivingFile.size);
+            // Update loading modal
+            updateLoading(30 + (percent * 0.7), 'Receiving File', `Downloading: ${receivingFile.name}`);
             
             // Update rocket
             updateRocket(percent, `Receiving: ${receivingFile.name}`);
@@ -1863,19 +1408,21 @@
             
             // Update markers
             updateMarkers(percent);
+            
+            // Calculate and display speed
+            const elapsed = (Date.now() - receivingFile.startTime) / 1000;
+            if (elapsed > 1) {
+                const speed = receivingFile.received / elapsed;
+                document.getElementById('rocketStatus').textContent = 
+                    `Receiving: ${receivingFile.name} (${formatSize(speed)}/s)`;
+            }
         }
         
         function finishReceivingFile(data) {
             if (!receivingFile) return;
             
-            // Update progress to complete
-            updateBigProgress(100, {
-                status: 'Download Complete!',
-                subStatus: 'Saving file...',
-                fileName: receivingFile.name,
-                currentSize: receivingFile.size,
-                totalSize: receivingFile.size
-            });
+            // Show completion loading
+            updateLoading(100, 'Download Complete!', 'Saving file...');
             
             // Combine chunks and save file
             const blob = new Blob(receivedChunks);
@@ -1898,25 +1445,19 @@
             addLog(`✅ Downloaded: ${receivingFile.name} (${formatSize(speed)}/s)`);
             updateRocket(100, 'Download Complete!');
             
-            // Hide modal after delay
+            // Hide loading after delay
             setTimeout(() => {
-                hideProgressModal();
+                hideLoading();
                 
                 receivingFile = null;
                 receivedChunks = [];
                 updateRocket(0, 'Ready for launch...');
-            }, 2000);
+            }, 1000);
         }
         
         function handleTransferCancel() {
-            updateBigProgress(100, {
-                status: 'Transfer Cancelled',
-                subStatus: 'Transfer was cancelled by sender'
-            });
-            
-            setTimeout(() => {
-                hideProgressModal();
-            }, 2000);
+            showLoading('Transfer Cancelled', 'Transfer was cancelled by sender', 100);
+            setTimeout(() => hideLoading(), 2000);
             
             addLog('❌ Transfer cancelled by sender');
             updateRocket(0, 'Transfer Cancelled');
@@ -1925,26 +1466,7 @@
             receivedChunks = [];
         }
         
-        // Control functions for modal
-        function togglePauseModal() {
-            const btn = document.getElementById('bigPauseBtn');
-            togglePause();
-            
-            if (isPaused) {
-                btn.innerHTML = '▶️';
-                btn.style.background = 'linear-gradient(135deg, #2ed573 0%, #1e90ff 100%)';
-            } else {
-                btn.innerHTML = '⏸️';
-                btn.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
-            }
-        }
-        
-        function cancelTransferModal() {
-            cancelTransfer();
-            hideProgressModal();
-        }
-        
-        // Original control functions
+        // Control functions
         function togglePause() {
             isPaused = !isPaused;
             const btn = document.getElementById('pauseBtn');
@@ -1955,15 +1477,22 @@
                 btn.classList.add('glass-btn', 'success');
                 addLog('⏸️ Transfer paused');
                 updateRocket(currentRocketPercent, 'PAUSED');
+                
+                // Show pause loading
+                showLoading('Transfer Paused', 'Click Resume to continue', currentRocketPercent);
             } else {
                 btn.innerHTML = '⏸️ Pause';
                 btn.classList.remove('success');
                 addLog('▶️ Transfer resumed');
+                hideLoading();
             }
         }
         
         function cancelTransfer() {
             if (confirm('Abort transfer?')) {
+                // Show cancellation loading
+                showLoading('Cancelling Transfer', 'Aborting file transfer...', 100);
+                
                 if (connection) {
                     connection.send({ type: 'cancel' });
                     connection.close();
@@ -1975,6 +1504,10 @@
                 updateRocket(0, 'Transfer Aborted');
                 addLog('❌ Transfer aborted');
                 updateStatus(false, 'Transfer Cancelled');
+                
+                setTimeout(() => {
+                    hideLoading();
+                }, 1000);
             }
         }
         
@@ -2061,15 +1594,9 @@
         function formatSize(bytes) {
             if (bytes === 0) return '0 B';
             const k = 1024;
-            const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+            const sizes = ['B', 'KB', 'MB', 'GB'];
             const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-        }
-        
-        function formatTime(seconds) {
-            if (seconds < 60) return `${Math.round(seconds)}s`;
-            if (seconds < 3600) return `${Math.round(seconds / 60)}m`;
-            return `${Math.round(seconds / 3600)}h`;
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
         }
         
         function updateStatus(connected, message) {
@@ -2127,6 +1654,7 @@
             if (peer && peer.disconnected) {
                 console.log('♻️ Attempting to reconnect...');
                 addLog('♻️ Attempting to reconnect...');
+                showLoading('Reconnecting', 'Re-establishing connection...', 50);
                 initializePeer();
             }
         }, 10000); // Check every 10 seconds
