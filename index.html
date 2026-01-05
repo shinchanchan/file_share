@@ -2,279 +2,368 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>🚀 Rocket Share</title>
     <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         /* Reset & Base */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #8b5cf6;
+            --accent: #06b6d4;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --background: #0f172a;
+            --surface: #1e293b;
+            --surface-light: #334155;
+            --text: #f8fafc;
+            --text-secondary: #94a3b8;
+            --border: #475569;
+            --shadow: rgba(0, 0, 0, 0.4);
+            --gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: 'Poppins', sans-serif;
             min-height: 100vh;
-            background: linear-gradient(135deg, 
-                #0f0c29 0%, 
-                #302b63 25%, 
-                #24243e 50%, 
-                #1a1a2e 75%, 
-                #16213e 100%);
+            background: var(--background);
+            color: var(--text);
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            padding: 16px;
             overflow-x: hidden;
+            line-height: 1.6;
         }
 
-        /* Glass Container */
-        .glass-container {
+        /* Main Container */
+        .app-container {
             width: 100%;
-            max-width: 600px;
-            background: rgba(255, 255, 255, 0.07);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
+            max-width: 480px;
+            min-height: 90vh;
+            background: var(--surface);
             border-radius: 24px;
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            overflow: hidden;
             box-shadow: 
-                0 20px 40px rgba(0, 0, 0, 0.3),
-                inset 0 1px 0 rgba(255, 255, 255, 0.1);
-            padding: 35px;
+                0 20px 40px var(--shadow),
+                0 0 0 1px rgba(255, 255, 255, 0.05);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* App Header */
+        .app-header {
+            padding: 24px 20px;
+            background: var(--gradient);
             position: relative;
             overflow: hidden;
         }
 
-        /* Animated Background Elements */
-        .container-bg {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            overflow: hidden;
-            z-index: -1;
-            border-radius: 24px;
-        }
-
-        .bg-circle {
-            position: absolute;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-            animation: float 20s infinite linear;
-        }
-
-        .bg-circle:nth-child(1) {
-            width: 300px;
-            height: 300px;
-            top: -150px;
-            right: -100px;
-            animation-delay: 0s;
-        }
-
-        .bg-circle:nth-child(2) {
-            width: 200px;
-            height: 200px;
-            bottom: -100px;
-            left: -50px;
-            animation-delay: -5s;
-            animation-duration: 25s;
-        }
-
-        .bg-circle:nth-child(3) {
-            width: 150px;
-            height: 150px;
-            top: 50%;
-            right: 20%;
-            animation-delay: -10s;
-            animation-duration: 30s;
-        }
-
-        @keyframes float {
-            0% {
-                transform: translate(0, 0) rotate(0deg);
-            }
-            33% {
-                transform: translate(30px, -20px) rotate(120deg);
-            }
-            66% {
-                transform: translate(-20px, 30px) rotate(240deg);
-            }
-            100% {
-                transform: translate(0, 0) rotate(360deg);
-            }
-        }
-
-        /* Header */
-        .header {
-            text-align: center;
-            margin-bottom: 35px;
-            position: relative;
-        }
-
-        h1 {
-            color: white;
-            font-size: 42px;
-            margin-bottom: 12px;
-            font-weight: 700;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            text-shadow: 0 2px 10px rgba(102, 126, 234, 0.3);
-        }
-
-        .subtitle {
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 16px;
-            font-weight: 400;
-        }
-
-        /* ID Section */
-        .id-section {
-            background: rgba(255, 255, 255, 0.08);
-            border-radius: 16px;
-            padding: 25px;
-            margin-bottom: 25px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .id-section::before {
+        .app-header::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, #667eea, transparent);
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+            animation: shimmer 3s infinite;
         }
 
-        .id-label {
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 14px;
-            margin-bottom: 10px;
+        .header-content {
             display: flex;
             align-items: center;
-            gap: 8px;
+            justify-content: space-between;
+            position: relative;
+            z-index: 1;
         }
 
-        #myId {
-            color: white;
-            font-size: 24px;
-            font-weight: 600;
-            margin: 15px 0;
-            word-break: break-all;
-            font-family: 'Monaco', 'Courier New', monospace;
-            background: rgba(0, 0, 0, 0.2);
-            padding: 12px;
-            border-radius: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        /* Status */
-        .status {
+        .logo {
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .logo-icon {
+            width: 44px;
+            height: 44px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            backdrop-filter: blur(10px);
+        }
+
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .app-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .app-subtitle {
+            font-size: 13px;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .icon-btn {
+            width: 44px;
+            height: 44px;
             border-radius: 12px;
-            margin: 15px 0;
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .icon-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px);
+        }
+
+        /* Main Content */
+        .app-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        /* Section Cards */
+        .section-card {
+            background: rgba(30, 41, 59, 0.5);
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            color: var(--primary);
+        }
+
+        .card-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text);
+            flex: 1;
+        }
+
+        /* ID Card */
+        .id-display {
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .id-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .id-value {
+            font-family: 'Space Grotesk', monospace;
+            font-size: 20px;
+            font-weight: 600;
+            word-break: break-all;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 16px;
+        }
+
+        /* Status Indicators */
+        .status-indicators {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .status-item {
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 14px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
         .status-dot {
             width: 10px;
             height: 10px;
             border-radius: 50%;
-            background: #ff4757;
+            background: var(--danger);
+            position: relative;
+        }
+
+        .status-dot.active {
+            background: var(--success);
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2);
+        }
+
+        .status-dot.pulse {
             animation: pulse 2s infinite;
         }
 
-        .status-dot.connected {
-            background: #2ed573;
-            animation: pulse-green 2s infinite;
+        .status-info {
+            flex: 1;
         }
 
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+        .status-name {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 2px;
         }
 
-        @keyframes pulse-green {
-            0%, 100% { 
-                opacity: 1;
-                box-shadow: 0 0 0 0 rgba(46, 213, 115, 0.7);
-            }
-            50% { 
-                opacity: 0.8;
-                box-shadow: 0 0 0 10px rgba(46, 213, 115, 0);
-            }
+        .status-value {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text);
         }
 
-        /* Inputs */
-        .glass-input {
-            width: 100%;
-            padding: 16px 20px;
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 12px;
-            color: white;
-            font-size: 16px;
+        /* Input Fields */
+        .input-group {
             margin-bottom: 20px;
-            transition: all 0.3s ease;
-            font-family: inherit;
         }
 
-        .glass-input:focus {
-            outline: none;
-            border-color: rgba(102, 126, 234, 0.5);
-            background: rgba(255, 255, 255, 0.12);
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        .input-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
         }
 
-        .glass-input::placeholder {
-            color: rgba(255, 255, 255, 0.4);
-        }
-
-        /* File Upload */
-        .upload-zone {
-            border: 2px dashed rgba(255, 255, 255, 0.2);
+        .input-field {
+            width: 100%;
+            padding: 18px 20px;
+            background: rgba(15, 23, 42, 0.6);
+            border: 2px solid var(--border);
             border-radius: 16px;
+            color: var(--text);
+            font-size: 16px;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+
+        .input-field::placeholder {
+            color: var(--text-secondary);
+        }
+
+        /* File Upload Area */
+        .upload-area {
+            border: 3px dashed var(--border);
+            border-radius: 20px;
             padding: 40px 20px;
             text-align: center;
             cursor: pointer;
-            margin-bottom: 20px;
             transition: all 0.3s ease;
+            margin-bottom: 20px;
+            background: rgba(15, 23, 42, 0.3);
             position: relative;
             overflow: hidden;
         }
 
-        .upload-zone:hover {
-            border-color: rgba(102, 126, 234, 0.5);
-            background: rgba(255, 255, 255, 0.05);
+        .upload-area.active {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.1);
             transform: translateY(-2px);
         }
 
         .upload-icon {
             font-size: 48px;
-            color: rgba(255, 255, 255, 0.3);
-            margin-bottom: 15px;
+            margin-bottom: 16px;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+        }
+
+        .upload-area.active .upload-icon {
+            color: var(--primary);
+            transform: scale(1.1);
         }
 
         .upload-text {
-            color: rgba(255, 255, 255, 0.9);
             font-size: 18px;
-            margin-bottom: 8px;
             font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--text);
         }
 
         .upload-subtext {
-            color: rgba(255, 255, 255, 0.5);
             font-size: 14px;
+            color: var(--text-secondary);
         }
 
         /* File List */
@@ -294,25 +383,38 @@
         }
 
         .file-list::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.2);
+            background: var(--primary);
             border-radius: 3px;
         }
 
         .file-item {
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 12px;
+            border: 1px solid var(--border);
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-            margin-bottom: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            gap: 16px;
             transition: all 0.3s ease;
         }
 
         .file-item:hover {
-            background: rgba(255, 255, 255, 0.08);
-            transform: translateX(5px);
+            transform: translateX(4px);
+            border-color: var(--primary);
+        }
+
+        .file-icon {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: var(--primary);
+            flex-shrink: 0;
         }
 
         .file-info {
@@ -321,50 +423,121 @@
         }
 
         .file-name {
-            color: white;
             font-size: 15px;
             font-weight: 500;
+            color: var(--text);
+            margin-bottom: 4px;
+            white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            white-space: nowrap;
+        }
+
+        .file-details {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 13px;
+            color: var(--text-secondary);
         }
 
         .file-size {
-            color: rgba(255, 255, 255, 0.5);
-            font-size: 13px;
-            margin-top: 4px;
+            font-weight: 500;
         }
 
         .remove-btn {
-            background: rgba(255, 71, 87, 0.2);
-            border: 1px solid rgba(255, 71, 87, 0.3);
-            color: rgba(255, 255, 255, 0.9);
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            cursor: pointer;
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            color: var(--danger);
             display: flex;
             align-items: center;
             justify-content: center;
-            flex-shrink: 0;
+            font-size: 16px;
+            cursor: pointer;
             transition: all 0.3s ease;
+            flex-shrink: 0;
         }
 
         .remove-btn:hover {
-            background: rgba(255, 71, 87, 0.3);
+            background: rgba(239, 68, 68, 0.2);
             transform: scale(1.1);
         }
 
-        /* Buttons */
-        .glass-btn {
-            width: 100%;
-            padding: 18px 24px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 17px;
+        /* Progress Section */
+        .progress-section {
+            margin: 30px 0;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .progress-title {
+            font-size: 16px;
             font-weight: 600;
+            color: var(--text);
+        }
+
+        .progress-value {
+            font-size: 24px;
+            font-weight: 700;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 8px;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--gradient);
+            border-radius: 4px;
+            width: 0%;
+            transition: width 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        .progress-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* Buttons */
+        .btn {
+            width: 100%;
+            padding: 20px;
+            border: none;
+            border-radius: 16px;
+            font-size: 16px;
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
             cursor: pointer;
             transition: all 0.3s ease;
             display: flex;
@@ -375,7 +548,7 @@
             overflow: hidden;
         }
 
-        .glass-btn::before {
+        .btn::before {
             content: '';
             position: absolute;
             top: 0;
@@ -386,435 +559,1223 @@
             transition: 0.5s;
         }
 
-        .glass-btn:hover::before {
+        .btn:hover::before {
             left: 100%;
         }
 
-        .glass-btn:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        .btn-primary {
+            background: var(--gradient);
+            color: white;
         }
 
-        .glass-btn:active:not(:disabled) {
-            transform: translateY(0);
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.4);
         }
 
-        .glass-btn:disabled {
+        .btn-success {
+            background: linear-gradient(135deg, var(--success) 0%, var(--accent) 100%);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger) 0%, var(--warning) 100%);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
-            transform: none;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transform: none !important;
         }
 
-        .glass-btn.success {
-            background: linear-gradient(135deg, #2ed573 0%, #1e90ff 100%);
-        }
-
-        .glass-btn.danger {
-            background: linear-gradient(135deg, #ff4757 0%, #ff6348 100%);
-        }
-
-        /* Rocket Progress Section */
-        .rocket-section {
-            margin: 30px 0;
-            padding: 25px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .rocket-container {
-            position: relative;
-            height: 120px;
+        /* Action Grid */
+        .action-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
             margin: 20px 0;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 10px;
-            overflow: hidden;
         }
 
-        .rocket-track {
-            position: absolute;
-            top: 50%;
-            left: 20px;
-            right: 20px;
-            height: 2px;
-            background: rgba(255, 255, 255, 0.1);
-            transform: translateY(-50%);
-        }
-
-        .rocket {
-            position: absolute;
-            left: 0;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 40px;
-            transition: left 0.3s ease;
-            filter: drop-shadow(0 5px 15px rgba(255, 255, 255, 0.3));
-            z-index: 2;
-        }
-
-        .rocket-progress {
-            position: absolute;
-            left: 0;
-            top: 50%;
-            height: 4px;
-            background: linear-gradient(90deg, #667eea, #764ba2);
-            border-radius: 2px;
-            transform: translateY(-50%);
-            transition: width 0.3s ease;
-            box-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
-        }
-
-        .progress-markers {
-            position: absolute;
-            top: 50%;
-            left: 20px;
-            right: 20px;
-            display: flex;
-            justify-content: space-between;
-            transform: translateY(-50%);
-            pointer-events: none;
-        }
-
-        .marker {
-            width: 8px;
-            height: 8px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
-            position: relative;
-        }
-
-        .marker.active {
-            background: #2ed573;
-            box-shadow: 0 0 10px #2ed573;
-        }
-
-        .marker::after {
-            content: attr(data-percent);
-            position: absolute;
-            top: -25px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: rgba(255, 255, 255, 0.5);
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .progress-info {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
-        }
-
-        .progress-text {
-            color: white;
-            font-size: 16px;
-            font-weight: 500;
-        }
-
-        .progress-percent {
-            color: #667eea;
-            font-size: 28px;
-            font-weight: 700;
-            text-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
-        }
-
-        /* Exhaust Animation */
-        .exhaust {
-            position: absolute;
-            bottom: -20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 4px;
-            height: 30px;
-            background: linear-gradient(to bottom, transparent, #667eea);
-            filter: blur(2px);
-            animation: exhaust 0.5s infinite;
-            opacity: 0.7;
-        }
-
-        @keyframes exhaust {
-            0%, 100% {
-                height: 20px;
-                opacity: 0.7;
-            }
-            50% {
-                height: 40px;
-                opacity: 1;
-            }
-        }
-
-        /* Stars Animation */
-        .stars {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            pointer-events: none;
-        }
-
-        .star {
-            position: absolute;
-            background: white;
-            border-radius: 50%;
-            animation: twinkle 2s infinite;
-        }
-
-        @keyframes twinkle {
-            0%, 100% { opacity: 0.2; }
-            50% { opacity: 1; }
-        }
-
-        /* Log */
-        .log {
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 12px;
+        /* Transfer Log */
+        .transfer-log {
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 16px;
             padding: 20px;
-            margin-top: 20px;
-            max-height: 150px;
+            max-height: 200px;
             overflow-y: auto;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border);
         }
 
-        .log::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .log::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 3px;
-        }
-
-        .log::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 3px;
+        .log-title {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .log-item {
-            color: rgba(255, 255, 255, 0.8);
-            padding: 8px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             font-size: 14px;
-            font-family: 'Monaco', 'Courier New', monospace;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
         }
 
         .log-item:last-child {
             border-bottom: none;
         }
 
-        /* Controls */
-        .controls {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-top: 25px;
+        .log-icon {
+            color: var(--primary);
+            font-size: 12px;
+            flex-shrink: 0;
+            margin-top: 2px;
         }
 
-        /* Responsive */
-        @media (max-width: 640px) {
-            .glass-container {
-                padding: 25px;
+        .log-message {
+            color: var(--text-secondary);
+            flex: 1;
+        }
+
+        /* Download Indicator */
+        .download-indicator {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 64px;
+            height: 64px;
+            background: var(--gradient);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
+            z-index: 100;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .download-indicator.active {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .download-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            width: 28px;
+            height: 28px;
+            background: var(--danger);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+        }
+
+        /* Modals */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: var(--surface);
+            border-radius: 24px;
+            width: 100%;
+            max-width: 400px;
+            max-height: 80vh;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+            transform: translateY(30px);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.active .modal {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            padding: 24px;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 22px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .modal-close {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+
+        .modal-content {
+            padding: 24px;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        /* Circular Progress */
+        .circular-progress {
+            width: 180px;
+            height: 180px;
+            margin: 0 auto 24px;
+            position: relative;
+        }
+
+        .circular-svg {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+
+        .circular-bg {
+            fill: none;
+            stroke: rgba(255, 255, 255, 0.1);
+            stroke-width: 10;
+        }
+
+        .circular-fill {
+            fill: none;
+            stroke: url(#gradient);
+            stroke-width: 10;
+            stroke-linecap: round;
+            stroke-dasharray: 565;
+            stroke-dashoffset: 565;
+            transition: stroke-dashoffset 0.5s ease;
+        }
+
+        .circular-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .circular-percent {
+            font-size: 36px;
+            font-weight: 700;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+            margin-bottom: 4px;
+        }
+
+        .circular-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Animations */
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { 
+                opacity: 1;
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+            }
+            50% { 
+                opacity: 0.8;
+                box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
+            }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* Mobile Optimizations */
+        @media (max-width: 480px) {
+            body {
+                padding: 12px;
             }
             
-            h1 {
-                font-size: 32px;
+            .app-container {
+                min-height: 95vh;
+                max-width: 100%;
+                border-radius: 20px;
             }
             
-            #myId {
+            .app-header {
+                padding: 20px 16px;
+            }
+            
+            .app-content {
+                padding: 16px;
+            }
+            
+            .section-card {
+                padding: 20px;
+                margin-bottom: 16px;
+                border-radius: 18px;
+            }
+            
+            .card-icon {
+                width: 40px;
+                height: 40px;
                 font-size: 20px;
             }
             
-            .controls {
+            .card-title {
+                font-size: 16px;
+            }
+            
+            .btn {
+                padding: 18px;
+                font-size: 15px;
+            }
+            
+            .action-grid {
                 grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            
+            .status-indicators {
+                grid-template-columns: 1fr;
+            }
+            
+            .id-value {
+                font-size: 18px;
+            }
+            
+            .download-indicator {
+                bottom: 20px;
+                right: 20px;
+                width: 56px;
+                height: 56px;
+                font-size: 20px;
+            }
+            
+            .modal-overlay {
+                padding: 16px;
+            }
+            
+            .modal {
+                max-height: 85vh;
+            }
+            
+            .modal-header {
+                padding: 20px;
+            }
+            
+            .modal-content {
+                padding: 20px;
+                max-height: 70vh;
+            }
+            
+            .circular-progress {
+                width: 160px;
+                height: 160px;
+            }
+            
+            .circular-percent {
+                font-size: 32px;
             }
         }
 
-        /* Glow Effect */
-        .glow {
+        /* Touch-friendly adjustments */
+        @media (hover: none) {
+            .icon-btn:hover,
+            .btn:hover:not(:disabled),
+            .file-item:hover,
+            .remove-btn:hover {
+                transform: none;
+            }
+            
+            .icon-btn:active,
+            .btn:active:not(:disabled),
+            .file-item:active,
+            .remove-btn:active {
+                transform: scale(0.98);
+            }
+        }
+
+        /* Tablet */
+        @media (min-width: 768px) and (max-width: 1024px) {
+            .app-container {
+                max-width: 600px;
+            }
+            
+            .action-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Help Content */
+        .help-section {
+            margin-bottom: 24px;
+        }
+
+        .help-section h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .help-section p {
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+
+        .step-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .step-list li {
+            padding: 10px 0 10px 32px;
+            position: relative;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .step-list li::before {
+            content: '→';
             position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0;
             left: 0;
-            background: radial-gradient(circle at 50% 0%, rgba(102, 126, 234, 0.3), transparent 50%);
-            pointer-events: none;
-            z-index: -1;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        /* Connection Info */
+        .connection-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 16px;
+            margin-top: 12px;
+        }
+
+        .connection-type {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .connection-badge {
+            padding: 4px 12px;
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 16px 20px;
+            box-shadow: 0 10px 30px var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 1001;
+            transform: translateX(150%);
+            transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            max-width: 320px;
+        }
+
+        .notification.active {
+            transform: translateX(0);
+        }
+
+        .notification-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .notification.success .notification-icon {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .notification.error .notification-icon {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        .notification.info .notification-icon {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+        }
+
+        .notification-message {
+            flex: 1;
+            font-size: 14px;
+            color: var(--text);
         }
     </style>
 </head>
 <body>
-    <div class="glass-container">
-        <div class="container-bg">
-            <div class="bg-circle"></div>
-            <div class="bg-circle"></div>
-            <div class="bg-circle"></div>
-        </div>
-        
-        <div class="glow"></div>
-        
-        <div class="header">
-            <h1>🚀 Rocket Share</h1>
-            <p class="subtitle">Lightning-fast P2P file transfer</p>
-        </div>
-        
-        <!-- Your ID Section -->
-        <div class="id-section">
-            <div class="id-label">
-                <span>🔑</span>
-                <span>Your ID - Share this to receive files</span>
-            </div>
-            <div id="myId">Generating...</div>
-            <button class="glass-btn" onclick="copyMyId()">
-                📋 Copy My ID
-            </button>
-            
-            <div class="status">
-                <div class="status-dot" id="statusDot"></div>
-                <span id="statusText">Connecting to network...</span>
-            </div>
-        </div>
-        
-        <!-- Send Section -->
-        <div class="section">
-            <input type="text" 
-                   class="glass-input" 
-                   id="receiverId" 
-                   placeholder="📨 Enter receiver's ID">
-            
-            <div class="upload-zone" onclick="document.getElementById('fileInput').click()">
-                <div class="upload-icon">📁</div>
-                <div class="upload-text">Select Files to Launch</div>
-                <div class="upload-subtext">Click or drag & drop files here</div>
-                <input type="file" id="fileInput" multiple style="display: none;">
-            </div>
-            
-            <div class="file-list" id="fileList"></div>
-            
-            <button class="glass-btn success" id="sendBtn" onclick="sendFiles()" disabled>
-                🚀 Launch Transfer
-            </button>
-        </div>
-        
-        <!-- Rocket Progress Section -->
-        <div class="rocket-section">
-            <div class="progress-info">
-                <div class="progress-text" id="rocketStatus">Ready for launch...</div>
-                <div class="progress-percent" id="rocketPercent">0%</div>
-            </div>
-            
-            <div class="rocket-container">
-                <div class="rocket-track"></div>
-                <div class="progress-markers">
-                    <div class="marker" data-percent="0%"></div>
-                    <div class="marker" data-percent="25%"></div>
-                    <div class="marker" data-percent="50%"></div>
-                    <div class="marker" data-percent="75%"></div>
-                    <div class="marker" data-percent="100%"></div>
+    <!-- Main App Container -->
+    <div class="app-container">
+        <!-- App Header -->
+        <div class="app-header">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-rocket"></i>
+                    </div>
+                    <div class="logo-text">
+                        <h1 class="app-title">Rocket Share</h1>
+                        <div class="app-subtitle">Peer-to-Peer File Transfer</div>
+                    </div>
                 </div>
-                <div class="rocket-progress" id="rocketProgress"></div>
-                <div class="rocket" id="rocket">🚀</div>
-                <div class="exhaust"></div>
-                <div class="stars" id="stars"></div>
+                <div class="action-buttons">
+                    <button class="icon-btn" onclick="showHelp()" title="Help">
+                        <i class="fas fa-question"></i>
+                    </button>
+                    <button class="icon-btn" onclick="refreshConnection()" title="Reconnect">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
             </div>
         </div>
-        
-        <!-- Controls -->
-        <div class="controls">
-            <button class="glass-btn" id="pauseBtn" onclick="togglePause()" disabled>
-                ⏸️ Pause
-            </button>
-            <button class="glass-btn danger" id="cancelBtn" onclick="cancelTransfer()" disabled>
-                ✖️ Abort
-            </button>
-        </div>
-        
-        <!-- Log -->
-        <div class="log" id="transferLog">
-            <div class="log-item">[System] Ready for file transfer</div>
+
+        <!-- App Content -->
+        <div class="app-content">
+            <!-- Connection Status Section -->
+            <div class="section-card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="fas fa-plug"></i>
+                    </div>
+                    <h2 class="card-title">Connection Status</h2>
+                </div>
+                
+                <div class="status-indicators">
+                    <div class="status-item">
+                        <div class="status-dot" id="peerStatus"></div>
+                        <div class="status-info">
+                            <div class="status-name">Peer Server</div>
+                            <div class="status-value" id="serverStatus">Connecting...</div>
+                        </div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-dot" id="relayStatus"></div>
+                        <div class="status-info">
+                            <div class="status-name">Relay</div>
+                            <div class="status-value">Available</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="connection-info">
+                    <div class="connection-type">Connection Type:</div>
+                    <div class="connection-badge" id="connectionType">Direct</div>
+                </div>
+            </div>
+
+            <!-- Your ID Section -->
+            <div class="section-card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="fas fa-id-card"></i>
+                    </div>
+                    <h2 class="card-title">Your Share ID</h2>
+                </div>
+                
+                <div class="id-display">
+                    <div class="id-label">Share this ID with sender</div>
+                    <div class="id-value" id="myId">Generating...</div>
+                    <button class="btn btn-primary" onclick="copyMyId()">
+                        <i class="fas fa-copy"></i> Copy ID
+                    </button>
+                </div>
+            </div>
+
+            <!-- Send Files Section -->
+            <div class="section-card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="fas fa-paper-plane"></i>
+                    </div>
+                    <h2 class="card-title">Send Files</h2>
+                </div>
+
+                <div class="input-group">
+                    <div class="input-label">
+                        <i class="fas fa-user"></i>
+                        <span>Receiver's ID</span>
+                    </div>
+                    <input type="text" class="input-field" id="receiverId" placeholder="Enter receiver's share ID">
+                </div>
+
+                <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
+                    <div class="upload-icon">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <div class="upload-text">Select Files</div>
+                    <div class="upload-subtext">Tap or drag & drop files here</div>
+                    <input type="file" id="fileInput" multiple style="display: none;">
+                </div>
+
+                <div class="file-list" id="fileList">
+                    <div style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                        <i class="fas fa-folder-open" style="font-size: 48px; margin-bottom: 16px;"></i>
+                        <p>No files selected</p>
+                    </div>
+                </div>
+
+                <button class="btn btn-success" id="sendBtn" onclick="initiateSend()" disabled>
+                    <i class="fas fa-rocket"></i> Launch Transfer
+                </button>
+            </div>
+
+            <!-- Progress Section -->
+            <div class="section-card progress-section">
+                <div class="progress-header">
+                    <div class="progress-title">Transfer Progress</div>
+                    <div class="progress-value" id="progressPercent">0%</div>
+                </div>
+                
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                </div>
+                
+                <div class="progress-labels">
+                    <span>0%</span>
+                    <span id="progressStatus">Ready</span>
+                    <span>100%</span>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-grid">
+                <button class="btn btn-secondary" id="pauseBtn" onclick="togglePause()" disabled>
+                    <i class="fas fa-pause"></i> Pause
+                </button>
+                <button class="btn btn-danger" id="cancelBtn" onclick="cancelTransfer()" disabled>
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+            </div>
+
+            <!-- Transfer Log -->
+            <div class="transfer-log">
+                <div class="log-title">
+                    <i class="fas fa-history"></i>
+                    <span>Transfer Log</span>
+                </div>
+                <div id="logContent">
+                    <div class="log-item">
+                        <div class="log-icon">•</div>
+                        <div class="log-message">Ready for file transfer</div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
+    <!-- Download Indicator -->
+    <div class="download-indicator" id="downloadIndicator" onclick="showDownloads()">
+        <i class="fas fa-download"></i>
+        <div class="download-badge" id="downloadCount">0</div>
+    </div>
+
+    <!-- Progress Modal -->
+    <div class="modal-overlay" id="progressModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Transfer Progress</div>
+                <button class="modal-close" onclick="cancelTransfer()">&times;</button>
+            </div>
+            <div class="modal-content">
+                <div class="circular-progress">
+                    <svg class="circular-svg">
+                        <defs>
+                            <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" stop-color="#6366f1" />
+                                <stop offset="100%" stop-color="#8b5cf6" />
+                            </linearGradient>
+                        </defs>
+                        <circle class="circular-bg" cx="50%" cy="50%" r="45%"></circle>
+                        <circle class="circular-fill" cx="50%" cy="50%" r="45%"></circle>
+                    </svg>
+                    <div class="circular-text">
+                        <div class="circular-percent" id="circularPercent">0%</div>
+                        <div class="circular-label" id="circularLabel">Starting</div>
+                    </div>
+                </div>
+
+                <div class="transfer-info">
+                    <div style="background: rgba(15, 23, 42, 0.6); border-radius: 16px; padding: 16px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                            <span style="color: var(--text-secondary);">File:</span>
+                            <span style="color: var(--text); font-weight: 500;" id="currentFile">-</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                            <span style="color: var(--text-secondary);">Speed:</span>
+                            <span style="color: var(--success); font-weight: 500;" id="currentSpeed">0 KB/s</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="color: var(--text-secondary);">Time Left:</span>
+                            <span style="color: var(--text); font-weight: 500;" id="timeRemaining">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-grid" style="margin-top: 24px;">
+                    <button class="btn btn-secondary" id="modalPauseBtn" onclick="togglePause()">
+                        <i class="fas fa-pause"></i> Pause
+                    </button>
+                    <button class="btn btn-danger" onclick="cancelTransfer()">
+                        <i class="fas fa-times"></i> Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Help Modal -->
+    <div class="modal-overlay" id="helpModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Help & Guide</div>
+                <button class="modal-close" onclick="hideHelp()">&times;</button>
+            </div>
+            <div class="modal-content">
+                <div class="help-section">
+                    <h3><i class="fas fa-rocket"></i> How It Works</h3>
+                    <p>Rocket Share enables direct file transfers between devices using WebRTC technology. No files are uploaded to servers.</p>
+                </div>
+
+                <div class="help-section">
+                    <h3><i class="fas fa-bolt"></i> Quick Start</h3>
+                    <ul class="step-list">
+                        <li>Share your ID with the receiver</li>
+                        <li>Enter receiver's ID and select files</li>
+                        <li>Tap "Launch Transfer" to begin</li>
+                        <li>Receiver gets download notification</li>
+                        <li>Track progress in real-time</li>
+                    </ul>
+                </div>
+
+                <div class="help-section">
+                    <h3><i class="fas fa-wifi"></i> Connection Types</h3>
+                    <p><strong>Direct:</strong> Devices connect directly when on same network</p>
+                    <p><strong>TURN Relay:</strong> Uses relay server when direct connection fails</p>
+                </div>
+
+                <div class="help-section">
+                    <h3><i class="fas fa-lightbulb"></i> Tips</h3>
+                    <ul class="step-list">
+                        <li>Keep app open during transfers</li>
+                        <li>Use stable internet connection</li>
+                        <li>Monitor connection type indicator</li>
+                        <li>Check downloads by tapping the download icon</li>
+                    </ul>
+                </div>
+
+                <button class="btn btn-primary" onclick="hideHelp()" style="margin-top: 20px;">
+                    <i class="fas fa-check"></i> Got It!
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Downloads Modal -->
+    <div class="modal-overlay" id="downloadsModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Downloads</div>
+                <button class="modal-close" onclick="hideDownloads()">&times;</button>
+            </div>
+            <div class="modal-content">
+                <div id="downloadsList">
+                    <div style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                        <i class="fas fa-inbox" style="font-size: 48px; margin-bottom: 16px;"></i>
+                        <p>No downloads yet</p>
+                        <p style="font-size: 13px; margin-top: 8px;">Received files will appear here</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification System -->
+    <div id="notificationContainer"></div>
+
     <script>
-        // Initialize
+        // Global variables
         let peer = null;
         let connection = null;
         let selectedFiles = [];
         let isSending = false;
         let isPaused = false;
         let currentTransfer = null;
+        let downloads = [];
+        let transferStats = {
+            startTime: null,
+            bytesTransferred: 0,
+            speed: 0,
+            lastUpdate: null
+        };
+        
+        // Cloud PeerJS Configuration
+        const PEER_CONFIG = {
+            host: '0.peerjs.com',
+            port: 443,
+            secure: true,
+            path: '/',
+            config: {
+                'iceServers': [
+                    { urls: 'stun:stun.l.google.com:19302' },
+                    { urls: 'stun:stun1.l.google.com:19302' },
+                    { urls: 'stun:stun2.l.google.com:19302' },
+                    { urls: 'stun:stun3.l.google.com:19302' },
+                    { urls: 'stun:stun4.l.google.com:19302' },
+                    {
+                        urls: 'turn:openrelay.metered.ca:80',
+                        username: 'openrelayproject',
+                        credential: 'openrelayproject'
+                    },
+                    {
+                        urls: 'turn:openrelay.metered.ca:443',
+                        username: 'openrelayproject',
+                        credential: 'openrelayproject'
+                    }
+                ]
+            }
+        };
         
         // Initialize on load
         document.addEventListener('DOMContentLoaded', function() {
-            createStars();
             initializePeer();
             setupEventListeners();
+            updateStatus('peerStatus', false);
+            updateStatus('relayStatus', false);
         });
-        
-        // Create stars for background
-        function createStars() {
-            const starsContainer = document.getElementById('stars');
-            for (let i = 0; i < 20; i++) {
-                const star = document.createElement('div');
-                star.className = 'star';
-                star.style.width = Math.random() * 3 + 1 + 'px';
-                star.style.height = star.style.width;
-                star.style.left = Math.random() * 100 + '%';
-                star.style.top = Math.random() * 100 + '%';
-                star.style.animationDelay = Math.random() * 2 + 's';
-                star.style.animationDuration = Math.random() * 2 + 1 + 's';
-                starsContainer.appendChild(star);
-            }
-        }
         
         // Initialize PeerJS
         function initializePeer() {
-            const simpleId = "RS-" + Math.floor(10000 + Math.random() * 90000);
+            try {
+                const simpleId = "RS-" + Math.floor(10000 + Math.random() * 90000);
+                
+                peer = new Peer(simpleId, PEER_CONFIG);
+                
+                peer.on('open', function(id) {
+                    document.getElementById('myId').textContent = id;
+                    updateStatus('peerStatus', true);
+                    updateServerStatus('Connected');
+                    showNotification('Connected to server', 'success');
+                    addLog('Connected to cloud server');
+                });
+                
+                peer.on('error', function(err) {
+                    console.error('Peer error:', err);
+                    updateStatus('peerStatus', false);
+                    
+                    let message = 'Connection error';
+                    if (err.type === 'peer-unavailable') {
+                        message = 'Peer unavailable';
+                    } else if (err.type === 'network') {
+                        message = 'Network error';
+                    }
+                    
+                    updateServerStatus(message);
+                    showNotification(message, 'error');
+                    addLog('Error: ' + message);
+                });
+                
+                peer.on('connection', function(conn) {
+                    handleIncomingConnection(conn);
+                });
+                
+                peer.on('iceStateChanged', function(state) {
+                    const relayStatus = document.getElementById('relayStatus');
+                    if (state === 'connected') {
+                        updateStatus('relayStatus', true);
+                        document.getElementById('connectionType').textContent = 'Relay';
+                        addLog('Using TURN relay');
+                    } else if (state === 'disconnected') {
+                        updateStatus('relayStatus', false);
+                        document.getElementById('connectionType').textContent = 'Direct';
+                    }
+                });
+                
+            } catch (error) {
+                console.error('Failed to initialize:', error);
+                showNotification('Failed to initialize', 'error');
+            }
+        }
+        
+        // Setup event listeners
+        function setupEventListeners() {
+            const fileInput = document.getElementById('fileInput');
+            const uploadArea = document.getElementById('uploadArea');
             
-            peer = new Peer(simpleId, {
-                debug: 0
+            fileInput.addEventListener('change', handleFileSelect);
+            
+            // Drag and drop
+            uploadArea.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                this.classList.add('active');
             });
             
-            peer.on('open', function(id) {
-                document.getElementById('myId').textContent = id;
-                updateStatus(true, 'Connected & Ready');
-                addLog('🛰️ Connected with ID: ' + id);
+            uploadArea.addEventListener('dragleave', function() {
+                this.classList.remove('active');
             });
             
-            peer.on('error', function(err) {
-                console.error('Peer error:', err);
-                updateStatus(false, 'Connection Error');
-                addLog('❌ Error: ' + err.type);
+            uploadArea.addEventListener('drop', function(e) {
+                e.preventDefault();
+                this.classList.remove('active');
+                handleFileDrop(e);
             });
             
-            peer.on('connection', function(conn) {
-                connection = conn;
-                setupConnection(conn);
-                addLog('📡 Incoming connection from: ' + conn.peer);
+            // Touch events for mobile
+            uploadArea.addEventListener('touchstart', function() {
+                this.classList.add('active');
+            });
+            
+            uploadArea.addEventListener('touchend', function() {
+                this.classList.remove('active');
+            });
+            
+            // Prevent zoom on double tap
+            document.addEventListener('touchstart', function(event) {
+                if (event.touches.length > 1) {
+                    event.preventDefault();
+                }
+            }, { passive: false });
+        }
+        
+        function handleFileSelect(e) {
+            selectedFiles = Array.from(e.target.files);
+            updateFileList();
+        }
+        
+        function handleFileDrop(e) {
+            selectedFiles = Array.from(e.dataTransfer.files);
+            updateFileList();
+        }
+        
+        // Update file list display
+        function updateFileList() {
+            const fileList = document.getElementById('fileList');
+            const sendBtn = document.getElementById('sendBtn');
+            
+            if (selectedFiles.length === 0) {
+                fileList.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                        <i class="fas fa-folder-open" style="font-size: 48px; margin-bottom: 16px;"></i>
+                        <p>No files selected</p>
+                    </div>
+                `;
+                sendBtn.disabled = true;
+                return;
+            }
+            
+            let html = '';
+            let totalSize = 0;
+            
+            selectedFiles.forEach((file, index) => {
+                totalSize += file.size;
+                const fileIcon = getFileIcon(file.type);
+                
+                html += `
+                    <div class="file-item">
+                        <div class="file-icon">
+                            <i class="${fileIcon}"></i>
+                        </div>
+                        <div class="file-info">
+                            <div class="file-name">${file.name}</div>
+                            <div class="file-details">
+                                <span class="file-size">${formatSize(file.size)}</span>
+                                <span>•</span>
+                                <span>${file.type || 'Unknown type'}</span>
+                            </div>
+                        </div>
+                        <button class="remove-btn" onclick="removeFile(${index})">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                `;
+            });
+            
+            // Add summary
+            if (selectedFiles.length > 1) {
+                html += `
+                    <div class="file-item" style="background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.3);">
+                        <div class="file-icon" style="color: var(--success);">
+                            <i class="fas fa-rocket"></i>
+                        </div>
+                        <div class="file-info">
+                            <div class="file-name">Ready to launch ${selectedFiles.length} files</div>
+                            <div class="file-details">
+                                <span class="file-size">${formatSize(totalSize)} total</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            fileList.innerHTML = html;
+            sendBtn.disabled = false;
+            
+            // Scroll to show files
+            fileList.scrollTop = fileList.scrollHeight;
+        }
+        
+        function getFileIcon(mimeType) {
+            if (mimeType.includes('image')) return 'fas fa-image';
+            if (mimeType.includes('video')) return 'fas fa-video';
+            if (mimeType.includes('audio')) return 'fas fa-music';
+            if (mimeType.includes('pdf')) return 'fas fa-file-pdf';
+            if (mimeType.includes('zip') || mimeType.includes('compressed')) return 'fas fa-file-archive';
+            if (mimeType.includes('text')) return 'fas fa-file-alt';
+            return 'fas fa-file';
+        }
+        
+        function removeFile(index) {
+            selectedFiles.splice(index, 1);
+            updateFileList();
+        }
+        
+        // Initiate send
+        function initiateSend() {
+            const receiverId = document.getElementById('receiverId').value.trim();
+            
+            if (!receiverId) {
+                showNotification('Enter receiver ID', 'error');
+                return;
+            }
+            
+            if (selectedFiles.length === 0) {
+                showNotification('Select files first', 'error');
+                return;
+            }
+            
+            if (!peer || peer.disconnected) {
+                showNotification('Not connected to server', 'error');
+                return;
+            }
+            
+            showProgressModal();
+            startTransfer(receiverId);
+        }
+        
+        // Start transfer
+        function startTransfer(receiverId) {
+            connection = peer.connect(receiverId, { reliable: true });
+            
+            connection.on('open', async function() {
+                isSending = true;
+                updateControls(true);
+                updateProgress(0, 'Starting transfer...');
+                
+                transferStats.startTime = Date.now();
+                transferStats.bytesTransferred = 0;
+                transferStats.lastUpdate = Date.now();
+                
+                addLog('Starting transfer...');
+                
+                // Calculate total size
+                const totalSize = selectedFiles.reduce((sum, file) => sum + file.size, 0);
+                let transferredSize = 0;
+                
+                // Send all files
+                for (let i = 0; i < selectedFiles.length; i++) {
+                    if (isPaused) {
+                        await waitForResume();
+                    }
+                    
+                    const file = selectedFiles[i];
+                    document.getElementById('currentFile').textContent = file.name;
+                    
+                    await sendFile(file, transferredSize, totalSize);
+                    transferredSize += file.size;
+                }
+                
+                addLog('Transfer complete!');
+                showNotification('Transfer completed successfully', 'success');
+                updateProgress(100, 'Transfer Complete!');
+                
+                setTimeout(() => {
+                    hideProgressModal();
+                    isSending = false;
+                    updateControls(false);
+                    selectedFiles = [];
+                    updateFileList();
+                    updateProgress(0, 'Ready');
+                }, 2000);
+            });
+            
+            connection.on('error', function(err) {
+                console.error('Transfer error:', err);
+                addLog('Transfer failed');
+                showNotification('Transfer failed', 'error');
+                hideProgressModal();
+            });
+            
+            setupConnection(connection);
+        }
+        
+        // Send single file
+        async function sendFile(file, offsetSoFar, totalSize) {
+            return new Promise((resolve) => {
+                // Send file info
+                connection.send({
+                    type: 'file_start',
+                    name: file.name,
+                    size: file.size,
+                    mime: file.type
+                });
+                
+                let offset = 0;
+                const chunkSize = 64 * 1024; // 64KB chunks
+                const reader = new FileReader();
+                
+                reader.onload = async function(e) {
+                    if (isPaused) {
+                        await waitForResume();
+                    }
+                    
+                    const chunk = e.target.result;
+                    
+                    // Send chunk
+                    connection.send({
+                        type: 'chunk',
+                        data: chunk,
+                        offset: offset
+                    });
+                    
+                    offset += chunk.byteLength;
+                    transferStats.bytesTransferred += chunk.byteLength;
+                    
+                    // Update progress
+                    const now = Date.now();
+                    if (now - transferStats.lastUpdate > 500) {
+                        const filePercent = Math.round((offset / file.size) * 100);
+                        const totalTransferred = offsetSoFar + offset;
+                        const totalPercent = Math.round((totalTransferred / totalSize) * 100);
+                        
+                        updateProgress(totalPercent, `Sending: ${file.name}`);
+                        updateSpeed();
+                        updateCircularProgress(totalPercent);
+                        
+                        transferStats.lastUpdate = now;
+                    }
+                    
+                    if (offset < file.size) {
+                        readNextChunk();
+                    } else {
+                        // File complete
+                        connection.send({
+                            type: 'file_end',
+                            name: file.name
+                        });
+                        
+                        addLog(`Sent: ${file.name}`);
+                        resolve();
+                    }
+                };
+                
+                function readNextChunk() {
+                    const slice = file.slice(offset, offset + chunkSize);
+                    reader.readAsArrayBuffer(slice);
+                }
+                
+                readNextChunk();
             });
         }
         
-        // Setup connection
-        function setupConnection(conn) {
-            conn.on('open', function() {
-                updateStatus(true, 'Connected to peer');
-                addLog('✅ Connection established');
-            });
+        // Handle incoming connection
+        function handleIncomingConnection(conn) {
+            connection = conn;
+            setupConnection(conn);
             
-            conn.on('data', function(data) {
-                handleIncomingData(data);
-            });
+            conn.on('data', handleIncomingData);
             
-            conn.on('close', function() {
-                addLog('🔌 Connection closed');
-                updateStatus(false, 'Disconnected');
-                connection = null;
-            });
+            addLog('Incoming connection');
+            showNotification('Incoming connection', 'info');
         }
         
         // Handle incoming data
+        let receivingFile = null;
+        let receivedChunks = [];
+        
         function handleIncomingData(data) {
             switch(data.type) {
                 case 'file_start':
@@ -829,214 +1790,21 @@
             }
         }
         
-        // Setup event listeners
-        function setupEventListeners() {
-            const fileInput = document.getElementById('fileInput');
-            const uploadZone = document.querySelector('.upload-zone');
-            
-            fileInput.addEventListener('change', function(e) {
-                selectedFiles = Array.from(e.target.files);
-                updateFileList();
-            });
-            
-            // Drag and drop
-            uploadZone.addEventListener('dragover', function(e) {
-                e.preventDefault();
-                this.style.borderColor = 'rgba(102, 126, 234, 0.5)';
-                this.style.transform = 'translateY(-5px)';
-            });
-            
-            uploadZone.addEventListener('dragleave', function() {
-                this.style.borderColor = '';
-                this.style.transform = '';
-            });
-            
-            uploadZone.addEventListener('drop', function(e) {
-                e.preventDefault();
-                this.style.borderColor = '';
-                this.style.transform = '';
-                selectedFiles = Array.from(e.dataTransfer.files);
-                updateFileList();
-            });
-        }
-        
-        // Update file list
-        function updateFileList() {
-            const fileList = document.getElementById('fileList');
-            const sendBtn = document.getElementById('sendBtn');
-            
-            if (selectedFiles.length === 0) {
-                fileList.innerHTML = '<div style="color: rgba(255,255,255,0.5); text-align: center; padding: 20px;">No files selected</div>';
-                sendBtn.disabled = true;
-                return;
-            }
-            
-            let html = '';
-            let totalSize = 0;
-            
-            selectedFiles.forEach((file, index) => {
-                totalSize += file.size;
-                html += `
-                    <div class="file-item">
-                        <div class="file-info">
-                            <div class="file-name">${file.name}</div>
-                            <div class="file-size">${formatSize(file.size)}</div>
-                        </div>
-                        <button class="remove-btn" onclick="removeFile(${index})">
-                            ✕
-                        </button>
-                    </div>
-                `;
-            });
-            
-            if (selectedFiles.length > 1) {
-                html += `
-                    <div class="file-item" style="background: rgba(46, 213, 115, 0.1); border-color: rgba(46, 213, 115, 0.2);">
-                        <div class="file-info">
-                            <div class="file-name">🚀 Ready to launch: ${selectedFiles.length} files</div>
-                            <div class="file-size">${formatSize(totalSize)} total</div>
-                        </div>
-                    </div>
-                `;
-            }
-            
-            fileList.innerHTML = html;
-            sendBtn.disabled = false;
-        }
-        
-        // Remove file
-        function removeFile(index) {
-            selectedFiles.splice(index, 1);
-            updateFileList();
-        }
-        
-        // Send files
-        async function sendFiles() {
-            const receiverId = document.getElementById('receiverId').value.trim();
-            
-            if (!receiverId) {
-                alert('Please enter receiver ID');
-                return;
-            }
-            
-            if (selectedFiles.length === 0) {
-                alert('Please select files');
-                return;
-            }
-            
-            // Connect to receiver
-            connection = peer.connect(receiverId);
-            setupConnection(connection);
-            
-            connection.on('open', async function() {
-                isSending = true;
-                updateControls(true);
-                updateRocket(0, 'Launching...');
-                addLog('🚀 Launching transfer...');
-                
-                // Send all files
-                for (let i = 0; i < selectedFiles.length; i++) {
-                    if (isPaused) {
-                        await waitForResume();
-                    }
-                    
-                    await sendFile(selectedFiles[i], i + 1, selectedFiles.length);
-                }
-                
-                addLog('✅ All files delivered successfully!');
-                updateRocket(100, 'Mission Complete!');
-                updateStatus(true, 'Transfer Complete');
-                isSending = false;
-                updateControls(false);
-                selectedFiles = [];
-                updateFileList();
-                
-                // Reset rocket after 3 seconds
-                setTimeout(() => {
-                    updateRocket(0, 'Ready for launch...');
-                }, 3000);
-            });
-        }
-        
-        // Send single file
-        async function sendFile(file, current, total) {
-            return new Promise((resolve) => {
-                addLog(`📤 Launching: ${file.name}`);
-                
-                // Send file info
-                connection.send({
-                    type: 'file_start',
-                    name: file.name,
-                    size: file.size,
-                    current: current,
-                    total: total
-                });
-                
-                let offset = 0;
-                const chunkSize = 64 * 1024;
-                const reader = new FileReader();
-                
-                reader.onload = async function(e) {
-                    if (isPaused) {
-                        await waitForResume();
-                    }
-                    
-                    const chunk = e.target.result;
-                    
-                    // Send chunk
-                    connection.send({
-                        type: 'chunk',
-                        data: chunk,
-                        offset: offset,
-                        total: file.size
-                    });
-                    
-                    offset += chunk.byteLength;
-                    
-                    // Update rocket progress
-                    const percent = Math.round((offset / file.size) * 100);
-                    updateRocket(percent, `Transferring: ${file.name}`);
-                    
-                    // Animate rocket
-                    animateRocket(percent);
-                    
-                    if (offset < file.size) {
-                        readNextChunk();
-                    } else {
-                        // File complete
-                        connection.send({
-                            type: 'file_end',
-                            name: file.name
-                        });
-                        
-                        addLog(`✅ Delivered: ${file.name}`);
-                        resolve();
-                    }
-                };
-                
-                function readNextChunk() {
-                    const slice = file.slice(offset, offset + chunkSize);
-                    reader.readAsArrayBuffer(slice);
-                }
-                
-                readNextChunk();
-            });
-        }
-        
-        // Receiving functions
-        let receivingFile = null;
-        let receivedChunks = [];
-        
         function startReceivingFile(data) {
             receivingFile = {
                 name: data.name,
                 size: data.size,
-                received: 0
+                mime: data.mime,
+                received: 0,
+                startTime: Date.now()
             };
             
             receivedChunks = [];
-            updateRocket(0, `Incoming: ${data.name}`);
-            addLog(`📥 Receiving: ${data.name}`);
+            
+            addLog(`Receiving: ${data.name}`);
+            showProgressModal();
+            document.getElementById('currentFile').textContent = data.name;
+            updateProgress(0, `Receiving: ${data.name}`);
         }
         
         function receiveChunk(data) {
@@ -1044,64 +1812,117 @@
             
             receivedChunks.push(data.data);
             receivingFile.received += data.data.byteLength;
+            transferStats.bytesTransferred += data.data.byteLength;
             
             const percent = Math.round((receivingFile.received / receivingFile.size) * 100);
             
-            // Update rocket
-            updateRocket(percent, `Receiving: ${receivingFile.name}`);
-            animateRocket(percent);
-            
-            // Update markers
-            updateMarkers(percent);
+            updateProgress(percent, `Receiving: ${receivingFile.name}`);
+            updateSpeed();
+            updateCircularProgress(percent);
         }
         
         function finishReceivingFile(data) {
             if (!receivingFile) return;
             
-            // Combine chunks and save file
-            const blob = new Blob(receivedChunks);
+            // Create file
+            const blob = new Blob(receivedChunks, { type: receivingFile.mime });
             const url = URL.createObjectURL(blob);
             
-            // Create download link
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = receivingFile.name;
-            a.click();
+            // Add to downloads
+            const download = {
+                id: Date.now(),
+                name: receivingFile.name,
+                size: receivingFile.size,
+                url: url,
+                date: new Date().toLocaleTimeString(),
+                downloaded: false
+            };
             
-            // Clean up
-            setTimeout(() => URL.revokeObjectURL(url), 1000);
+            downloads.push(download);
+            updateDownloadIndicator();
             
-            addLog(`✅ Downloaded: ${receivingFile.name}`);
-            updateRocket(100, 'Download Complete!');
+            // Trigger download
+            triggerDownload(download);
             
-            // Reset
+            addLog(`Received: ${receivingFile.name}`);
+            updateProgress(100, 'Download Complete!');
+            
             setTimeout(() => {
+                hideProgressModal();
                 receivingFile = null;
                 receivedChunks = [];
-                updateRocket(0, 'Ready for launch...');
             }, 2000);
         }
         
-        // Control functions
+        function triggerDownload(download) {
+            const a = document.createElement('a');
+            a.href = download.url;
+            a.download = download.name;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            
+            download.downloaded = true;
+            
+            // Clean up after some time
+            setTimeout(() => {
+                URL.revokeObjectURL(download.url);
+            }, 60000);
+        }
+        
+        // Update progress
+        function updateProgress(percent, status) {
+            document.getElementById('progressFill').style.width = percent + '%';
+            document.getElementById('progressPercent').textContent = percent + '%';
+            document.getElementById('progressStatus').textContent = status;
+        }
+        
+        function updateCircularProgress(percent) {
+            const circle = document.querySelector('.circular-fill');
+            const circumference = 565;
+            const offset = circumference - (percent / 100) * circumference;
+            
+            circle.style.strokeDashoffset = offset;
+            document.getElementById('circularPercent').textContent = percent + '%';
+            document.getElementById('circularLabel').textContent = percent === 100 ? 'Complete' : 'Transferring';
+        }
+        
+        function updateSpeed() {
+            const now = Date.now();
+            const elapsed = (now - transferStats.startTime) / 1000;
+            
+            if (elapsed > 0.5) {
+                const speed = transferStats.bytesTransferred / elapsed;
+                document.getElementById('currentSpeed').textContent = formatSize(speed) + '/s';
+                
+                // Calculate time remaining
+                if (receivingFile) {
+                    const remaining = receivingFile.size - receivingFile.received;
+                    const timeLeft = speed > 0 ? remaining / speed : 0;
+                    document.getElementById('timeRemaining').textContent = formatTime(timeLeft);
+                }
+            }
+        }
+        
+        // Controls
         function togglePause() {
             isPaused = !isPaused;
-            const btn = document.getElementById('pauseBtn');
+            const btn = document.getElementById('modalPauseBtn');
+            const mainBtn = document.getElementById('pauseBtn');
             
             if (isPaused) {
-                btn.innerHTML = '▶️ Resume';
-                btn.classList.remove('glass-btn');
-                btn.classList.add('glass-btn', 'success');
-                addLog('⏸️ Transfer paused');
-                updateRocket(currentRocketPercent, 'PAUSED');
+                btn.innerHTML = '<i class="fas fa-play"></i> Resume';
+                mainBtn.innerHTML = '<i class="fas fa-play"></i> Resume';
+                addLog('Transfer paused');
             } else {
-                btn.innerHTML = '⏸️ Pause';
-                btn.classList.remove('success');
-                addLog('▶️ Transfer resumed');
+                btn.innerHTML = '<i class="fas fa-pause"></i> Pause';
+                mainBtn.innerHTML = '<i class="fas fa-pause"></i> Pause';
+                addLog('Transfer resumed');
             }
         }
         
         function cancelTransfer() {
-            if (confirm('Abort transfer?')) {
+            if (confirm('Cancel transfer?')) {
                 if (connection) {
                     connection.close();
                 }
@@ -1109,9 +1930,10 @@
                 isSending = false;
                 isPaused = false;
                 updateControls(false);
-                updateRocket(0, 'Transfer Aborted');
-                addLog('❌ Transfer aborted');
-                updateStatus(false, 'Transfer Cancelled');
+                hideProgressModal();
+                updateProgress(0, 'Cancelled');
+                addLog('Transfer cancelled');
+                showNotification('Transfer cancelled', 'error');
             }
         }
         
@@ -1126,46 +1948,101 @@
             });
         }
         
-        // Rocket animation
-        let currentRocketPercent = 0;
+        // Update controls
+        function updateControls(transferring) {
+            document.getElementById('sendBtn').disabled = transferring;
+            document.getElementById('pauseBtn').disabled = !transferring;
+            document.getElementById('cancelBtn').disabled = !transferring;
+        }
         
-        function updateRocket(percent, message) {
-            currentRocketPercent = percent;
-            document.getElementById('rocketProgress').style.width = percent + '%';
-            document.getElementById('rocket').style.left = percent + '%';
-            document.getElementById('rocketPercent').textContent = percent + '%';
-            document.getElementById('rocketStatus').textContent = message;
+        // Download indicator
+        function updateDownloadIndicator() {
+            const indicator = document.getElementById('downloadIndicator');
+            const count = document.getElementById('downloadCount');
             
-            // Update markers
-            updateMarkers(percent);
+            count.textContent = downloads.length;
+            
+            if (downloads.length > 0) {
+                indicator.classList.add('active');
+            }
         }
         
-        function animateRocket(percent) {
-            const rocket = document.getElementById('rocket');
-            rocket.style.transform = `translate(-50%, -50%) scale(${1 + Math.sin(Date.now() / 100) * 0.1})`;
+        function showDownloads() {
+            const modal = document.getElementById('downloadsModal');
+            const list = document.getElementById('downloadsList');
+            
+            if (downloads.length === 0) {
+                list.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                        <i class="fas fa-inbox" style="font-size: 48px; margin-bottom: 16px;"></i>
+                        <p>No downloads yet</p>
+                    </div>
+                `;
+            } else {
+                let html = '';
+                downloads.forEach((download, index) => {
+                    html += `
+                        <div class="file-item" style="margin-bottom: 12px;">
+                            <div class="file-icon">
+                                <i class="${getFileIcon(download.mime)}"></i>
+                            </div>
+                            <div class="file-info">
+                                <div class="file-name">${download.name}</div>
+                                <div class="file-details">
+                                    <span class="file-size">${formatSize(download.size)}</span>
+                                    <span>•</span>
+                                    <span>${download.date}</span>
+                                </div>
+                            </div>
+                            <button class="remove-btn" onclick="deleteDownload(${index})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    `;
+                });
+                
+                list.innerHTML = html;
+            }
+            
+            modal.classList.add('active');
         }
         
-        function updateMarkers(percent) {
-            const markers = document.querySelectorAll('.marker');
-            markers.forEach(marker => {
-                const markerPercent = parseInt(marker.dataset.percent);
-                if (percent >= markerPercent) {
-                    marker.classList.add('active');
-                } else {
-                    marker.classList.remove('active');
-                }
-            });
+        function deleteDownload(index) {
+            if (downloads[index].url) {
+                URL.revokeObjectURL(downloads[index].url);
+            }
+            downloads.splice(index, 1);
+            updateDownloadIndicator();
+            showDownloads();
         }
         
-        // UI Helper functions
+        function hideDownloads() {
+            document.getElementById('downloadsModal').classList.remove('active');
+        }
+        
+        // Modal functions
+        function showProgressModal() {
+            document.getElementById('progressModal').classList.add('active');
+        }
+        
+        function hideProgressModal() {
+            document.getElementById('progressModal').classList.remove('active');
+        }
+        
+        function showHelp() {
+            document.getElementById('helpModal').classList.add('active');
+        }
+        
+        function hideHelp() {
+            document.getElementById('helpModal').classList.remove('active');
+        }
+        
+        // Utility functions
         function copyMyId() {
             const id = document.getElementById('myId').textContent;
             navigator.clipboard.writeText(id).then(() => {
-                const btn = document.querySelector('.glass-btn');
-                const original = btn.innerHTML;
-                btn.innerHTML = '✅ Copied!';
-                setTimeout(() => btn.innerHTML = original, 2000);
-                addLog('📋 ID copied to clipboard');
+                showNotification('ID copied to clipboard!', 'success');
+                addLog('ID copied');
             });
         }
         
@@ -1176,43 +2053,98 @@
             return (bytes / (1024 * 1024 * 1024)).toFixed(1) + ' GB';
         }
         
-        function updateStatus(connected, message) {
-            const dot = document.getElementById('statusDot');
-            const text = document.getElementById('statusText');
-            
-            text.textContent = message;
-            dot.className = 'status-dot';
+        function formatTime(seconds) {
+            if (seconds < 60) return Math.round(seconds) + 's';
+            if (seconds < 3600) return Math.round(seconds / 60) + 'm';
+            return Math.round(seconds / 3600) + 'h';
+        }
+        
+        function updateStatus(elementId, connected) {
+            const element = document.getElementById(elementId);
+            element.className = 'status-dot';
             if (connected) {
-                dot.classList.add('connected');
+                element.classList.add('active');
+                element.classList.add('pulse');
             }
         }
         
-        function updateControls(transferring) {
-            document.getElementById('pauseBtn').disabled = !transferring;
-            document.getElementById('cancelBtn').disabled = !transferring;
-            document.getElementById('sendBtn').disabled = transferring;
+        function updateServerStatus(message) {
+            document.getElementById('serverStatus').textContent = message;
         }
         
         function addLog(message) {
-            const log = document.getElementById('transferLog');
-            const item = document.createElement('div');
-            item.className = 'log-item';
-            item.textContent = `[${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}] ${message}`;
+            const logContent = document.getElementById('logContent');
+            const logItem = document.createElement('div');
+            logItem.className = 'log-item';
+            logItem.innerHTML = `
+                <div class="log-icon">•</div>
+                <div class="log-message">${message}</div>
+            `;
             
-            log.appendChild(item);
-            log.scrollTop = log.scrollHeight;
+            logContent.appendChild(logItem);
+            logContent.scrollTop = logContent.scrollHeight;
             
-            if (log.children.length > 10) {
-                log.removeChild(log.firstChild);
+            // Keep only last 10 logs
+            if (logContent.children.length > 10) {
+                logContent.removeChild(logContent.firstChild);
             }
         }
         
-        // Start rocket animation loop
-        setInterval(() => {
-            if (isSending && !isPaused) {
-                animateRocket(currentRocketPercent);
+        // Notification system
+        function showNotification(message, type = 'info') {
+            const container = document.getElementById('notificationContainer');
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <div class="notification-icon">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+                </div>
+                <div class="notification-message">${message}</div>
+            `;
+            
+            container.appendChild(notification);
+            
+            // Trigger animation
+            setTimeout(() => notification.classList.add('active'), 10);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.classList.remove('active');
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+        
+        // Refresh connection
+        function refreshConnection() {
+            if (peer) {
+                peer.destroy();
             }
-        }, 100);
+            
+            updateServerStatus('Reconnecting...');
+            updateStatus('peerStatus', false);
+            updateStatus('relayStatus', false);
+            addLog('Reconnecting...');
+            
+            setTimeout(() => {
+                initializePeer();
+            }, 1000);
+        }
+        
+        // Auto-reconnect
+        setInterval(() => {
+            if (peer && peer.disconnected) {
+                refreshConnection();
+            }
+        }, 30000);
+        
+        // Prevent accidental refresh
+        window.addEventListener('beforeunload', function(e) {
+            if (isSending) {
+                e.preventDefault();
+                e.returnValue = 'File transfer in progress. Are you sure you want to leave?';
+                return e.returnValue;
+            }
+        });
     </script>
 </body>
 </html>
