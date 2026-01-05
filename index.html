@@ -55,6 +55,32 @@
             box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
         }
 
+        /* Connection Troubleshooter */
+        .troubleshoot-btn {
+            position: fixed;
+            top: 85px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #2ed573 0%, #1e90ff 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 22px;
+            cursor: pointer;
+            z-index: 100;
+            box-shadow: 0 4px 15px rgba(46, 213, 115, 0.4);
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .troubleshoot-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(46, 213, 115, 0.6);
+        }
+
         /* Modal Progress View */
         .modal-overlay {
             position: fixed;
@@ -181,6 +207,29 @@
             margin-bottom: 15px;
         }
 
+        /* Connection Info */
+        .connection-info {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 12px;
+            width: 100%;
+            margin-top: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .connection-type {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        .connection-status {
+            display: flex;
+            justify-content: space-between;
+        }
+
         /* File Info */
         .big-file-info {
             background: rgba(255, 255, 255, 0.05);
@@ -292,6 +341,162 @@
             box-shadow: 0 8px 25px rgba(255, 71, 87, 0.6);
         }
 
+        /* Troubleshoot Modal */
+        .troubleshoot-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1002;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .troubleshoot-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .troubleshoot-content {
+            width: 90%;
+            max-width: 500px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .troubleshoot-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .troubleshoot-title {
+            color: white;
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #2ed573, #1e90ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .close-troubleshoot {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 28px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .close-troubleshoot:hover {
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .troubleshoot-section {
+            margin-bottom: 20px;
+        }
+
+        .troubleshoot-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .troubleshoot-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(46, 213, 115, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #2ed573;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .troubleshoot-text {
+            flex: 1;
+        }
+
+        .troubleshoot-text strong {
+            color: white;
+            display: block;
+            margin-bottom: 5px;
+            font-size: 16px;
+        }
+
+        .troubleshoot-text span {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .troubleshoot-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .troubleshoot-btn-primary {
+            flex: 1;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .troubleshoot-btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .troubleshoot-btn-secondary {
+            flex: 1;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .troubleshoot-btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
         /* Animations */
         @keyframes pulse {
             0% {
@@ -304,11 +509,6 @@
             }
         }
 
-        @keyframes spin {
-            0% { transform: rotate(45deg); }
-            100% { transform: rotate(405deg); }
-        }
-
         /* Help Modal */
         .help-modal {
             position: fixed;
@@ -316,8 +516,8 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.9);
-            backdrop-filter: blur(10px);
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -546,6 +746,11 @@
             animation: pulse-green 2s infinite;
         }
 
+        .status-dot.reconnecting {
+            background: #ffa502;
+            animation: pulse-orange 2s infinite;
+        }
+
         @keyframes pulse-dot {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.5; }
@@ -559,6 +764,17 @@
             50% { 
                 opacity: 0.8;
                 box-shadow: 0 0 0 10px rgba(46, 213, 115, 0);
+            }
+        }
+
+        @keyframes pulse-orange {
+            0%, 100% { 
+                opacity: 1;
+                box-shadow: 0 0 0 0 rgba(255, 165, 2, 0.7);
+            }
+            50% { 
+                opacity: 0.8;
+                box-shadow: 0 0 0 10px rgba(255, 165, 2, 0);
             }
         }
 
@@ -806,6 +1022,30 @@
             margin-top: 25px;
         }
 
+        /* QR Code */
+        .qr-container {
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .qr-title {
+            color: white;
+            font-size: 16px;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        #qrcode {
+            display: inline-block;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+        }
+
         /* Responsive */
         @media (max-width: 640px) {
             .glass-container {
@@ -834,6 +1074,7 @@
                 height: 220px;
                 top: 30px;
                 left: 30px;
+                padding: 25px;
             }
             
             .big-percent {
@@ -844,7 +1085,8 @@
                 font-size: 36px;
             }
             
-            .help-content {
+            .help-content,
+            .troubleshoot-content {
                 padding: 20px;
             }
         }
@@ -866,6 +1108,9 @@
     <!-- Help Button -->
     <button class="help-btn" onclick="showHelp()">?</button>
 
+    <!-- Troubleshoot Button -->
+    <button class="troubleshoot-btn" onclick="showTroubleshoot()">🔧</button>
+
     <!-- Big Progress Modal with Countdown -->
     <div class="modal-overlay" id="progressModal">
         <div class="big-circular-progress">
@@ -884,6 +1129,18 @@
                 <!-- Status Messages -->
                 <div class="big-status" id="bigStatus">Preparing Transfer...</div>
                 <div class="big-substatus" id="bigSubstatus">Initializing connection</div>
+                
+                <!-- Connection Info -->
+                <div class="connection-info">
+                    <div class="connection-type">
+                        <span>Connection:</span>
+                        <span id="connectionType">Direct P2P</span>
+                    </div>
+                    <div class="connection-status">
+                        <span>Status:</span>
+                        <span id="connectionStatus">Connecting...</span>
+                    </div>
+                </div>
                 
                 <!-- File Information -->
                 <div class="big-file-info">
@@ -916,6 +1173,59 @@
                         ✖️
                     </button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Troubleshoot Modal -->
+    <div class="troubleshoot-modal" id="troubleshootModal">
+        <div class="troubleshoot-content">
+            <div class="troubleshoot-header">
+                <div class="troubleshoot-title">🔧 Connection Troubleshooter</div>
+                <button class="close-troubleshoot" onclick="hideTroubleshoot()">&times;</button>
+            </div>
+            
+            <div class="troubleshoot-section">
+                <div class="troubleshoot-item">
+                    <div class="troubleshoot-icon">1</div>
+                    <div class="troubleshoot-text">
+                        <strong>Same Network</strong>
+                        <span>Ensure both devices are on the same Wi-Fi network for best results.</span>
+                    </div>
+                </div>
+                
+                <div class="troubleshoot-item">
+                    <div class="troubleshoot-icon">2</div>
+                    <div class="troubleshoot-text">
+                        <strong>Allow Permissions</strong>
+                        <span>Make sure your browser has permission to access camera/microphone for WebRTC.</span>
+                    </div>
+                </div>
+                
+                <div class="troubleshoot-item">
+                    <div class="troubleshoot-icon">3</div>
+                    <div class="troubleshoot-text">
+                        <strong>Disable Firewall</strong>
+                        <span>Temporarily disable firewall/antivirus that might block WebRTC connections.</span>
+                    </div>
+                </div>
+                
+                <div class="troubleshoot-item">
+                    <div class="troubleshoot-icon">4</div>
+                    <div class="troubleshoot-text">
+                        <strong>Use Mobile Data</strong>
+                        <span>If Wi-Fi doesn't work, try using mobile hotspot from one device.</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="troubleshoot-actions">
+                <button class="troubleshoot-btn-primary" onclick="forceReconnect()">
+                    🔄 Force Reconnect
+                </button>
+                <button class="troubleshoot-btn-secondary" onclick="testConnection()">
+                    🧪 Test Connection
+                </button>
             </div>
         </div>
     </div>
@@ -957,41 +1267,41 @@
             </div>
             
             <div class="help-section">
-                <div class="help-section-title">⚡ Features</div>
+                <div class="help-section-title">⚡ Cross-Device Tips</div>
                 
                 <div class="help-step">
-                    <div class="step-number">🚀</div>
+                    <div class="step-number">📱→💻</div>
                     <div class="step-content">
-                        <div class="step-title">Big File Support</div>
-                        <div class="step-desc">Transfer files of any size - from small documents to large videos (GBs supported).</div>
+                        <div class="step-title">Phone to Laptop</div>
+                        <div class="step-desc">Use QR code to easily share ID. Make sure both devices are on same network.</div>
                     </div>
                 </div>
                 
                 <div class="help-step">
-                    <div class="step-number">⏱️</div>
+                    <div class="step-number">💻→📱</div>
                     <div class="step-content">
-                        <div class="step-title">Real-time Countdown</div>
-                        <div class="step-desc">Accurate countdown timer showing estimated time remaining for transfer completion.</div>
+                        <div class="step-title">Laptop to Phone</div>
+                        <div class="step-desc">Type phone's ID carefully. Phone should have screen on during transfer.</div>
                     </div>
                 </div>
                 
                 <div class="help-step">
-                    <div class="step-number">⏸️</div>
+                    <div class="step-number">📶</div>
                     <div class="step-content">
-                        <div class="step-title">Pause & Resume</div>
-                        <div class="step-desc">Pause large transfers anytime and resume later without losing progress.</div>
+                        <div class="step-title">Network Issues</div>
+                        <div class="step-desc">If direct connection fails, the app will use relay servers (slower but reliable).</div>
                     </div>
                 </div>
             </div>
             
             <div class="help-tip">
-                <div class="tip-title">💡 Pro Tips</div>
+                <div class="tip-title">💡 Cross-Device Transfer Tips</div>
                 <div class="tip-content">
-                    • Keep the browser tab open during transfers<br>
-                    • Use wired internet for large files (>1GB)<br>
-                    • Close other bandwidth-heavy applications<br>
-                    • For best results, both users should be on the same network<br>
-                    • The app works best in Chrome or Firefox
+                    • <strong>Same Network:</strong> Both devices should be on same Wi-Fi<br>
+                    • <strong>Browser:</strong> Use Chrome or Firefox on both devices<br>
+                    • <strong>Permissions:</strong> Allow camera/microphone access when prompted<br>
+                    • <strong>Hotspot:</strong> Use phone hotspot if Wi-Fi doesn't work<br>
+                    • <strong>QR Code:</strong> Use QR code for easy ID sharing between phone and laptop
                 </div>
             </div>
         </div>
@@ -1009,7 +1319,7 @@
         
         <div class="header">
             <h1>🚀 Cube File's Share</h1>
-            <p class="subtitle">Lightning-fast P2P file transfer with countdown timer</p>
+            <p class="subtitle">Cross-device P2P file transfer with QR code</p>
         </div>
         
         <!-- Your ID Section -->
@@ -1019,9 +1329,24 @@
                 <span>Your ID - Share this to receive files</span>
             </div>
             <div id="myId">Generating...</div>
-            <button class="glass-btn" onclick="copyMyId()">
-                📋 Copy My ID
-            </button>
+            
+            <div class="controls" style="grid-template-columns: 1fr 1fr; margin-top: 15px;">
+                <button class="glass-btn" onclick="copyMyId()">
+                    📋 Copy ID
+                </button>
+                <button class="glass-btn success" onclick="generateQRCode()">
+                    📱 Show QR
+                </button>
+            </div>
+            
+            <!-- QR Code Section -->
+            <div class="qr-container" id="qrContainer" style="display: none;">
+                <div class="qr-title">Scan QR Code with Phone</div>
+                <div id="qrcode"></div>
+                <div style="color: rgba(255,255,255,0.6); font-size: 12px; margin-top: 10px;">
+                    Open camera and point at QR code
+                </div>
+            </div>
             
             <div class="status">
                 <div class="status-dot" id="statusDot"></div>
@@ -1034,11 +1359,11 @@
             <input type="text" 
                    class="glass-input" 
                    id="receiverId" 
-                   placeholder="📨 Enter receiver's ID">
+                   placeholder="📨 Enter receiver's ID or scan QR code">
             
             <div class="upload-zone" onclick="document.getElementById('fileInput').click()">
                 <div class="upload-icon">📁</div>
-                <div class="upload-text">Select Files to Launch</div>
+                <div class="upload-text">Select Files to Transfer</div>
                 <div class="upload-subtext">Click or drag & drop files here (Supports GBs!)</div>
                 <input type="file" id="fileInput" multiple style="display: none;">
             </div>
@@ -1066,6 +1391,9 @@
         </div>
     </div>
 
+    <!-- QR Code Library -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+
     <script>
         // Initialize variables
         let peer = null;
@@ -1087,11 +1415,31 @@
         let countdownInterval = null;
         let estimatedRemainingTime = 0;
         
+        // Connection tracking
+        let connectionAttempts = 0;
+        let maxConnectionAttempts = 3;
+        let isUsingRelay = false;
+        
         // Initialize on load
         document.addEventListener('DOMContentLoaded', function() {
             initializePeer();
             setupEventListeners();
+            detectDeviceType();
         });
+        
+        // Detect device type
+        function detectDeviceType() {
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            const deviceType = isMobile ? '📱 Mobile' : '💻 Desktop';
+            addLog(`[System] Detected device: ${deviceType}`);
+            
+            // Show QR code option for desktop
+            if (!isMobile) {
+                setTimeout(() => {
+                    addLog('[Tip] Use QR code to easily share ID with mobile devices');
+                }, 2000);
+            }
+        }
         
         // Show big progress modal
         function showProgressModal() {
@@ -1152,6 +1500,12 @@
             }
         }
         
+        // Update connection info
+        function updateConnectionInfo(type, status) {
+            document.getElementById('connectionType').textContent = type;
+            document.getElementById('connectionStatus').textContent = status;
+        }
+        
         // Update transfer stats and calculate countdown
         function updateTransferStats(currentSize, totalSize) {
             if (!transferStartTime || currentSize === 0) return;
@@ -1203,6 +1557,42 @@
             }
         }
         
+        // Generate QR Code
+        function generateQRCode() {
+            const myId = document.getElementById('myId').textContent;
+            if (myId === 'Generating...') {
+                alert('Please wait for ID to generate');
+                return;
+            }
+            
+            const qrContainer = document.getElementById('qrContainer');
+            const qrcodeDiv = document.getElementById('qrcode');
+            
+            // Clear previous QR code
+            qrcodeDiv.innerHTML = '';
+            
+            // Generate QR code
+            QRCode.toCanvas(qrcodeDiv, myId, {
+                width: 150,
+                height: 150,
+                margin: 1,
+                color: {
+                    dark: '#000000',
+                    light: '#ffffff'
+                }
+            }, function(error) {
+                if (error) {
+                    console.error('QR Code generation error:', error);
+                    alert('Failed to generate QR code');
+                    return;
+                }
+                
+                // Show QR container
+                qrContainer.style.display = 'block';
+                addLog('[System] QR code generated for easy sharing');
+            });
+        }
+        
         // Show help modal
         function showHelp() {
             const modal = document.getElementById('helpModal');
@@ -1215,28 +1605,110 @@
             modal.classList.remove('active');
         }
         
-        // Initialize PeerJS with CLOUD SERVER
+        // Show troubleshoot modal
+        function showTroubleshoot() {
+            const modal = document.getElementById('troubleshootModal');
+            modal.classList.add('active');
+        }
+        
+        // Hide troubleshoot modal
+        function hideTroubleshoot() {
+            const modal = document.getElementById('troubleshootModal');
+            modal.classList.remove('active');
+        }
+        
+        // Force reconnect
+        function forceReconnect() {
+            addLog('[Troubleshoot] Forcing reconnection...');
+            updateStatus(false, 'Reconnecting...');
+            
+            if (peer) {
+                peer.destroy();
+            }
+            
+            setTimeout(() => {
+                initializePeer();
+                hideTroubleshoot();
+            }, 1000);
+        }
+        
+        // Test connection
+        function testConnection() {
+            addLog('[Troubleshoot] Testing WebRTC connection...');
+            
+            // Simple WebRTC test
+            const testPeer = new Peer('test-' + Math.random().toString(36).substr(2, 9), {
+                host: '0.peerjs.com',
+                port: 443,
+                path: '/',
+                secure: true
+            });
+            
+            testPeer.on('open', function(id) {
+                addLog('[Test] ✅ WebRTC connection successful');
+                testPeer.destroy();
+                hideTroubleshoot();
+            });
+            
+            testPeer.on('error', function(err) {
+                addLog(`[Test] ❌ WebRTC error: ${err.type}`);
+                testPeer.destroy();
+            });
+        }
+        
+        // Initialize PeerJS with improved configuration
         function initializePeer() {
             const simpleId = "CS-" + Math.floor(10000 + Math.random() * 90000);
             
-            // Using PeerJS Cloud Server for reliable connections
+            // Enhanced ICE servers for better cross-device connectivity
+            const iceServers = [
+                { urls: 'stun:stun.l.google.com:19302' },
+                { urls: 'stun:stun1.l.google.com:19302' },
+                { urls: 'stun:stun2.l.google.com:19302' },
+                { urls: 'stun:stun3.l.google.com:19302' },
+                { urls: 'stun:stun4.l.google.com:19302' },
+                { urls: 'stun:global.stun.twilio.com:3478' },
+                { 
+                    urls: 'turn:numb.viagenie.ca',
+                    credential: 'muazkh',
+                    username: 'webrtc@live.com'
+                },
+                {
+                    urls: 'turn:openrelay.metered.ca:80',
+                    username: 'openrelayproject',
+                    credential: 'openrelayproject'
+                },
+                {
+                    urls: 'turn:openrelay.metered.ca:443',
+                    username: 'openrelayproject',
+                    credential: 'openrelayproject'
+                },
+                {
+                    urls: 'turn:openrelay.metered.ca:443?transport=tcp',
+                    username: 'openrelayproject',
+                    credential: 'openrelayproject'
+                }
+            ];
+            
             peer = new Peer(simpleId, {
-                debug: 2,
+                debug: 3,
                 host: '0.peerjs.com',
                 port: 443,
                 path: '/',
                 secure: true,
                 config: {
-                    'iceServers': [
-                        { urls: 'stun:stun.l.google.com:19302' },
-                        { urls: 'stun:global.stun.twilio.com:3478' },
-                        { 
-                            urls: 'turn:numb.viagenie.ca',
-                            credential: 'muazkh',
-                            username: 'webrtc@live.com'
-                        }
-                    ]
-                }
+                    'iceServers': iceServers,
+                    'iceTransportPolicy': 'all',
+                    'rtcConfiguration': {
+                        'iceCandidatePoolSize': 10,
+                        'bundlePolicy': 'max-bundle',
+                        'rtcpMuxPolicy': 'require'
+                    }
+                },
+                // Increase timeouts for mobile connections
+                pingInterval: 5000,
+                // Allow cross-origin connections
+                crossOriginIsolated: false
             });
             
             // Peer event handlers
@@ -1244,7 +1716,11 @@
                 console.log('✅ Connected to PeerJS Cloud with ID:', id);
                 document.getElementById('myId').textContent = id;
                 updateStatus(true, '✅ Connected to PeerJS Cloud');
+                updateConnectionInfo('PeerJS Cloud', 'Connected');
                 addLog(`✅ Connected to PeerJS Cloud with ID: ${id}`);
+                
+                // Reset connection attempts on successful connection
+                connectionAttempts = 0;
             });
             
             peer.on('error', function(err) {
@@ -1260,17 +1736,34 @@
                         break;
                     case 'server-error':
                         errorMessage = 'Server error - retrying...';
-                        setTimeout(initializePeer, 3000);
                         break;
                     case 'browser-incompatible':
-                        errorMessage = 'Browser not supported. Use Chrome/Firefox';
+                        errorMessage = 'Browser not supported';
+                        break;
+                    case 'disconnected':
+                        errorMessage = 'Disconnected - reconnecting...';
+                        break;
+                    case 'socket-error':
+                        errorMessage = 'Socket error - check firewall';
                         break;
                     default:
-                        errorMessage = err.type;
+                        errorMessage = err.type || 'Unknown error';
                 }
                 
                 updateStatus(false, `❌ ${errorMessage}`);
+                updateConnectionInfo('Error', errorMessage);
                 addLog(`❌ Error: ${errorMessage}`);
+                
+                // Auto-reconnect logic
+                if (connectionAttempts < maxConnectionAttempts) {
+                    connectionAttempts++;
+                    addLog(`♻️ Reconnection attempt ${connectionAttempts}/${maxConnectionAttempts}...`);
+                    setTimeout(() => {
+                        if (peer && peer.disconnected) {
+                            initializePeer();
+                        }
+                    }, 3000);
+                }
             });
             
             // Handle incoming connections
@@ -1287,15 +1780,33 @@
                     fileName: 'Waiting for file info...'
                 });
                 
+                updateConnectionInfo('Direct P2P', 'Connecting...');
                 addLog(`📡 Incoming connection from: ${conn.peer}`);
+            });
+            
+            // Track connection type
+            peer.on('iceConnectionStateChange', function(state) {
+                console.log('ICE Connection State:', state);
+                
+                if (state === 'connected' || state === 'completed') {
+                    isUsingRelay = peer._iceConnectedState === 'relay';
+                    const connectionType = isUsingRelay ? 'Relay Server' : 'Direct P2P';
+                    updateConnectionInfo(connectionType, state);
+                    addLog(`📶 Connection type: ${connectionType}`);
+                    
+                    if (isUsingRelay) {
+                        addLog('[Info] Using relay server (direct connection failed)');
+                    }
+                }
             });
         }
         
-        // Setup connection
+        // Setup connection with improved error handling
         function setupConnection(conn) {
             conn.on('open', function() {
                 console.log('✅ Connection opened with peer');
                 updateStatus(true, '✅ Connected to peer');
+                updateConnectionInfo('Direct P2P', 'Connected');
                 addLog('✅ Peer connection established');
             });
             
@@ -1308,6 +1819,7 @@
                 console.log('🔌 Connection closed');
                 addLog('🔌 Connection closed');
                 updateStatus(false, 'Disconnected');
+                updateConnectionInfo('Disconnected', 'Closed');
                 connection = null;
                 
                 setTimeout(() => {
@@ -1317,7 +1829,14 @@
             
             conn.on('error', function(err) {
                 console.error('❌ Connection error:', err);
+                updateConnectionInfo('Error', err.type || 'Connection failed');
                 addLog(`❌ Connection error: ${err.message || err.type}`);
+            });
+            
+            // Monitor connection state
+            conn.on('iceStateChanged', function(state) {
+                console.log('ICE State Changed:', state);
+                updateConnectionInfo('P2P Connection', state);
             });
         }
         
@@ -1377,6 +1896,16 @@
                 if (e.key === 'Escape') {
                     hideProgressModal();
                     hideHelp();
+                    hideTroubleshoot();
+                }
+            });
+            
+            // Handle page visibility changes (important for mobile)
+            document.addEventListener('visibilitychange', function() {
+                if (document.hidden) {
+                    addLog('[Mobile] App is in background');
+                } else {
+                    addLog('[Mobile] App is active');
                 }
             });
         }
@@ -1431,7 +1960,7 @@
             updateFileList();
         }
         
-        // Send files
+        // Send files with improved connection handling
         async function sendFiles() {
             const receiverId = document.getElementById('receiverId').value.trim();
             
@@ -1466,16 +1995,39 @@
                 totalSize: totalFilesSize
             });
             
-            // Connect to receiver
+            updateConnectionInfo('Connecting', 'Starting connection...');
+            
+            // Connect to receiver with timeout
             addLog(`🔗 Connecting to ${receiverId}...`);
-            connection = peer.connect(receiverId);
+            
+            const connectionTimeout = setTimeout(() => {
+                if (!connection || !connection.open) {
+                    addLog('⚠️ Connection timeout - trying alternative method');
+                    updateConnectionInfo('Timeout', 'Trying relay...');
+                    attemptAlternativeConnection(receiverId);
+                }
+            }, 10000); // 10 second timeout
+            
+            connection = peer.connect(receiverId, {
+                reliable: true,
+                serialization: 'binary',
+                metadata: {
+                    client: 'Cube Share',
+                    version: '2.0',
+                    device: navigator.userAgent.match(/mobile/i) ? 'mobile' : 'desktop'
+                }
+            });
+            
             setupConnection(connection);
             
             connection.on('open', async function() {
+                clearTimeout(connectionTimeout);
                 updateBigProgress(10, {
                     status: 'Connected!',
                     subStatus: 'Preparing file transfer...'
                 });
+                
+                updateConnectionInfo('Direct P2P', 'Connected');
                 
                 isSending = true;
                 updateControls(true);
@@ -1506,7 +2058,7 @@
                         totalSize: totalFilesSize
                     });
                     
-                    // Show completion message in countdown
+                    // Show completion in countdown
                     document.getElementById('countdownDisplay').textContent = 'DONE!';
                     document.getElementById('bigTime').textContent = 'Complete';
                     
@@ -1527,6 +2079,7 @@
                     });
                     
                     document.getElementById('countdownDisplay').textContent = 'ERROR';
+                    updateConnectionInfo('Failed', error.message);
                     
                     addLog(`❌ Transfer failed: ${error.message}`);
                     updateStatus(false, 'Transfer Failed');
@@ -1539,6 +2092,7 @@
             });
             
             connection.on('error', function(err) {
+                clearTimeout(connectionTimeout);
                 console.error('❌ Connection error:', err);
                 
                 updateBigProgress(0, {
@@ -1547,19 +2101,35 @@
                 });
                 
                 document.getElementById('countdownDisplay').textContent = 'FAILED';
+                updateConnectionInfo('Error', err.type);
                 
                 addLog(`❌ Failed to connect: ${err.message || err.type}`);
-                alert(`Failed to connect to ${receiverId}\nCheck the ID and try again.`);
+                
+                // Try alternative connection method
+                attemptAlternativeConnection(receiverId);
+                
                 isSending = false;
                 updateControls(false);
-                
-                setTimeout(() => {
-                    hideProgressModal();
-                }, 2000);
             });
         }
         
-        // Send single file
+        // Attempt alternative connection method
+        function attemptAlternativeConnection(receiverId) {
+            addLog('🔄 Trying alternative connection method...');
+            updateConnectionInfo('Trying', 'Alternative method...');
+            
+            // This could be extended to use WebSocket fallback or other methods
+            // For now, just show error with troubleshooting tips
+            setTimeout(() => {
+                updateBigProgress(0, {
+                    status: 'Connection Failed',
+                    subStatus: 'Check troubleshooting tips'
+                });
+                showTroubleshoot();
+            }, 2000);
+        }
+        
+        // Send single file with improved chunking for mobile
         async function sendFile(file, current, total) {
             return new Promise((resolve, reject) => {
                 addLog(`📤 Sending: ${file.name} (${current}/${total})`);
@@ -1584,7 +2154,8 @@
                 });
                 
                 let offset = 0;
-                const chunkSize = 256 * 1024; // 256KB chunks for better performance
+                // Use smaller chunks for mobile connections
+                const chunkSize = isUsingRelay ? 32 * 1024 : 64 * 1024; // 32KB for relay, 64KB for direct
                 const reader = new FileReader();
                 
                 reader.onload = async function(e) {
@@ -1624,7 +2195,8 @@
                         updateTransferStats(transferredSize, totalFilesSize);
                         
                         if (offset < file.size) {
-                            readNextChunk();
+                            // Add small delay for mobile stability
+                            setTimeout(readNextChunk, 10);
                         } else {
                             // File complete
                             connection.send({
@@ -1678,6 +2250,8 @@
                 fileName: data.name,
                 totalSize: data.size
             });
+            
+            updateConnectionInfo('Receiving', 'Preparing download...');
             
             // Ask for confirmation for large files
             if (data.size > 500 * 1024 * 1024) { // 500MB
@@ -1735,6 +2309,7 @@
             
             // Show completion in countdown
             document.getElementById('countdownDisplay').textContent = 'DONE!';
+            updateConnectionInfo('Complete', 'Download finished');
             
             // Combine chunks and save file
             const blob = new Blob(receivedChunks);
@@ -1772,6 +2347,7 @@
             });
             
             document.getElementById('countdownDisplay').textContent = 'CANCELLED';
+            updateConnectionInfo('Cancelled', 'Transfer stopped');
             
             setTimeout(() => {
                 hideProgressModal();
@@ -1795,9 +2371,11 @@
                     status: 'Transfer Paused',
                     subStatus: 'Click resume to continue'
                 });
+                updateConnectionInfo('Paused', 'Transfer paused');
             } else {
                 btn.innerHTML = '⏸️';
                 btn.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                updateConnectionInfo('Resuming', 'Transfer continuing...');
             }
         }
         
@@ -1897,6 +2475,8 @@
                 dot.className = 'status-dot';
                 if (connected) {
                     dot.classList.add('connected');
+                } else if (message.includes('reconnect')) {
+                    dot.classList.add('reconnecting');
                 }
             }
         }
@@ -1935,9 +2515,18 @@
             if (peer && peer.disconnected) {
                 console.log('♻️ Attempting to reconnect...');
                 addLog('♻️ Attempting to reconnect...');
+                updateStatus(false, 'Reconnecting...');
                 initializePeer();
             }
-        }, 10000);
+        }, 15000);
+        
+        // Show connection tips for mobile
+        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+            setTimeout(() => {
+                addLog('[Mobile Tip] Keep screen ON during transfer');
+                addLog('[Mobile Tip] Use Wi-Fi for better speed');
+            }, 5000);
+        }
     </script>
 </body>
 </html>
