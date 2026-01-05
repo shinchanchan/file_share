@@ -263,7 +263,7 @@
 
         .modal-content {
             width: 100%;
-            max-width: 400px;
+            max-width: 500px;
             background: rgba(255, 255, 255, 0.08);
             backdrop-filter: blur(30px);
             border-radius: 24px;
@@ -377,9 +377,44 @@
             transform: translateX(-50%) translateY(0);
         }
 
-        /* Help Section Styles */
-        .help-step {
+        /* Help Modal Specific Styles */
+        .help-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .help-header h2 {
+            color: white;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .help-header p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+        }
+
+        /* Help Sections */
+        .help-section {
+            margin-bottom: 25px;
             background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .section-title {
+            color: white;
+            font-size: 18px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Step Cards */
+        .step-card {
+            background: rgba(255, 255, 255, 0.07);
             border-radius: 12px;
             padding: 15px;
             margin-bottom: 10px;
@@ -388,44 +423,105 @@
 
         .step-number {
             display: inline-block;
-            width: 24px;
-            height: 24px;
+            width: 28px;
+            height: 28px;
             background: #667eea;
             color: white;
             border-radius: 50%;
             text-align: center;
-            line-height: 24px;
+            line-height: 28px;
             font-weight: bold;
             margin-right: 10px;
         }
 
         .step-title {
             color: white;
-            font-weight: 500;
+            font-weight: 600;
             margin-bottom: 5px;
+            display: inline-block;
         }
 
         .step-desc {
             color: rgba(255, 255, 255, 0.7);
             font-size: 14px;
             line-height: 1.5;
+            margin-left: 38px;
         }
 
-        .tip-box {
+        /* Tips Box */
+        .tips-box {
             background: rgba(100, 150, 255, 0.1);
             border: 1px solid rgba(100, 150, 255, 0.3);
             border-radius: 12px;
-            padding: 15px;
-            margin: 15px 0;
+            padding: 20px;
+            margin: 20px 0;
         }
 
-        .tip-title {
+        .tips-title {
             color: #667eea;
             font-weight: 600;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             display: flex;
             align-items: center;
+            gap: 10px;
+        }
+
+        .tip-item {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: flex-start;
             gap: 8px;
+        }
+
+        .tip-item:before {
+            content: "•";
+            color: #667eea;
+            font-size: 20px;
+            line-height: 1;
+        }
+
+        /* FAQ Section */
+        .faq-item {
+            background: rgba(255, 255, 255, 0.07);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .faq-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .faq-question {
+            color: white;
+            font-weight: 500;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .faq-answer {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+            margin-top: 10px;
+            display: none;
+            line-height: 1.5;
+        }
+
+        .faq-item.active .faq-answer {
+            display: block;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 20px;
         }
 
         /* Responsive */
@@ -450,6 +546,14 @@
             .circle-percent {
                 font-size: 28px;
             }
+            
+            .modal-content {
+                padding: 20px;
+            }
+            
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -461,7 +565,7 @@
 
         <div class="header">
             <h1>🚀 Cube Share</h1>
-            <p>Share files between any device</p>
+            <p>Simple file sharing with 4-digit codes</p>
         </div>
 
         <!-- Connection Status -->
@@ -472,13 +576,13 @@
 
         <!-- Your ID -->
         <div class="id-box">
-            <div class="id-label">Your Unique ID</div>
+            <div class="id-label">Your Unique Code</div>
             <div id="myId">----</div>
             <button class="simple-btn" onclick="copyMyId()">
-                📋 Copy ID
+                📋 Copy Code
             </button>
-            <button class="simple-btn secondary" onclick="generateNewId()" style="margin-top: 10px;">
-                🔄 Generate New ID
+            <button class="simple-btn secondary" onclick="generateNewId()" style="margin-top: 10px; display: none;">
+                🔄 New Code
             </button>
         </div>
 
@@ -486,7 +590,7 @@
         <input type="text" 
                class="simple-input" 
                id="receiverId" 
-               placeholder="Enter receiver's 4-digit ID"
+               placeholder="Enter receiver's 4-digit code"
                maxlength="4"
                pattern="[0-9]{4}"
                oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 4)">
@@ -508,10 +612,6 @@
         <button class="simple-btn" onclick="startSending()" id="sendBtn" disabled>
             🚀 Send Files
         </button>
-
-        <div style="text-align: center; color: rgba(255,255,255,0.4); font-size: 12px; margin-top: 20px;">
-            Simple 4-digit ID file sharing
-        </div>
     </div>
 
     <!-- Sending Modal -->
@@ -595,13 +695,13 @@
             </div>
 
             <!-- Controls -->
-            <button class="simple-btn" onclick="acceptFiles()" id="acceptBtn" style="display: none;">
+            <button class="simple-btn" onclick="acceptFiles()" id="acceptBtn">
                 ✅ Accept Files
             </button>
-            <button class="simple-btn" onclick="declineFiles()" id="declineBtn" style="display: none; background: rgba(255,100,100,0.3);">
+            <button class="simple-btn" onclick="declineFiles()" id="declineBtn" style="background: rgba(255,100,100,0.3); margin-top: 10px;">
                 ❌ Decline
             </button>
-            <button class="simple-btn" onclick="closeReceiveModal()" id="closeReceiveBtn">
+            <button class="simple-btn" onclick="closeReceiveModal()" id="closeReceiveBtn" style="display: none; margin-top: 10px;">
                 Close
             </button>
         </div>
@@ -612,58 +712,140 @@
         <div class="modal-content">
             <button class="close-btn" onclick="closeHelpModal()">✕</button>
             
-            <div style="text-align: center; margin-bottom: 20px;">
-                <div style="color: white; font-size: 20px; font-weight: 600;">How to Use Cube Share</div>
+            <!-- Help Header -->
+            <div class="help-header">
+                <h2>📚 How to Use Cube Share</h2>
+                <p>Simple guide to share files between devices</p>
             </div>
 
-            <!-- Step-by-step Guide -->
-            <div class="help-step">
-                <div class="step-title"><span class="step-number">1</span> Get Your ID</div>
-                <div class="step-desc">Your 4-digit ID is generated automatically. Share it with others so they can send you files.</div>
-            </div>
-            
-            <div class="help-step">
-                <div class="step-title"><span class="step-number">2</span> Send Files</div>
-                <div class="step-desc">
-                    1. Enter the receiver's 4-digit ID<br>
-                    2. Select files to send<br>
-                    3. Click "Send Files"<br>
-                    4. Wait for connection and transfer
+            <!-- How to Send Section -->
+            <div class="help-section">
+                <div class="section-title">
+                    <span>📤</span>
+                    How to Send Files
                 </div>
-            </div>
-            
-            <div class="help-step">
-                <div class="step-title"><span class="step-number">3</span> Receive Files</div>
-                <div class="step-desc">When someone sends you files, you'll see a popup. Click "Accept Files" to start receiving. Files download automatically.</div>
-            </div>
-
-            <!-- Tips -->
-            <div class="tip-box">
-                <div class="tip-title">💡 Tips for Best Experience</div>
-                <div style="color: rgba(255,255,255,0.8); font-size: 14px;">
-                    • Both devices should have good internet connection<br>
-                    • Use 4-digit IDs (easy to share and remember)<br>
-                    • Files transfer directly between devices<br>
-                    • You can generate new ID anytime<br>
-                    • Works on all devices: phones, tablets, computers
+                
+                <div class="step-card">
+                    <div class="step-title"><span class="step-number">1</span>Get Your Code</div>
+                    <div class="step-desc">Your 4-digit code is shown above. Share it with the person receiving files.</div>
+                </div>
+                
+                <div class="step-card">
+                    <div class="step-title"><span class="step-number">2</span>Enter Receiver's Code</div>
+                    <div class="step-desc">Type the receiver's 4-digit code in the input field (numbers only).</div>
+                </div>
+                
+                <div class="step-card">
+                    <div class="step-title"><span class="step-number">3</span>Select Files</div>
+                    <div class="step-desc">Click the upload area or drag & drop files. You can select multiple files.</div>
+                </div>
+                
+                <div class="step-card">
+                    <div class="step-title"><span class="step-number">4</span>Send Files</div>
+                    <div class="step-desc">Click "Send Files" button and wait for the receiver to accept.</div>
                 </div>
             </div>
 
-            <!-- Troubleshooting -->
-            <div style="background: rgba(255,100,100,0.1); border: 1px solid rgba(255,100,100,0.3); border-radius: 12px; padding: 15px; margin: 15px 0;">
-                <div style="color: #ff6b6b; font-weight: 600; margin-bottom: 8px;">🛠️ Troubleshooting</div>
-                <div style="color: rgba(255,255,255,0.8); font-size: 14px;">
-                    <strong>Not connecting?</strong><br>
-                    1. Check both IDs are correct (4 digits)<br>
-                    2. Ensure both devices are online<br>
-                    3. Try generating new ID<br>
-                    4. Refresh the page if stuck
+            <!-- How to Receive Section -->
+            <div class="help-section">
+                <div class="section-title">
+                    <span>📥</span>
+                    How to Receive Files
+                </div>
+                
+                <div class="step-card">
+                    <div class="step-title"><span class="step-number">1</span>Share Your Code</div>
+                    <div class="step-desc">Give your 4-digit code to the person sending you files.</div>
+                </div>
+                
+                <div class="step-card">
+                    <div class="step-title"><span class="step-number">2</span>Wait for Connection</div>
+                    <div class="step-desc">A popup will appear automatically when someone tries to send files.</div>
+                </div>
+                
+                <div class="step-card">
+                    <div class="step-title"><span class="step-number">3</span>Accept Files</div>
+                    <div class="step-desc">Click "Accept Files" to start receiving. Files download automatically.</div>
+                </div>
+                
+                <div class="step-card">
+                    <div class="step-title"><span class="step-number">4</span>Download Complete</div>
+                    <div class="step-desc">Files will be saved to your device's downloads folder.</div>
                 </div>
             </div>
 
-            <button class="simple-btn" onclick="closeHelpModal()" style="margin-top: 20px;">
-                Got it! Start Sharing
-            </button>
+            <!-- Tips Section -->
+            <div class="tips-box">
+                <div class="tips-title">
+                    <span>💡</span>
+                    Pro Tips for Best Experience
+                </div>
+                
+                <div class="tip-item">Both devices need internet connection</div>
+                <div class="tip-item">4-digit codes are easy to share and remember</div>
+                <div class="tip-item">Files transfer directly between devices (no servers)</div>
+                <div class="tip-item">Works on all devices: phones, tablets, computers</div>
+                <div class="tip-item">Try with small files first to test the connection</div>
+                <div class="tip-item">Click "New Code" if you want a fresh 4-digit code</div>
+            </div>
+
+            <!-- FAQ Section -->
+            <div class="help-section">
+                <div class="section-title">
+                    <span>❓</span>
+                    Frequently Asked Questions
+                </div>
+                
+                <div class="faq-item" onclick="toggleFAQ(this)">
+                    <div class="faq-question">
+                        How long does transfer take?
+                        <span>▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        Depends on file size and internet speed. A 10MB file takes about 10-30 seconds on good Wi-Fi.
+                    </div>
+                </div>
+                
+                <div class="faq-item" onclick="toggleFAQ(this)">
+                    <div class="faq-question">
+                        Is it secure?
+                        <span>▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        Yes! Files transfer directly between devices using encrypted WebRTC connection. No files are stored on servers.
+                    </div>
+                </div>
+                
+                <div class="faq-item" onclick="toggleFAQ(this)">
+                    <div class="faq-question">
+                        What if connection fails?
+                        <span>▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        Try these steps: 1) Check both codes are correct 2) Refresh both pages 3) Generate new codes 4) Try with smaller files first.
+                    </div>
+                </div>
+                
+                <div class="faq-item" onclick="toggleFAQ(this)">
+                    <div class="faq-question">
+                        What file types are supported?
+                        <span>▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        All file types! Photos, videos, documents, music - everything works. Maximum recommended size is 50MB per file.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <button class="simple-btn secondary" onclick="copyMyIdFromHelp()">
+                    📋 Copy My Code
+                </button>
+                <button class="simple-btn" onclick="startFromHelp()">
+                    🚀 Start Sending
+                </button>
+            </div>
         </div>
     </div>
 
@@ -674,12 +856,14 @@
         let selectedFiles = [];
         let myId = '';
         let isSending = false;
-        let currentFileIndex = 0;
         
         // File receiving variables
         let receivingFile = null;
         let receivedChunks = [];
         let receivedSize = 0;
+        let currentFileName = '';
+        let currentFileSize = 0;
+        let isReceiving = false;
 
         // Generate 4-digit ID
         function generate4DigitId() {
@@ -697,34 +881,20 @@
                 document.getElementById('myId').textContent = myId;
                 updateStatus('🔄 Connecting to server...', 'connecting');
                 
-                // Initialize Peer
+                // Initialize Peer with simpler config
                 peer = new Peer(myId, {
-                    debug: 1,
                     host: '0.peerjs.com',
                     port: 443,
                     path: '/',
                     secure: true,
-                    config: {
-                        'iceServers': [
-                            { urls: 'stun:stun.l.google.com:19302' },
-                            { urls: 'stun:stun1.l.google.com:19302' },
-                            { urls: 'stun:stun2.l.google.com:19302' },
-                            { urls: 'stun:stun3.l.google.com:19302' },
-                            { urls: 'stun:stun4.l.google.com:19302' },
-                            { 
-                                urls: 'turn:numb.viagenie.ca',
-                                credential: 'muazkh',
-                                username: 'webrtc@live.com'
-                            }
-                        ]
-                    }
+                    debug: 0
                 });
 
                 // Peer event handlers
                 peer.on('open', function(id) {
-                    console.log('✅ Connected with ID:', id);
-                    updateStatus('✅ Connected - Ready to share', 'connected');
-                    showToast('Connected! Your ID: ' + id);
+                    console.log('Connected with ID:', id);
+                    updateStatus('Connected - Ready to share', 'connected');
+                    showToast('Connected! Your code: ' + id);
                 });
 
                 peer.on('error', function(err) {
@@ -741,7 +911,7 @@
 
                 // Handle incoming connections
                 peer.on('connection', function(conn) {
-                    console.log('📡 Incoming connection:', conn.peer);
+                    console.log('📡 Incoming connection from:', conn.peer);
                     handleIncomingConnection(conn);
                 });
 
@@ -766,7 +936,7 @@
                 peer.destroy();
             }
             initializePeer();
-            showToast('New ID generated: ' + myId);
+            showToast('New code generated: ' + myId);
         }
 
         // Update status
@@ -847,7 +1017,7 @@
             const receiverId = document.getElementById('receiverId').value.trim();
             
             if (!receiverId || receiverId.length !== 4) {
-                showToast('Please enter a valid 4-digit ID');
+                showToast('Please enter a valid 4-digit code');
                 return;
             }
             
@@ -917,18 +1087,18 @@
         async function startFileTransfer() {
             isSending = true;
             
-            // Send transfer info
-            const totalSize = selectedFiles.reduce((sum, file) => sum + file.size, 0);
-            connection.send({
-                type: 'transfer_start',
-                totalFiles: selectedFiles.length,
-                totalSize: totalSize,
-                senderId: myId
-            });
-            
-            updateModalProgress(20, 'Starting transfer...');
-            
             try {
+                // First, send file metadata
+                const totalSize = selectedFiles.reduce((sum, file) => sum + file.size, 0);
+                connection.send({
+                    type: 'transfer_start',
+                    totalFiles: selectedFiles.length,
+                    totalSize: totalSize,
+                    senderId: myId
+                });
+                
+                updateModalProgress(20, 'Sending file info...');
+                
                 // Send files one by one
                 for (let i = 0; i < selectedFiles.length; i++) {
                     await sendFile(selectedFiles[i], i);
@@ -946,7 +1116,7 @@
                 
             } catch (error) {
                 console.error('Transfer error:', error);
-                showToast('Transfer failed');
+                showToast('Transfer failed: ' + error.message);
                 closeSendModal();
             } finally {
                 isSending = false;
@@ -954,60 +1124,74 @@
         }
 
         // Send single file
-        function sendFile(file, index) {
+        function sendFile(file, fileIndex) {
             return new Promise((resolve, reject) => {
-                console.log(`📤 Sending: ${file.name} (${index + 1}/${selectedFiles.length})`);
+                console.log(`📤 Sending: ${file.name} (${fileIndex + 1}/${selectedFiles.length})`);
                 
                 // Update modal
                 document.getElementById('modalFileName').textContent = file.name;
                 document.getElementById('modalFileDetails').textContent = 
-                    `${formatSize(file.size)} • File ${index + 1} of ${selectedFiles.length}`;
+                    `${formatSize(file.size)} • File ${fileIndex + 1} of ${selectedFiles.length}`;
                 
-                // Send file info
+                // Send file metadata first
                 connection.send({
                     type: 'file_start',
                     name: file.name,
                     size: file.size,
                     type: file.type,
-                    index: index,
+                    index: fileIndex,
                     total: selectedFiles.length
                 });
                 
                 let offset = 0;
-                const chunkSize = 16 * 1024; // 16KB chunks for reliability
+                const chunkSize = 8 * 1024; // SMALLER 8KB chunks to avoid call stack overflow
                 const reader = new FileReader();
+                let chunkIndex = 0;
                 
                 reader.onload = function(e) {
                     try {
                         const chunk = e.target.result;
                         
+                        // Convert ArrayBuffer to base64 for smaller serialization
+                        const binaryString = String.fromCharCode.apply(null, new Uint8Array(chunk));
+                        const base64Chunk = btoa(binaryString);
+                        
                         // Send chunk
-                        connection.send({
-                            type: 'chunk',
-                            data: chunk,
+                        const chunkData = {
+                            type: 'file_chunk',
+                            fileName: file.name,
+                            fileSize: file.size,
+                            chunk: base64Chunk,
+                            chunkIndex: chunkIndex,
                             offset: offset,
-                            total: file.size
-                        });
+                            total: file.size,
+                            isLast: offset + chunk.byteLength >= file.size
+                        };
+                        
+                        connection.send(chunkData);
                         
                         offset += chunk.byteLength;
+                        chunkIndex++;
                         
                         // Update progress
-                        const fileProgress = Math.round((offset / file.size) * 100);
-                        const overallProgress = 20 + Math.round((index / selectedFiles.length) * 70) + Math.round((fileProgress / 100) * (70 / selectedFiles.length));
-                        updateModalProgress(overallProgress, `Sending: ${file.name} (${fileProgress}%)`);
+                        const percent = Math.round((offset / file.size) * 100);
+                        const overallProgress = 20 + Math.round((fileIndex / selectedFiles.length) * 70) + 
+                                                Math.round((percent / 100) * (70 / selectedFiles.length));
+                        updateModalProgress(overallProgress, `Sending: ${file.name} (${percent}%)`);
                         
                         if (offset < file.size) {
-                            // Read next chunk
-                            readNextChunk();
+                            // Small delay to prevent call stack overflow
+                            setTimeout(() => {
+                                readNextChunk();
+                            }, 10);
                         } else {
-                            // File complete
+                            console.log(`✅ Sent: ${file.name}`);
+                            // Send file complete signal
                             connection.send({
                                 type: 'file_end',
                                 name: file.name,
                                 size: file.size
                             });
-                            
-                            console.log(`✅ Sent: ${file.name}`);
                             resolve();
                         }
                     } catch (error) {
@@ -1024,7 +1208,7 @@
                     reader.readAsArrayBuffer(slice);
                 }
                 
-                // Start reading
+                // Start reading first chunk
                 readNextChunk();
             });
         }
@@ -1049,7 +1233,7 @@
             
             conn.on('close', function() {
                 console.log('🔌 Incoming connection closed');
-                if (receivingFile) {
+                if (isReceiving) {
                     showToast('Connection closed during transfer');
                     resetReceivingState();
                 }
@@ -1064,7 +1248,7 @@
         // Handle incoming data
         function handleIncomingData(data) {
             try {
-                console.log('📨 Received:', data.type);
+                console.log('📨 Received data type:', data.type);
                 
                 switch(data.type) {
                     case 'transfer_start':
@@ -1073,7 +1257,7 @@
                     case 'file_start':
                         handleFileStart(data);
                         break;
-                    case 'chunk':
+                    case 'file_chunk':
                         handleFileChunk(data);
                         break;
                     case 'file_end':
@@ -1085,6 +1269,7 @@
                 }
             } catch (error) {
                 console.error('Error handling data:', error);
+                showToast('Error receiving data');
             }
         }
 
@@ -1099,22 +1284,26 @@
                 receivedFiles: 0
             };
             
-            // Show accept/decline buttons
-            document.getElementById('acceptBtn').style.display = 'block';
-            document.getElementById('declineBtn').style.display = 'block';
-            document.getElementById('closeReceiveBtn').style.display = 'none';
-            
+            // Update UI
             document.getElementById('receiveFileName').textContent = `${data.totalFiles} files`;
             document.getElementById('receiveFileDetails').textContent = `Total: ${formatSize(data.totalSize)}`;
             document.getElementById('receiveStatusText').textContent = `Incoming transfer from ${connection.peer}. Accept?`;
             
             updateReceiveProgress(0, 'Ready to receive');
+            
+            // Auto-accept after 2 seconds
+            setTimeout(() => {
+                if (document.getElementById('acceptBtn').style.display !== 'none') {
+                    acceptFiles();
+                }
+            }, 2000);
         }
 
         // Handle file start
         function handleFileStart(data) {
             console.log('📄 Starting file:', data.name);
             
+            isReceiving = true;
             receivingFile.currentFile = {
                 name: data.name,
                 size: data.size,
@@ -1125,6 +1314,8 @@
             
             receivedChunks = [];
             receivedSize = 0;
+            currentFileName = data.name;
+            currentFileSize = data.size;
             
             // Update UI
             document.getElementById('receiveFileName').textContent = data.name;
@@ -1132,39 +1323,69 @@
                 `${formatSize(data.size)} • File ${data.index + 1} of ${data.total}`;
             document.getElementById('receiveStatusText').textContent = `Receiving: ${data.name}`;
             
+            document.getElementById('acceptBtn').style.display = 'none';
+            document.getElementById('declineBtn').style.display = 'none';
+            
             updateReceiveProgress(0, 'Receiving file...');
         }
 
         // Handle file chunk
         function handleFileChunk(data) {
-            if (!receivingFile || !receivingFile.currentFile) return;
+            if (!isReceiving || currentFileName !== data.fileName) return;
             
-            // Store chunk
-            receivedChunks.push(data.data);
-            receivedSize += data.data.byteLength || data.data.size || 0;
-            
-            // Calculate progress
-            const percent = Math.round((receivedSize / receivingFile.currentFile.size) * 100);
-            const overallPercent = Math.round((receivingFile.receivedFiles / receivingFile.totalFiles) * 50 + (percent / 100) * (50 / receivingFile.totalFiles));
-            
-            updateReceiveProgress(overallPercent, `Receiving: ${receivingFile.currentFile.name} (${percent}%)`);
+            try {
+                // Convert base64 back to binary
+                const binaryString = atob(data.chunk);
+                const bytes = new Uint8Array(binaryString.length);
+                for (let i = 0; i < binaryString.length; i++) {
+                    bytes[i] = binaryString.charCodeAt(i);
+                }
+                
+                receivedChunks.push(bytes);
+                receivedSize += bytes.length;
+                
+                // Calculate progress
+                const percent = Math.round((receivedSize / currentFileSize) * 100);
+                updateReceiveProgress(percent, `Receiving: ${currentFileName} (${percent}%)`);
+                
+            } catch (error) {
+                console.error('Error processing chunk:', error);
+                showToast('Error processing file chunk');
+            }
         }
 
         // Handle file end
         function handleFileEnd(data) {
-            if (!receivingFile || !receivingFile.currentFile) return;
+            if (!isReceiving || currentFileName !== data.name) return;
             
             console.log('✅ File complete:', data.name);
             
-            // Combine chunks and save file
+            // Save the file
+            saveReceivedFile();
+        }
+
+        // Save received file
+        function saveReceivedFile() {
             try {
-                const blob = new Blob(receivedChunks, { type: receivingFile.currentFile.type });
-                const url = URL.createObjectURL(blob);
+                // Combine all chunks
+                let totalLength = 0;
+                receivedChunks.forEach(chunk => {
+                    totalLength += chunk.length;
+                });
                 
-                // Create download link
+                const combinedArray = new Uint8Array(totalLength);
+                let offset = 0;
+                receivedChunks.forEach(chunk => {
+                    combinedArray.set(chunk, offset);
+                    offset += chunk.length;
+                });
+                
+                // Create blob and download
+                const blob = new Blob([combinedArray]);
+                const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = data.name;
+                a.download = currentFileName;
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
@@ -1172,26 +1393,23 @@
                 // Clean up
                 setTimeout(() => URL.revokeObjectURL(url), 1000);
                 
-                receivingFile.receivedFiles++;
-                updateReceiveProgress(
-                    Math.round((receivingFile.receivedFiles / receivingFile.totalFiles) * 100),
-                    `Received: ${data.name}`
-                );
+                console.log('✅ File saved:', currentFileName);
                 
+                // Update UI
+                updateReceiveProgress(100, 'File received!');
                 document.getElementById('receiveStatusText').textContent = 
-                    `✅ ${data.name} downloaded (${receivingFile.receivedFiles}/${receivingFile.totalFiles})`;
+                    `✅ ${currentFileName} downloaded successfully!`;
+                document.getElementById('closeReceiveBtn').style.display = 'block';
                 
-                showToast(`✅ ${data.name} downloaded`);
+                showToast(`✅ ${currentFileName} downloaded!`);
+                
+                // Reset for next file
+                resetReceivingState();
                 
             } catch (error) {
                 console.error('Error saving file:', error);
-                showToast('Error saving file');
+                showToast('Error saving received file');
             }
-            
-            // Reset for next file
-            receivingFile.currentFile = null;
-            receivedChunks = [];
-            receivedSize = 0;
         }
 
         // Handle transfer complete
@@ -1200,7 +1418,7 @@
             
             updateReceiveProgress(100, 'Transfer complete!');
             document.getElementById('receiveStatusText').textContent = 
-                `✅ All ${receivingFile.receivedFiles} files received successfully!`;
+                `✅ All files received successfully!`;
             
             showToast('✅ All files received!');
             
@@ -1209,13 +1427,7 @@
             document.getElementById('declineBtn').style.display = 'none';
             document.getElementById('closeReceiveBtn').style.display = 'block';
             
-            // Reset after 5 seconds
-            setTimeout(() => {
-                if (document.getElementById('receiveModal').style.display === 'flex') {
-                    closeReceiveModal();
-                }
-            }, 5000);
-            
+            // Reset
             resetReceivingState();
         }
 
@@ -1225,15 +1437,14 @@
                 connection.send({ type: 'transfer_accepted' });
                 document.getElementById('acceptBtn').style.display = 'none';
                 document.getElementById('declineBtn').style.display = 'none';
-                document.getElementById('receiveStatusText').textContent = 'Transfer accepted. Waiting for files...';
-                showToast('Transfer accepted');
+                document.getElementById('receiveStatusText').textContent = 'Ready to receive files...';
+                showToast('Ready to receive files');
             }
         }
 
         // Decline incoming files
         function declineFiles() {
             if (connection && connection.open) {
-                connection.send({ type: 'transfer_declined' });
                 connection.close();
                 closeReceiveModal();
                 showToast('Transfer declined');
@@ -1242,7 +1453,9 @@
 
         // Reset receiving state
         function resetReceivingState() {
-            receivingFile = null;
+            isReceiving = false;
+            currentFileName = '';
+            currentFileSize = 0;
             receivedChunks = [];
             receivedSize = 0;
         }
@@ -1253,9 +1466,6 @@
             
             if (data.type === 'transfer_accepted') {
                 showToast('Receiver accepted transfer');
-            } else if (data.type === 'transfer_declined') {
-                showToast('Receiver declined transfer');
-                closeSendModal();
             }
         }
 
@@ -1285,19 +1495,44 @@
         function showReceiveModal() {
             document.getElementById('receiveModal').style.display = 'flex';
             updateReceiveProgress(0, 'Waiting for connection...');
-            document.getElementById('acceptBtn').style.display = 'none';
-            document.getElementById('declineBtn').style.display = 'none';
-            document.getElementById('closeReceiveBtn').style.display = 'block';
+            document.getElementById('acceptBtn').style.display = 'block';
+            document.getElementById('declineBtn').style.display = 'block';
+            document.getElementById('closeReceiveBtn').style.display = 'none';
         }
 
         // Show help modal
         function showHelpModal() {
+            closeAllModals();
             document.getElementById('helpModal').style.display = 'flex';
         }
 
         // Close help modal
         function closeHelpModal() {
             document.getElementById('helpModal').style.display = 'none';
+        }
+
+        // Close all modals
+        function closeAllModals() {
+            document.getElementById('sendModal').style.display = 'none';
+            document.getElementById('receiveModal').style.display = 'none';
+            document.getElementById('helpModal').style.display = 'none';
+        }
+
+        // Toggle FAQ item
+        function toggleFAQ(element) {
+            element.classList.toggle('active');
+        }
+
+        // Copy ID from help modal
+        function copyMyIdFromHelp() {
+            copyMyId();
+            closeHelpModal();
+        }
+
+        // Start sending from help modal
+        function startFromHelp() {
+            closeHelpModal();
+            document.getElementById('receiverId').focus();
         }
 
         // Close send modal
@@ -1323,7 +1558,7 @@
         // Copy my ID
         function copyMyId() {
             navigator.clipboard.writeText(myId).then(() => {
-                showToast('✅ ID copied to clipboard!');
+                showToast('✅ Code copied to clipboard!');
             }).catch(() => {
                 // Fallback for older browsers
                 const textArea = document.createElement('textarea');
@@ -1332,7 +1567,7 @@
                 textArea.select();
                 document.execCommand('copy');
                 document.body.removeChild(textArea);
-                showToast('✅ ID copied!');
+                showToast('✅ Code copied!');
             });
         }
 
@@ -1386,7 +1621,7 @@
             
             // Show welcome message
             setTimeout(() => {
-                showToast('Welcome to Cube Share! Click ? for help.');
+                showToast('Welcome! Click ? button for help.');
             }, 1500);
         });
     </script>
