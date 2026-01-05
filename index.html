@@ -392,127 +392,30 @@
             margin-top: 10px;
         }
 
-        /* Help Modal Specific Styles */
-        .help-content {
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-
-        .help-section {
-            margin-bottom: 25px;
-        }
-
-        .help-title {
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.9);
             color: white;
-            font-size: 20px;
-            margin-bottom: 15px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .help-step {
-            background: rgba(255, 255, 255, 0.05);
+            padding: 12px 24px;
             border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-left: 4px solid #667eea;
-        }
-
-        .step-number {
-            display: inline-block;
-            width: 24px;
-            height: 24px;
-            background: #667eea;
-            color: white;
-            border-radius: 50%;
+            font-weight: 500;
+            z-index: 10000;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            max-width: 80%;
             text-align: center;
-            line-height: 24px;
-            font-weight: bold;
-            margin-right: 10px;
+            opacity: 0;
+            transition: all 0.3s ease;
         }
 
-        .step-title {
-            color: white;
-            font-weight: 500;
-            margin-bottom: 5px;
-        }
-
-        .step-desc {
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 14px;
-            line-height: 1.5;
-        }
-
-        .tip-box {
-            background: rgba(100, 150, 255, 0.1);
-            border: 1px solid rgba(100, 150, 255, 0.3);
-            border-radius: 12px;
-            padding: 15px;
-            margin: 15px 0;
-        }
-
-        .tip-title {
-            color: #667eea;
-            font-weight: 600;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .quality-guide {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin: 15px 0;
-        }
-
-        .quality-guide-item {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-            padding: 12px;
-            text-align: center;
-        }
-
-        .quality-name {
-            color: white;
-            font-weight: 500;
-            margin-bottom: 5px;
-        }
-
-        .quality-desc {
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 12px;
-        }
-
-        /* FAQ Section */
-        .faq-item {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 10px;
-            cursor: pointer;
-        }
-
-        .faq-question {
-            color: white;
-            font-weight: 500;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .faq-answer {
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 14px;
-            margin-top: 10px;
-            display: none;
-        }
-
-        .faq-item.active .faq-answer {
-            display: block;
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
         }
     </style>
 </head>
@@ -525,6 +428,11 @@
         <div class="header">
             <h1>🚀 Cube Share</h1>
             <p>Simple P2P File Transfer</p>
+        </div>
+
+        <!-- Connection Status -->
+        <div class="status" id="connectionStatus">
+            <span style="color: #ff6b6b;">●</span> Connecting to server...
         </div>
 
         <!-- Your ID -->
@@ -557,7 +465,7 @@
         </button>
 
         <div class="small-text">
-            Files will be optimized for faster transfer
+            Ready to send and receive files
         </div>
     </div>
 
@@ -651,154 +559,60 @@
                 </div>
             </div>
 
-            <!-- Status -->
+            <!-- Receive Controls -->
             <div class="status" id="receiveStatusText">
                 Ready to receive files
             </div>
 
-            <button class="simple-btn" onclick="closeReceiveModal()">
+            <button class="simple-btn" id="receiveAcceptBtn" onclick="acceptTransfer()" style="display: none;">
+                Accept Files
+            </button>
+            
+            <button class="simple-btn" onclick="declineTransfer()" style="background: rgba(255,100,100,0.3); margin-top: 10px; display: none;" id="receiveDeclineBtn">
+                Decline
+            </button>
+
+            <button class="simple-btn" onclick="downloadReceivedFile()" id="downloadBtn" style="display: none;">
+                ⬇️ Download File
+            </button>
+
+            <button class="simple-btn" onclick="closeReceiveModal()" id="closeReceiveBtn">
                 Close
             </button>
         </div>
     </div>
 
-    <!-- Help Modal -->
+    <!-- Help Modal (simplified) -->
     <div class="modal" id="helpModal">
-        <div class="modal-content help-content">
+        <div class="modal-content">
             <button class="close-btn" onclick="closeHelpModal()">✕</button>
             
-            <div class="help-section">
-                <div class="help-title">📖 How to Use Cube Share</div>
-                
-                <!-- Step-by-step Guide -->
-                <div class="help-step">
-                    <div class="step-title"><span class="step-number">1</span> Get Your ID</div>
-                    <div class="step-desc">Wait for your unique ID to appear. Copy it and share with others so they can send you files.</div>
+            <div style="text-align: center; margin-bottom: 20px;">
+                <div style="color: white; font-size: 20px; font-weight: 600;">How to Use Cube Share</div>
+            </div>
+
+            <div class="file-info" style="text-align: left;">
+                <div style="color: white; margin-bottom: 10px;">📤 To Send:</div>
+                <div style="color: rgba(255,255,255,0.7); font-size: 14px; margin-bottom: 10px;">
+                    1. Share your ID with receiver<br>
+                    2. Enter receiver's ID<br>
+                    3. Select files<br>
+                    4. Choose quality<br>
+                    5. Click Send
                 </div>
                 
-                <div class="help-step">
-                    <div class="step-title"><span class="step-number">2</span> Send Files</div>
-                    <div class="step-desc">
-                        <ol style="color: rgba(255,255,255,0.7); padding-left: 20px; margin-top: 5px;">
-                            <li>Enter receiver's ID</li>
-                            <li>Select files to send</li>
-                            <li>Choose quality level</li>
-                            <li>Click "Start Transfer"</li>
-                        </ol>
-                    </div>
-                </div>
-                
-                <div class="help-step">
-                    <div class="step-title"><span class="step-number">3</span> Receive Files</div>
-                    <div class="step-desc">When someone sends you files, the receive modal will appear automatically. Files will download when transfer completes.</div>
+                <div style="color: white; margin: 20px 0 10px 0;">📥 To Receive:</div>
+                <div style="color: rgba(255,255,255,0.7); font-size: 14px;">
+                    1. Share your ID with sender<br>
+                    2. Wait for connection<br>
+                    3. Accept files when prompted<br>
+                    4. Download received files
                 </div>
             </div>
 
-            <!-- Quality Guide -->
-            <div class="help-section">
-                <div class="help-title">⚙️ Quality Settings Guide</div>
-                
-                <div class="quality-guide">
-                    <div class="quality-guide-item">
-                        <div class="quality-name">Original</div>
-                        <div class="quality-desc">No compression<br>Best quality</div>
-                    </div>
-                    <div class="quality-guide-item">
-                        <div class="quality-name">High</div>
-                        <div class="quality-desc">70% size<br>Great quality</div>
-                    </div>
-                    <div class="quality-guide-item">
-                        <div class="quality-name">Medium</div>
-                        <div class="quality-desc">50% size<br>Good quality</div>
-                    </div>
-                    <div class="quality-guide-item">
-                        <div class="quality-name">Low</div>
-                        <div class="quality-desc">30% size<br>Fast transfer</div>
-                    </div>
-                </div>
-                
-                <div class="tip-box">
-                    <div class="tip-title">💡 Pro Tip</div>
-                    <div style="color: rgba(255,255,255,0.8); font-size: 14px;">
-                        Use <strong>High</strong> for videos, <strong>Medium</strong> for photos, and <strong>Low</strong> for documents or when you need fastest transfer.
-                    </div>
-                </div>
-            </div>
-
-            <!-- Tips Section -->
-            <div class="help-section">
-                <div class="help-title">🚀 Tips for Best Experience</div>
-                
-                <div class="help-step">
-                    <div class="step-title">📱 iPhone Videos</div>
-                    <div class="step-desc">For iPhone videos (.mov, .mp4), use "Original" or "High" quality to preserve quality while optimizing size.</div>
-                </div>
-                
-                <div class="help-step">
-                    <div class="step-title">⚡ Faster Transfers</div>
-                    <div class="step-desc">Use "Low" quality for documents and photos where maximum quality isn't required.</div>
-                </div>
-                
-                <div class="help-step">
-                    <div class="step-title">🔗 Connection Issues</div>
-                    <div class="step-desc">Ensure both devices are on same network or have good internet connection for best results.</div>
-                </div>
-            </div>
-
-            <!-- FAQ Section -->
-            <div class="help-section">
-                <div class="help-title">❓ Frequently Asked Questions</div>
-                
-                <div class="faq-item" onclick="toggleFAQ(this)">
-                    <div class="faq-question">
-                        How long does transfer take?
-                        <span>▼</span>
-                    </div>
-                    <div class="faq-answer">
-                        Depends on file size and quality setting. A 1GB file at High quality takes about 2-5 minutes on good Wi-Fi.
-                    </div>
-                </div>
-                
-                <div class="faq-item" onclick="toggleFAQ(this)">
-                    <div class="faq-question">
-                        Is it secure?
-                        <span>▼</span>
-                    </div>
-                    <div class="faq-answer">
-                        Yes! Files transfer directly between devices (P2P) without going through any server.
-                    </div>
-                </div>
-                
-                <div class="faq-item" onclick="toggleFAQ(this)">
-                    <div class="faq-question">
-                        What file types are supported?
-                        <span>▼</span>
-                    </div>
-                    <div class="faq-answer">
-                        All file types! Videos, photos, documents, music - everything works.
-                    </div>
-                </div>
-                
-                <div class="faq-item" onclick="toggleFAQ(this)">
-                    <div class="faq-question">
-                        Why choose lower quality?
-                        <span>▼</span>
-                    </div>
-                    <div class="faq-answer">
-                        Lower quality means faster transfer times and less data usage, useful for slow connections or large files.
-                    </div>
-                </div>
-            </div>
-
-            <!-- Quick Actions -->
-            <div style="margin-top: 25px; text-align: center;">
-                <button class="simple-btn" style="margin: 5px;" onclick="showSendModal()">
-                    🚀 Start Sending
-                </button>
-                <button class="simple-btn" style="margin: 5px; background: rgba(100, 150, 255, 0.3);" onclick="copyMyId()">
-                    📋 Copy My ID
-                </button>
-            </div>
+            <button class="simple-btn" onclick="closeHelpModal()">
+                Got it!
+            </button>
         </div>
     </div>
 
@@ -810,25 +624,29 @@
         let isSending = false;
         let isPaused = false;
         let currentQuality = 'high';
-        let transferInterval = null;
         let currentProgress = 0;
-        let timeRemaining = 0;
-        let currentFile = null;
+        
+        // File receiving variables
+        let incomingFile = null;
+        let receivedChunks = [];
+        let totalFileSize = 0;
+        let receivedSize = 0;
+        let currentFileName = '';
+        let transferStartTime = null;
 
         // Initialize on load
         document.addEventListener('DOMContentLoaded', function() {
             initializePeer();
             setupEventListeners();
-            
-            // Show welcome message
-            setTimeout(() => {
-                showToast("Welcome to Cube Share! Click ? for help.");
-            }, 1000);
+            showToast("Cube Share loading...");
         });
 
         // Initialize PeerJS
         function initializePeer() {
-            const simpleId = "CS-" + Math.floor(10000 + Math.random() * 90000);
+            // Generate a simpler ID for better connectivity
+            const simpleId = "user_" + Math.random().toString(36).substr(2, 6);
+            
+            console.log("Initializing PeerJS with ID:", simpleId);
             
             peer = new Peer(simpleId, {
                 host: '0.peerjs.com',
@@ -837,129 +655,303 @@
                 secure: true,
                 config: {
                     'iceServers': [
-                        { urls: 'stun:stun.l.google.com:19302' }
+                        { urls: 'stun:stun.l.google.com:19302' },
+                        { urls: 'stun:stun1.l.google.com:19302' },
+                        { urls: 'stun:stun2.l.google.com:19302' },
+                        { urls: 'stun:stun3.l.google.com:19302' },
+                        { urls: 'stun:stun4.l.google.com:19302' }
                     ]
                 }
             });
             
             peer.on('open', function(id) {
+                console.log('✅ Connected to PeerJS with ID:', id);
                 document.getElementById('myId').textContent = id;
-                console.log('Connected with ID:', id);
-                showToast("Connected! Your ID is ready.");
+                document.getElementById('connectionStatus').innerHTML = 
+                    '<span style="color: #2ed573;">●</span> Connected - Share your ID: ' + id;
+                showToast("✅ Connected! Your ID: " + id);
             });
             
+            peer.on('error', function(err) {
+                console.error('❌ PeerJS Error:', err);
+                document.getElementById('connectionStatus').innerHTML = 
+                    '<span style="color: #ff6b6b;">●</span> Connection error - Retrying...';
+                showToast("Connection error, retrying...");
+                
+                // Retry connection after 3 seconds
+                setTimeout(initializePeer, 3000);
+            });
+            
+            // Handle incoming connections
             peer.on('connection', function(conn) {
-                console.log('Incoming connection:', conn.peer);
+                console.log('📡 Incoming connection from:', conn.peer);
+                showToast("📡 Incoming connection from: " + conn.peer);
+                
                 connection = conn;
-                setupConnection(conn);
+                setupIncomingConnection(conn);
+                
+                // Show receive modal
                 showReceiveModal(conn.peer);
-                showToast("Incoming connection from: " + conn.peer);
             });
         }
 
-        // Setup connection
-        function setupConnection(conn) {
+        // Setup incoming connection
+        function setupIncomingConnection(conn) {
             conn.on('open', function() {
-                console.log('Connection opened');
+                console.log('✅ Incoming connection opened');
+                showToast("✅ Connected to sender");
+                
+                // Show accept/decline buttons
+                document.getElementById('receiveAcceptBtn').style.display = 'block';
+                document.getElementById('receiveDeclineBtn').style.display = 'block';
+                document.getElementById('closeReceiveBtn').style.display = 'none';
+                
+                document.getElementById('receiveStatusText').textContent = 
+                    "Connection established. Accept files?";
             });
             
             conn.on('data', function(data) {
-                handleIncomingData(data);
+                console.log('📨 Received data type:', data.type);
+                handleIncomingData(data, conn);
             });
             
             conn.on('close', function() {
-                console.log('Connection closed');
-                connection = null;
+                console.log('🔌 Incoming connection closed');
                 showToast("Connection closed");
+                connection = null;
+            });
+            
+            conn.on('error', function(err) {
+                console.error('❌ Connection error:', err);
+                showToast("Connection error: " + err.message);
             });
         }
 
         // Handle incoming data
-        function handleIncomingData(data) {
-            console.log('Received data:', data.type);
-            
-            switch(data.type) {
-                case 'transfer_start':
-                    handleTransferStart(data);
-                    break;
-                case 'file_start':
-                    handleFileStart(data);
-                    break;
-                case 'chunk':
-                    handleChunk(data);
-                    break;
-                case 'file_end':
-                    handleFileEnd(data);
-                    break;
-                case 'transfer_complete':
-                    handleTransferComplete();
-                    break;
-                case 'transfer_cancel':
-                    handleTransferCancel();
-                    break;
+        function handleIncomingData(data, conn) {
+            try {
+                switch(data.type) {
+                    case 'transfer_start':
+                        handleTransferStart(data, conn);
+                        break;
+                    case 'file_start':
+                        handleFileStart(data);
+                        break;
+                    case 'chunk':
+                        handleChunk(data);
+                        break;
+                    case 'file_end':
+                        handleFileEnd(data);
+                        break;
+                    case 'transfer_complete':
+                        handleTransferComplete();
+                        break;
+                    case 'transfer_cancel':
+                        handleTransferCancel();
+                        break;
+                    default:
+                        console.log('Unknown data type:', data.type);
+                }
+            } catch (error) {
+                console.error('Error handling incoming data:', error);
+                showToast("Error receiving data");
             }
         }
 
         // Handle transfer start
-        function handleTransferStart(data) {
-            document.getElementById('receiveFileName').textContent = `${data.fileCount} files`;
-            document.getElementById('receiveFileDetails').textContent = `Total: ${formatSize(data.totalSize)} • ${data.quality} quality`;
-            updateReceiveProgress(0, 'Receiving...');
-            showToast(`Incoming transfer: ${data.fileCount} files`);
+        function handleTransferStart(data, conn) {
+            console.log('📥 Transfer start received:', data);
+            
+            incomingFile = {
+                name: 'Multiple files',
+                size: data.totalSize,
+                received: 0,
+                chunks: [],
+                fileCount: data.fileCount,
+                quality: data.quality
+            };
+            
+            // Update UI
+            document.getElementById('receiveFileName').textContent = `${data.fileCount} files incoming`;
+            document.getElementById('receiveFileDetails').textContent = 
+                `Total: ${formatSize(data.totalSize)} • ${data.quality} quality`;
+            
+            document.getElementById('receiveStatusText').textContent = 
+                `Ready to receive ${data.fileCount} file(s). Click Accept to start.`;
+            
+            showToast(`📥 Ready to receive ${data.fileCount} file(s)`);
         }
 
         // Handle file start
         function handleFileStart(data) {
+            console.log('📄 File start received:', data);
+            
+            // Reset for new file
+            receivedChunks = [];
+            receivedSize = 0;
+            totalFileSize = data.size;
+            currentFileName = data.name;
+            transferStartTime = Date.now();
+            
+            // Update UI
             document.getElementById('receiveFileName').textContent = data.name;
             document.getElementById('receiveFileDetails').textContent = 
                 `${formatSize(data.size)} • ${data.quality} quality`;
-            updateReceiveProgress(0, 'Receiving file...');
-            showToast(`Receiving: ${data.name}`);
+            
+            document.getElementById('receiveStatusText').textContent = 
+                `Receiving: ${data.name}`;
+            
+            // Hide accept/decline buttons, show progress
+            document.getElementById('receiveAcceptBtn').style.display = 'none';
+            document.getElementById('receiveDeclineBtn').style.display = 'none';
+            
+            showToast(`📄 Receiving: ${data.name}`);
         }
 
         // Handle chunk
         function handleChunk(data) {
-            const percent = Math.round((data.offset / data.total) * 100);
-            updateReceiveProgress(percent, 'Receiving...');
-            
-            // Calculate time remaining
-            if (data.offset > 0) {
-                const elapsed = (Date.now() - data.timestamp) / 1000;
-                const speed = data.offset / elapsed;
-                const remaining = data.total - data.offset;
-                const seconds = Math.round(remaining / speed);
-                updateReceiveTime(seconds);
+            try {
+                console.log('📦 Chunk received:', data.offset, '/', data.total);
+                
+                // Store chunk
+                receivedChunks.push(data.data);
+                receivedSize += data.data.byteLength || data.data.size || 0;
+                
+                // Calculate progress
+                const percent = Math.round((receivedSize / totalFileSize) * 100);
+                updateReceiveProgress(percent, 'Receiving...');
+                
+                // Calculate speed and time
+                if (transferStartTime) {
+                    const elapsed = (Date.now() - transferStartTime) / 1000;
+                    if (elapsed > 0) {
+                        const speed = receivedSize / elapsed; // bytes per second
+                        const remaining = totalFileSize - receivedSize;
+                        const timeLeft = Math.round(remaining / speed);
+                        updateReceiveTime(timeLeft);
+                        
+                        // Update status with speed
+                        document.getElementById('receiveStatusText').textContent = 
+                            `Receiving: ${currentFileName} (${formatSpeed(speed)})`;
+                    }
+                }
+                
+            } catch (error) {
+                console.error('Error handling chunk:', error);
+                showToast("Error receiving chunk");
             }
         }
 
         // Handle file end
         function handleFileEnd(data) {
-            updateReceiveProgress(100, 'File received');
-            showToast(`✓ Received: ${data.name}`);
+            console.log('✅ File end received:', data);
             
-            // Auto-close after 2 seconds if last file
-            setTimeout(() => {
-                if (currentProgress === 100) {
-                    handleTransferComplete();
-                }
-            }, 2000);
+            // Combine all chunks into a single file
+            try {
+                const blob = new Blob(receivedChunks);
+                const url = URL.createObjectURL(blob);
+                
+                // Save the file locally
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = currentFileName || data.name || 'received_file';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                
+                // Clean up
+                setTimeout(() => URL.revokeObjectURL(url), 1000);
+                
+                // Update UI
+                updateReceiveProgress(100, 'File received');
+                document.getElementById('downloadBtn').style.display = 'block';
+                document.getElementById('receiveStatusText').textContent = 
+                    `✅ ${currentFileName} downloaded successfully!`;
+                
+                showToast(`✅ ${currentFileName} downloaded!`);
+                
+                // Reset for next file
+                receivedChunks = [];
+                receivedSize = 0;
+                
+            } catch (error) {
+                console.error('Error saving file:', error);
+                showToast("Error saving file");
+            }
         }
 
         // Handle transfer complete
         function handleTransferComplete() {
+            console.log('🎉 Transfer complete');
             updateReceiveProgress(100, 'Transfer complete');
-            showToast('🎉 All files received successfully!');
+            document.getElementById('receiveStatusText').textContent = 
+                "🎉 All files received successfully!";
+            showToast("🎉 All files received!");
             
-            // Auto-close modal after 3 seconds
-            setTimeout(() => {
-                closeReceiveModal();
-            }, 3000);
+            // Show close button
+            document.getElementById('closeReceiveBtn').style.display = 'block';
+            document.getElementById('downloadBtn').style.display = 'none';
         }
 
         // Handle transfer cancel
         function handleTransferCancel() {
+            console.log('❌ Transfer cancelled by sender');
             updateReceiveProgress(0, 'Transfer cancelled');
-            showToast('Transfer cancelled by sender');
+            document.getElementById('receiveStatusText').textContent = 
+                "Transfer cancelled by sender";
+            showToast("Transfer cancelled by sender");
+            
+            // Reset
+            receivedChunks = [];
+            receivedSize = 0;
+            incomingFile = null;
+        }
+
+        // Accept transfer
+        function acceptTransfer() {
+            if (connection && connection.open) {
+                console.log('✅ Accepting transfer');
+                document.getElementById('receiveStatusText').textContent = 
+                    "Waiting for files...";
+                showToast("✅ Ready to receive files");
+                
+                // Send acceptance
+                connection.send({ type: 'transfer_accepted' });
+                
+                // Hide accept/decline buttons
+                document.getElementById('receiveAcceptBtn').style.display = 'none';
+                document.getElementById('receiveDeclineBtn').style.display = 'none';
+            }
+        }
+
+        // Decline transfer
+        function declineTransfer() {
+            if (connection && connection.open) {
+                console.log('❌ Declining transfer');
+                connection.send({ type: 'transfer_declined' });
+                connection.close();
+                closeReceiveModal();
+                showToast("Transfer declined");
+            }
+        }
+
+        // Download received file
+        function downloadReceivedFile() {
+            if (receivedChunks.length > 0) {
+                const blob = new Blob(receivedChunks);
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = currentFileName || 'received_file';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                
+                setTimeout(() => URL.revokeObjectURL(url), 1000);
+                showToast("File downloaded!");
+            } else {
+                showToast("No file to download");
+            }
         }
 
         // Setup event listeners
@@ -970,7 +962,9 @@
             fileInput.addEventListener('change', function(e) {
                 selectedFiles = Array.from(e.target.files);
                 updateFileList();
-                showToast(`Selected ${selectedFiles.length} file(s)`);
+                if (selectedFiles.length > 0) {
+                    showToast(`Selected ${selectedFiles.length} file(s)`);
+                }
             });
             
             // Drag and drop
@@ -984,26 +978,20 @@
                 this.style.borderColor = '';
                 selectedFiles = Array.from(e.dataTransfer.files);
                 updateFileList();
-                showToast(`Selected ${selectedFiles.length} file(s)`);
+                if (selectedFiles.length > 0) {
+                    showToast(`Selected ${selectedFiles.length} file(s)`);
+                }
             });
             
-            // Keyboard shortcuts
-            document.addEventListener('keydown', function(e) {
-                // Escape key closes modals
-                if (e.key === 'Escape') {
-                    closeAllModals();
+            // Auto-accept after 10 seconds
+            setTimeout(() => {
+                if (document.getElementById('receiveModal').style.display === 'flex') {
+                    const acceptBtn = document.getElementById('receiveAcceptBtn');
+                    if (acceptBtn.style.display === 'block') {
+                        acceptTransfer();
+                    }
                 }
-                // Ctrl+H or Cmd+H opens help
-                if ((e.ctrlKey || e.metaKey) && e.key === 'h') {
-                    e.preventDefault();
-                    showHelpModal();
-                }
-                // Ctrl+? opens help
-                if ((e.ctrlKey || e.metaKey) && e.key === '?') {
-                    e.preventDefault();
-                    showHelpModal();
-                }
-            });
+            }, 10000);
         }
 
         // Update file list
@@ -1080,11 +1068,25 @@
         function showReceiveModal(senderId) {
             document.getElementById('modalSenderId').textContent = senderId;
             document.getElementById('receiveModal').style.display = 'flex';
+            
+            // Reset UI
+            document.getElementById('receiveAcceptBtn').style.display = 'none';
+            document.getElementById('receiveDeclineBtn').style.display = 'none';
+            document.getElementById('downloadBtn').style.display = 'none';
+            document.getElementById('closeReceiveBtn').style.display = 'block';
+            updateReceiveProgress(0, 'Waiting for connection...');
         }
 
         // Close receive modal
         function closeReceiveModal() {
             document.getElementById('receiveModal').style.display = 'none';
+            if (connection && connection.open) {
+                connection.close();
+            }
+            // Reset receiving state
+            receivedChunks = [];
+            receivedSize = 0;
+            incomingFile = null;
         }
 
         // Close all modals
@@ -1092,11 +1094,6 @@
             document.getElementById('sendModal').style.display = 'none';
             document.getElementById('receiveModal').style.display = 'none';
             document.getElementById('helpModal').style.display = 'none';
-        }
-
-        // Toggle FAQ item
-        function toggleFAQ(element) {
-            element.classList.toggle('active');
         }
 
         // Set quality
@@ -1124,13 +1121,13 @@
             
             switch(currentQuality) {
                 case 'high':
-                    estimatedSize = originalSize * 0.7; // 70% of original
+                    estimatedSize = originalSize * 0.7;
                     break;
                 case 'medium':
-                    estimatedSize = originalSize * 0.5; // 50% of original
+                    estimatedSize = originalSize * 0.5;
                     break;
                 case 'low':
-                    estimatedSize = originalSize * 0.3; // 30% of original
+                    estimatedSize = originalSize * 0.3;
                     break;
                 case 'original':
                     estimatedSize = originalSize;
@@ -1155,13 +1152,24 @@
                 return;
             }
             
-            // Connect to receiver
-            connection = peer.connect(receiverId);
-            setupConnection(connection);
+            if (selectedFiles.length === 0) {
+                showToast('Please select files');
+                return;
+            }
+            
+            showToast(`Connecting to ${receiverId}...`);
+            
+            // Create new connection
+            connection = peer.connect(receiverId, {
+                reliable: true
+            });
+            
+            setupOutgoingConnection(connection);
             
             connection.on('open', async function() {
+                console.log('✅ Outgoing connection opened');
                 isSending = true;
-                updateModalProgress(0, 'Connecting...');
+                updateModalProgress(0, 'Connected, starting transfer...');
                 
                 // Show pause button
                 document.getElementById('startTransferBtn').style.display = 'none';
@@ -1169,10 +1177,11 @@
                 
                 try {
                     // Send transfer info
+                    const totalSize = selectedFiles.reduce((sum, file) => sum + file.size, 0);
                     connection.send({
                         type: 'transfer_start',
                         fileCount: selectedFiles.length,
-                        totalSize: selectedFiles.reduce((sum, file) => sum + file.size, 0),
+                        totalSize: totalSize,
                         quality: currentQuality
                     });
                     
@@ -1185,7 +1194,7 @@
                     // Transfer complete
                     connection.send({ type: 'transfer_complete' });
                     updateModalProgress(100, 'Transfer complete');
-                    showToast('🎉 Transfer completed successfully!');
+                    showToast('🎉 All files sent successfully!');
                     
                     // Auto-close after 3 seconds
                     setTimeout(() => {
@@ -1195,7 +1204,7 @@
                 } catch (error) {
                     console.error('Transfer error:', error);
                     updateModalProgress(0, 'Transfer failed');
-                    showToast('❌ Transfer failed');
+                    showToast('❌ Transfer failed: ' + error.message);
                 } finally {
                     isSending = false;
                     document.getElementById('startTransferBtn').style.display = 'block';
@@ -1204,13 +1213,33 @@
             });
             
             connection.on('error', function(err) {
-                console.error('Connection error:', err);
+                console.error('❌ Connection error:', err);
                 showToast('Failed to connect. Check receiver ID.');
                 isSending = false;
+                updateModalProgress(0, 'Connection failed');
             });
         }
 
-        // Send file with quality optimization
+        // Setup outgoing connection
+        function setupOutgoingConnection(conn) {
+            conn.on('data', function(data) {
+                console.log('Received response:', data.type);
+                if (data.type === 'transfer_accepted') {
+                    showToast("Receiver accepted files");
+                } else if (data.type === 'transfer_declined') {
+                    showToast("Receiver declined files");
+                    cancelTransfer();
+                }
+            });
+            
+            conn.on('close', function() {
+                console.log('Connection closed');
+                showToast("Connection closed");
+                connection = null;
+            });
+        }
+
+        // Send file
         async function sendFile(file, index) {
             return new Promise((resolve, reject) => {
                 // Update modal with current file
@@ -1297,15 +1326,15 @@
         function getChunkSizeForQuality(quality) {
             switch(quality) {
                 case 'original':
-                    return 256 * 1024; // 256KB
+                    return 64 * 1024; // 64KB for reliability
                 case 'high':
-                    return 128 * 1024; // 128KB
-                case 'medium':
-                    return 64 * 1024; // 64KB
-                case 'low':
                     return 32 * 1024; // 32KB
+                case 'medium':
+                    return 16 * 1024; // 16KB
+                case 'low':
+                    return 8 * 1024; // 8KB
                 default:
-                    return 64 * 1024;
+                    return 16 * 1024;
             }
         }
 
@@ -1328,7 +1357,7 @@
         // Cancel transfer
         function cancelTransfer() {
             if (isSending && confirm('Cancel transfer?')) {
-                if (connection) {
+                if (connection && connection.open) {
                     connection.send({ type: 'transfer_cancel' });
                     connection.close();
                 }
@@ -1419,38 +1448,35 @@
             return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
         }
 
+        // Format speed
+        function formatSpeed(bytesPerSecond) {
+            if (bytesPerSecond < 1024) return bytesPerSecond.toFixed(0) + ' B/s';
+            if (bytesPerSecond < 1024 * 1024) return (bytesPerSecond / 1024).toFixed(1) + ' KB/s';
+            return (bytesPerSecond / (1024 * 1024)).toFixed(1) + ' MB/s';
+        }
+
         // Show toast
         function showToast(message) {
-            // Simple toast implementation
-            console.log("Toast:", message);
+            // Remove existing toast
+            const existingToast = document.querySelector('.toast');
+            if (existingToast) {
+                document.body.removeChild(existingToast);
+            }
             
-            // Create toast element
+            // Create new toast
             const toast = document.createElement('div');
-            toast.style.cssText = `
-                position: fixed;
-                bottom: 20px;
-                left: 50%;
-                transform: translateX(-50%);
-                background: rgba(0, 0, 0, 0.8);
-                color: white;
-                padding: 12px 24px;
-                border-radius: 12px;
-                font-weight: 500;
-                z-index: 10000;
-                backdrop-filter: blur(10px);
-                border: 1px solid rgba(255, 255, 255, 0.2);
-                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-                max-width: 80%;
-                text-align: center;
-            `;
-            
+            toast.className = 'toast';
             toast.textContent = message;
             document.body.appendChild(toast);
             
-            // Remove after 3 seconds
+            // Show toast
             setTimeout(() => {
-                toast.style.opacity = '0';
-                toast.style.transform = 'translateX(-50%) translateY(20px)';
+                toast.classList.add('show');
+            }, 10);
+            
+            // Hide after 3 seconds
+            setTimeout(() => {
+                toast.classList.remove('show');
                 setTimeout(() => {
                     if (toast.parentNode) {
                         document.body.removeChild(toast);
