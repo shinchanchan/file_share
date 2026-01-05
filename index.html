@@ -36,6 +36,30 @@
             position: relative;
         }
 
+        /* Help Button */
+        .help-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .help-btn:hover {
+            background: rgba(100, 150, 255, 0.3);
+            transform: scale(1.1);
+        }
+
         /* Header */
         .header {
             text-align: center;
@@ -170,6 +194,15 @@
             transform: none;
         }
 
+        .simple-btn.secondary {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .simple-btn.secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
         /* File Upload */
         .upload-area {
             border: 2px dashed rgba(255, 255, 255, 0.2);
@@ -209,25 +242,7 @@
             font-size: 14px;
             margin: 10px 0;
             min-height: 40px;
-        }
-
-        /* QR Code */
-        .qr-container {
-            text-align: center;
-            margin: 20px 0;
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        #qrcode {
-            width: 150px;
-            height: 150px;
-            margin: 0 auto 15px;
-            background: white;
-            padding: 10px;
-            border-radius: 10px;
+            line-height: 1.5;
         }
 
         /* Modal */
@@ -256,6 +271,8 @@
             padding: 30px;
             position: relative;
             animation: modalSlideIn 0.3s ease;
+            max-height: 90vh;
+            overflow-y: auto;
         }
 
         @keyframes modalSlideIn {
@@ -267,6 +284,24 @@
                 opacity: 1;
                 transform: scale(1);
             }
+        }
+
+        /* Close Button */
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 36px;
+            height: 36px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         /* Progress Circle */
@@ -342,10 +377,55 @@
             transform: translateX(-50%) translateY(0);
         }
 
-        /* Device Icons */
-        .device-icon {
-            font-size: 24px;
-            margin: 0 10px;
+        /* Help Section Styles */
+        .help-step {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .step-number {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            background: #667eea;
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 24px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .step-title {
+            color: white;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .step-desc {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .tip-box {
+            background: rgba(100, 150, 255, 0.1);
+            border: 1px solid rgba(100, 150, 255, 0.3);
+            border-radius: 12px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .tip-title {
+            color: #667eea;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         /* Responsive */
@@ -376,6 +456,9 @@
 <body>
     <!-- Main Container -->
     <div class="main-container">
+        <!-- Help Button -->
+        <button class="help-btn" onclick="showHelpModal()">?</button>
+
         <div class="header">
             <h1>🚀 Cube Share</h1>
             <p>Share files between any device</p>
@@ -391,33 +474,19 @@
         <div class="id-box">
             <div class="id-label">Your Unique ID</div>
             <div id="myId">----</div>
-            <div style="text-align: center; margin: 15px 0;">
-                <span class="device-icon">📱</span>
-                <span style="color: rgba(255,255,255,0.5);">↔️</span>
-                <span class="device-icon">💻</span>
-            </div>
             <button class="simple-btn" onclick="copyMyId()">
                 📋 Copy ID
             </button>
-            <button class="simple-btn" onclick="generateNewId()" style="margin-top: 10px; background: rgba(255,255,255,0.1);">
-                🔄 New ID
+            <button class="simple-btn secondary" onclick="generateNewId()" style="margin-top: 10px;">
+                🔄 Generate New ID
             </button>
-        </div>
-
-        <!-- QR Code -->
-        <div class="qr-container" id="qrContainer">
-            <div style="color: rgba(255,255,255,0.7); margin-bottom: 10px;">Scan to connect</div>
-            <div id="qrcode"></div>
-            <div style="color: rgba(255,255,255,0.5); font-size: 12px; margin-top: 10px;">
-                Scan this QR code from another device
-            </div>
         </div>
 
         <!-- Receiver ID Input -->
         <input type="text" 
                class="simple-input" 
                id="receiverId" 
-               placeholder="📱 Enter receiver's 4-digit ID"
+               placeholder="Enter receiver's 4-digit ID"
                maxlength="4"
                pattern="[0-9]{4}"
                oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 4)">
@@ -441,13 +510,15 @@
         </button>
 
         <div style="text-align: center; color: rgba(255,255,255,0.4); font-size: 12px; margin-top: 20px;">
-            Works on Mobile ↔️ Laptop ↔️ Tablet
+            Simple 4-digit ID file sharing
         </div>
     </div>
 
     <!-- Sending Modal -->
     <div class="modal" id="sendModal">
         <div class="modal-content">
+            <button class="close-btn" onclick="closeSendModal()">✕</button>
+            
             <div style="text-align: center; margin-bottom: 20px;">
                 <div style="color: white; font-size: 20px; font-weight: 600;">Sending Files</div>
                 <div style="color: rgba(255,255,255,0.6); font-size: 14px; margin-top: 5px;">
@@ -487,6 +558,8 @@
     <!-- Receiving Modal -->
     <div class="modal" id="receiveModal">
         <div class="modal-content">
+            <button class="close-btn" onclick="closeReceiveModal()">✕</button>
+            
             <div style="text-align: center; margin-bottom: 20px;">
                 <div style="color: white; font-size: 20px; font-weight: 600;">Receiving Files</div>
                 <div style="color: rgba(255,255,255,0.6); font-size: 14px; margin-top: 5px;">
@@ -534,7 +607,66 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <!-- Help Modal -->
+    <div class="modal" id="helpModal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeHelpModal()">✕</button>
+            
+            <div style="text-align: center; margin-bottom: 20px;">
+                <div style="color: white; font-size: 20px; font-weight: 600;">How to Use Cube Share</div>
+            </div>
+
+            <!-- Step-by-step Guide -->
+            <div class="help-step">
+                <div class="step-title"><span class="step-number">1</span> Get Your ID</div>
+                <div class="step-desc">Your 4-digit ID is generated automatically. Share it with others so they can send you files.</div>
+            </div>
+            
+            <div class="help-step">
+                <div class="step-title"><span class="step-number">2</span> Send Files</div>
+                <div class="step-desc">
+                    1. Enter the receiver's 4-digit ID<br>
+                    2. Select files to send<br>
+                    3. Click "Send Files"<br>
+                    4. Wait for connection and transfer
+                </div>
+            </div>
+            
+            <div class="help-step">
+                <div class="step-title"><span class="step-number">3</span> Receive Files</div>
+                <div class="step-desc">When someone sends you files, you'll see a popup. Click "Accept Files" to start receiving. Files download automatically.</div>
+            </div>
+
+            <!-- Tips -->
+            <div class="tip-box">
+                <div class="tip-title">💡 Tips for Best Experience</div>
+                <div style="color: rgba(255,255,255,0.8); font-size: 14px;">
+                    • Both devices should have good internet connection<br>
+                    • Use 4-digit IDs (easy to share and remember)<br>
+                    • Files transfer directly between devices<br>
+                    • You can generate new ID anytime<br>
+                    • Works on all devices: phones, tablets, computers
+                </div>
+            </div>
+
+            <!-- Troubleshooting -->
+            <div style="background: rgba(255,100,100,0.1); border: 1px solid rgba(255,100,100,0.3); border-radius: 12px; padding: 15px; margin: 15px 0;">
+                <div style="color: #ff6b6b; font-weight: 600; margin-bottom: 8px;">🛠️ Troubleshooting</div>
+                <div style="color: rgba(255,255,255,0.8); font-size: 14px;">
+                    <strong>Not connecting?</strong><br>
+                    1. Check both IDs are correct (4 digits)<br>
+                    2. Ensure both devices are online<br>
+                    3. Try generating new ID<br>
+                    4. Refresh the page if stuck
+                </div>
+            </div>
+
+            <button class="simple-btn" onclick="closeHelpModal()" style="margin-top: 20px;">
+                Got it! Start Sharing
+            </button>
+        </div>
+    </div>
+
     <script>
         // Initialize variables
         let peer = null;
@@ -591,9 +723,8 @@
                 // Peer event handlers
                 peer.on('open', function(id) {
                     console.log('✅ Connected with ID:', id);
-                    updateStatus('✅ Connected - ID: ' + id, 'connected');
-                    showToast('Connected to server!');
-                    generateQRCode();
+                    updateStatus('✅ Connected - Ready to share', 'connected');
+                    showToast('Connected! Your ID: ' + id);
                 });
 
                 peer.on('error', function(err) {
@@ -635,25 +766,7 @@
                 peer.destroy();
             }
             initializePeer();
-            showToast('New ID generated!');
-        }
-
-        // Generate QR Code
-        function generateQRCode() {
-            const qrContainer = document.getElementById('qrcode');
-            if (qrContainer && myId) {
-                qrContainer.innerHTML = '';
-                QRCode.toCanvas(qrContainer, myId, {
-                    width: 150,
-                    height: 150,
-                    color: {
-                        dark: '#000000',
-                        light: '#ffffff'
-                    }
-                }, function(error) {
-                    if (error) console.error('QR Code error:', error);
-                });
-            }
+            showToast('New ID generated: ' + myId);
         }
 
         // Update status
@@ -776,8 +889,8 @@
             
             connection.on('open', function() {
                 console.log('✅ Connection established');
-                updateModalProgress(10, 'Connection established');
-                showToast('Connected to receiver!');
+                updateModalProgress(10, 'Connected to receiver');
+                showToast('Connected! Starting transfer...');
                 startFileTransfer();
             });
             
@@ -795,7 +908,7 @@
             
             connection.on('error', function(err) {
                 console.error('Connection error:', err);
-                showToast('Connection error: ' + (err.message || err.type));
+                showToast('Connection error');
                 closeSendModal();
             });
         }
@@ -833,7 +946,7 @@
                 
             } catch (error) {
                 console.error('Transfer error:', error);
-                showToast('Transfer failed: ' + error.message);
+                showToast('Transfer failed');
                 closeSendModal();
             } finally {
                 isSending = false;
@@ -881,7 +994,7 @@
                         // Update progress
                         const fileProgress = Math.round((offset / file.size) * 100);
                         const overallProgress = 20 + Math.round((index / selectedFiles.length) * 70) + Math.round((fileProgress / 100) * (70 / selectedFiles.length));
-                        updateModalProgress(overallProgress, `Sending: ${file.name}`);
+                        updateModalProgress(overallProgress, `Sending: ${file.name} (${fileProgress}%)`);
                         
                         if (offset < file.size) {
                             // Read next chunk
@@ -927,7 +1040,7 @@
                 console.log('✅ Incoming connection opened');
                 document.getElementById('modalSenderId').textContent = conn.peer;
                 updateReceiveProgress(0, 'Connected to sender');
-                showToast('Connected to sender!');
+                showToast('Incoming connection from: ' + conn.peer);
             });
             
             conn.on('data', function(data) {
@@ -1177,6 +1290,16 @@
             document.getElementById('closeReceiveBtn').style.display = 'block';
         }
 
+        // Show help modal
+        function showHelpModal() {
+            document.getElementById('helpModal').style.display = 'flex';
+        }
+
+        // Close help modal
+        function closeHelpModal() {
+            document.getElementById('helpModal').style.display = 'none';
+        }
+
         // Close send modal
         function closeSendModal() {
             document.getElementById('sendModal').style.display = 'none';
@@ -1263,7 +1386,7 @@
             
             // Show welcome message
             setTimeout(() => {
-                showToast('Welcome to Cube Share! Enter 4-digit ID to share files.');
+                showToast('Welcome to Cube Share! Click ? for help.');
             }, 1500);
         });
     </script>
