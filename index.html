@@ -14,57 +14,146 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             min-height: 100vh;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            background: linear-gradient(135deg, 
+                #0f0c29 0%, 
+                #302b63 25%, 
+                #24243e 50%, 
+                #1a1a2e 75%, 
+                #16213e 100%);
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 20px;
+            overflow-x: hidden;
         }
 
-        /* Main Container */
-        .main-container {
+        /* Glass Container */
+        .glass-container {
             width: 100%;
-            max-width: 400px;
-            background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(20px);
+            max-width: 600px;
+            background: rgba(255, 255, 255, 0.07);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
             border-radius: 24px;
             border: 1px solid rgba(255, 255, 255, 0.15);
-            padding: 30px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            padding: 35px;
             position: relative;
+            overflow: hidden;
+        }
+
+        /* Animated Background Elements */
+        .container-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            overflow: hidden;
+            z-index: -1;
+            border-radius: 24px;
+        }
+
+        .bg-circle {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: float 20s infinite linear;
+        }
+
+        .bg-circle:nth-child(1) {
+            width: 300px;
+            height: 300px;
+            top: -150px;
+            right: -100px;
+            animation-delay: 0s;
+        }
+
+        .bg-circle:nth-child(2) {
+            width: 200px;
+            height: 200px;
+            bottom: -100px;
+            left: -50px;
+            animation-delay: -5s;
+            animation-duration: 25s;
+        }
+
+        .bg-circle:nth-child(3) {
+            width: 150px;
+            height: 150px;
+            top: 50%;
+            right: 20%;
+            animation-delay: -10s;
+            animation-duration: 30s;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+            33% {
+                transform: translate(30px, -20px) rotate(120deg);
+            }
+            66% {
+                transform: translate(-20px, 30px) rotate(240deg);
+            }
+            100% {
+                transform: translate(0, 0) rotate(360deg);
+            }
         }
 
         /* Header */
         .header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 35px;
+            position: relative;
         }
 
-        .header h1 {
+        h1 {
             color: white;
-            font-size: 28px;
-            margin-bottom: 8px;
+            font-size: 42px;
+            margin-bottom: 12px;
             font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 10px rgba(102, 126, 234, 0.3);
         }
 
-        .header p {
+        .subtitle {
             color: rgba(255, 255, 255, 0.7);
-            font-size: 14px;
+            font-size: 16px;
+            font-weight: 400;
         }
 
-        /* ID Box */
-        .id-box {
-            background: rgba(255, 255, 255, 0.05);
+        /* ID Section */
+        .id-section {
+            background: rgba(255, 255, 255, 0.08);
             border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
             border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .id-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #667eea, transparent);
         }
 
         .id-label {
-            color: rgba(255, 255, 255, 0.7);
+            color: rgba(255, 255, 255, 0.6);
             font-size: 14px;
             margin-bottom: 10px;
             display: flex;
@@ -74,438 +163,577 @@
 
         #myId {
             color: white;
-            font-size: 18px;
+            font-size: 24px;
             font-weight: 600;
-            margin: 10px 0;
+            margin: 15px 0;
             word-break: break-all;
-            padding: 10px;
+            font-family: 'Monaco', 'Courier New', monospace;
             background: rgba(0, 0, 0, 0.2);
-            border-radius: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        /* Simple Input */
-        .simple-input {
-            width: 100%;
-            padding: 16px;
-            background: rgba(255, 255, 255, 0.07);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            color: white;
-            font-size: 16px;
-            margin-bottom: 15px;
-            outline: none;
-        }
-
-        .simple-input:focus {
-            border-color: rgba(100, 150, 255, 0.5);
-        }
-
-        /* Simple Button */
-        .simple-btn {
-            width: 100%;
-            padding: 16px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border: none;
-            border-radius: 12px;
-            color: white;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            margin: 10px 0;
-            transition: transform 0.2s;
-        }
-
-        .simple-btn:hover {
-            transform: translateY(-2px);
-        }
-
-        .simple-btn:active {
-            transform: translateY(0);
-        }
-
-        .simple-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        /* Modal Overlay */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(10px);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        /* Modal Content */
-        .modal-content {
-            width: 100%;
-            max-width: 400px;
-            background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(30px);
-            border-radius: 24px;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            padding: 30px;
-            position: relative;
-            animation: modalSlideIn 0.3s ease;
-        }
-
-        @keyframes modalSlideIn {
-            from {
-                opacity: 0;
-                transform: scale(0.9);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-
-        /* Circular Progress */
-        .circle-progress {
-            width: 200px;
-            height: 200px;
-            margin: 30px auto;
-            position: relative;
-        }
-
-        .circle-bg {
-            fill: none;
-            stroke: rgba(255, 255, 255, 0.1);
-            stroke-width: 8;
-        }
-
-        .circle-prog {
-            fill: none;
-            stroke: #667eea;
-            stroke-width: 8;
-            stroke-linecap: round;
-            stroke-dasharray: 565;
-            stroke-dashoffset: 565;
-            transition: stroke-dashoffset 0.3s ease;
-            transform: rotate(-90deg);
-            transform-origin: 50% 50%;
-        }
-
-        .circle-inner {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-            width: 100%;
-        }
-
-        .circle-percent {
-            font-size: 48px;
-            font-weight: 700;
-            color: white;
-            margin-bottom: 5px;
-        }
-
-        .circle-label {
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 16px;
-        }
-
-        .circle-time {
-            color: rgba(255, 255, 255, 0.5);
-            font-size: 14px;
-            margin-top: 5px;
-        }
-
-        /* Quality Selector */
-        .quality-selector {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 16px;
-            padding: 20px;
-            margin: 20px 0;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .quality-title {
-            color: white;
-            font-size: 16px;
-            margin-bottom: 15px;
-            text-align: center;
-        }
-
-        .quality-options {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-
-        .quality-option {
             padding: 12px;
-            background: rgba(255, 255, 255, 0.07);
-            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 10px;
-            color: rgba(255, 255, 255, 0.8);
-            cursor: pointer;
-            text-align: center;
-            transition: all 0.2s;
-        }
-
-        .quality-option:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .quality-option.active {
-            background: rgba(102, 126, 234, 0.3);
-            border-color: #667eea;
-            color: white;
-        }
-
-        /* File Info */
-        .file-info {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 16px;
-            padding: 20px;
-            margin: 20px 0;
             border: 1px solid rgba(255, 255, 255, 0.1);
-            text-align: center;
-        }
-
-        .file-name {
-            color: white;
-            font-size: 16px;
-            margin-bottom: 10px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .file-details {
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 14px;
         }
 
         /* Status */
         .status {
-            text-align: center;
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 14px;
-            margin: 10px 0;
-            padding: 10px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-        }
-
-        /* Close Button */
-        .close-btn {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            width: 36px;
-            height: 36px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
-            color: white;
-            font-size: 18px;
-            cursor: pointer;
             display: flex;
             align-items: center;
-            justify-content: center;
+            gap: 12px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            margin: 15px 0;
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
-        /* Hidden File Input */
-        .file-input {
-            display: none;
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #ff4757;
+            animation: pulse 2s infinite;
         }
 
-        /* Upload Area */
-        .upload-area {
+        .status-dot.connected {
+            background: #2ed573;
+            animation: pulse-green 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        @keyframes pulse-green {
+            0%, 100% { 
+                opacity: 1;
+                box-shadow: 0 0 0 0 rgba(46, 213, 115, 0.7);
+            }
+            50% { 
+                opacity: 0.8;
+                box-shadow: 0 0 0 10px rgba(46, 213, 115, 0);
+            }
+        }
+
+        /* Inputs */
+        .glass-input {
+            width: 100%;
+            padding: 16px 20px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            color: white;
+            font-size: 16px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .glass-input:focus {
+            outline: none;
+            border-color: rgba(102, 126, 234, 0.5);
+            background: rgba(255, 255, 255, 0.12);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .glass-input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        /* File Upload */
+        .upload-zone {
             border: 2px dashed rgba(255, 255, 255, 0.2);
             border-radius: 16px;
             padding: 40px 20px;
             text-align: center;
             cursor: pointer;
-            margin: 20px 0;
-            transition: all 0.3s;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
 
-        .upload-area:hover {
+        .upload-zone:hover {
             border-color: rgba(102, 126, 234, 0.5);
             background: rgba(255, 255, 255, 0.05);
+            transform: translateY(-2px);
         }
 
         .upload-icon {
-            font-size: 40px;
+            font-size: 48px;
             color: rgba(255, 255, 255, 0.3);
-            margin-bottom: 10px;
+            margin-bottom: 15px;
         }
 
         .upload-text {
-            color: white;
-            font-size: 16px;
-            margin-bottom: 5px;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 18px;
+            margin-bottom: 8px;
+            font-weight: 500;
         }
 
-        .upload-sub {
+        .upload-subtext {
             color: rgba(255, 255, 255, 0.5);
             font-size: 14px;
         }
 
-        /* Small Text */
-        .small-text {
+        /* File List */
+        .file-list {
+            max-height: 200px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+
+        .file-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .file-list::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 3px;
+        }
+
+        .file-list::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+        }
+
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            margin-bottom: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .file-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateX(5px);
+        }
+
+        .file-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .file-name {
+            color: white;
+            font-size: 15px;
+            font-weight: 500;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .file-size {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 13px;
+            margin-top: 4px;
+        }
+
+        .remove-btn {
+            background: rgba(255, 71, 87, 0.2);
+            border: 1px solid rgba(255, 71, 87, 0.3);
+            color: rgba(255, 255, 255, 0.9);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.3s ease;
+        }
+
+        .remove-btn:hover {
+            background: rgba(255, 71, 87, 0.3);
+            transform: scale(1.1);
+        }
+
+        /* Buttons */
+        .glass-btn {
+            width: 100%;
+            padding: 18px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+        }
+
+        .glass-btn:hover::before {
+            left: 100%;
+        }
+
+        .glass-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .glass-btn:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        .glass-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .glass-btn.success {
+            background: linear-gradient(135deg, #2ed573 0%, #1e90ff 100%);
+        }
+
+        .glass-btn.danger {
+            background: linear-gradient(135deg, #ff4757 0%, #ff6348 100%);
+        }
+
+        /* Rocket Progress Section */
+        .rocket-section {
+            margin: 30px 0;
+            padding: 25px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .rocket-container {
+            position: relative;
+            height: 120px;
+            margin: 20px 0;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .rocket-track {
+            position: absolute;
+            top: 50%;
+            left: 20px;
+            right: 20px;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-50%);
+        }
+
+        .rocket {
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 40px;
+            transition: left 0.3s ease;
+            filter: drop-shadow(0 5px 15px rgba(255, 255, 255, 0.3));
+            z-index: 2;
+        }
+
+        .rocket-progress {
+            position: absolute;
+            left: 0;
+            top: 50%;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 2px;
+            transform: translateY(-50%);
+            transition: width 0.3s ease;
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
+        }
+
+        .progress-markers {
+            position: absolute;
+            top: 50%;
+            left: 20px;
+            right: 20px;
+            display: flex;
+            justify-content: space-between;
+            transform: translateY(-50%);
+            pointer-events: none;
+        }
+
+        .marker {
+            width: 8px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            position: relative;
+        }
+
+        .marker.active {
+            background: #2ed573;
+            box-shadow: 0 0 10px #2ed573;
+        }
+
+        .marker::after {
+            content: attr(data-percent);
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
             color: rgba(255, 255, 255, 0.5);
             font-size: 12px;
-            text-align: center;
-            margin-top: 10px;
+            font-weight: 600;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .progress-text {
+            color: white;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .progress-percent {
+            color: #667eea;
+            font-size: 28px;
+            font-weight: 700;
+            text-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
+        }
+
+        /* Exhaust Animation */
+        .exhaust {
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 30px;
+            background: linear-gradient(to bottom, transparent, #667eea);
+            filter: blur(2px);
+            animation: exhaust 0.5s infinite;
+            opacity: 0.7;
+        }
+
+        @keyframes exhaust {
+            0%, 100% {
+                height: 20px;
+                opacity: 0.7;
+            }
+            50% {
+                height: 40px;
+                opacity: 1;
+            }
+        }
+
+        /* Stars Animation */
+        .stars {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 2s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 1; }
+        }
+
+        /* Log */
+        .log {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            max-height: 150px;
+            overflow-y: auto;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .log::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .log::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 3px;
+        }
+
+        .log::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+        }
+
+        .log-item {
+            color: rgba(255, 255, 255, 0.8);
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 14px;
+            font-family: 'Monaco', 'Courier New', monospace;
+        }
+
+        .log-item:last-child {
+            border-bottom: none;
+        }
+
+        /* Controls */
+        .controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .glass-container {
+                padding: 25px;
+            }
+            
+            h1 {
+                font-size: 32px;
+            }
+            
+            #myId {
+                font-size: 20px;
+            }
+            
+            .controls {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Glow Effect */
+        .glow {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background: radial-gradient(circle at 50% 0%, rgba(102, 126, 234, 0.3), transparent 50%);
+            pointer-events: none;
+            z-index: -1;
         }
     </style>
 </head>
 <body>
-    <!-- Main Container -->
-    <div class="main-container">
+    <div class="glass-container">
+        <div class="container-bg">
+            <div class="bg-circle"></div>
+            <div class="bg-circle"></div>
+            <div class="bg-circle"></div>
+        </div>
+        
+        <div class="glow"></div>
+        
         <div class="header">
-            <h1>🚀 Cube Share</h1>
-            <p>Simple P2P File Transfer</p>
+            <h1>🚀 Cube File's Share</h1>
+            <p class="subtitle">Lightning-fast P2P file transfer</p>
         </div>
-
-        <!-- Your ID -->
-        <div class="id-box">
-            <div class="id-label">Your ID</div>
-            <div id="myId">Connecting...</div>
-            <button class="simple-btn" onclick="copyMyId()">📋 Copy ID</button>
-        </div>
-
-        <!-- Receiver ID Input -->
-        <input type="text" 
-               class="simple-input" 
-               id="receiverId" 
-               placeholder="Enter receiver ID">
-
-        <!-- File Upload -->
-        <div class="upload-area" onclick="document.getElementById('fileInput').click()">
-            <div class="upload-icon">📁</div>
-            <div class="upload-text">Select Files</div>
-            <div class="upload-sub">Click or drag files here</div>
-            <input type="file" id="fileInput" class="file-input" multiple>
-        </div>
-
-        <!-- File List (Simple) -->
-        <div id="fileList" style="color: rgba(255,255,255,0.7); font-size: 14px; margin: 10px 0;"></div>
-
-        <!-- Action Buttons -->
-        <button class="simple-btn" onclick="showSendModal()" id="sendBtn" disabled>
-            Send Files
-        </button>
-
-        <div class="small-text">
-            Files will be optimized for faster transfer
-        </div>
-    </div>
-
-    <!-- Send Modal -->
-    <div class="modal" id="sendModal">
-        <div class="modal-content">
-            <button class="close-btn" onclick="closeSendModal()">✕</button>
+        
+        <!-- Your ID Section -->
+        <div class="id-section">
+            <div class="id-label">
+                <span>🔑</span>
+                <span>Your ID - Share this to receive files</span>
+            </div>
+            <div id="myId">Generating...</div>
+            <button class="glass-btn" onclick="copyMyId()">
+                📋 Copy My ID
+            </button>
             
-            <div style="text-align: center; margin-bottom: 20px;">
-                <div style="color: white; font-size: 20px; font-weight: 600;">Sending Files</div>
-                <div style="color: rgba(255,255,255,0.6); font-size: 14px;">To: <span id="modalReceiverId"></span></div>
+            <div class="status">
+                <div class="status-dot" id="statusDot"></div>
+                <span id="statusText">Connecting to PeerJS Cloud...</span>
             </div>
-
-            <!-- Quality Selector -->
-            <div class="quality-selector">
-                <div class="quality-title">Select Quality</div>
-                <div class="quality-options">
-                    <div class="quality-option active" onclick="setQuality('high')" data-quality="high">
-                        High
-                    </div>
-                    <div class="quality-option" onclick="setQuality('medium')" data-quality="medium">
-                        Medium
-                    </div>
-                    <div class="quality-option" onclick="setQuality('low')" data-quality="low">
-                        Low
-                    </div>
-                    <div class="quality-option" onclick="setQuality('original')" data-quality="original">
-                        Original
-                    </div>
-                </div>
+        </div>
+        
+        <!-- Send Section -->
+        <div class="section">
+            <input type="text" 
+                   class="glass-input" 
+                   id="receiverId" 
+                   placeholder="📨 Enter receiver's ID">
+            
+            <div class="upload-zone" onclick="document.getElementById('fileInput').click()">
+                <div class="upload-icon">📁</div>
+                <div class="upload-text">Select Files to Launch</div>
+                <div class="upload-subtext">Click or drag & drop files here</div>
+                <input type="file" id="fileInput" multiple style="display: none;">
             </div>
-
-            <!-- File Info -->
-            <div class="file-info">
-                <div class="file-name" id="modalFileName">No file selected</div>
-                <div class="file-details" id="modalFileDetails">Select files to see details</div>
-            </div>
-
-            <!-- Circular Progress -->
-            <div class="circle-progress">
-                <svg viewBox="0 0 200 200">
-                    <circle class="circle-bg" cx="100" cy="100" r="90"></circle>
-                    <circle class="circle-prog" id="progressCircle" cx="100" cy="100" r="90"></circle>
-                </svg>
-                <div class="circle-inner">
-                    <div class="circle-percent" id="modalPercent">0%</div>
-                    <div class="circle-label" id="modalStatus">Ready</div>
-                    <div class="circle-time" id="modalTime">--:--</div>
-                </div>
-            </div>
-
-            <!-- Controls -->
-            <button class="simple-btn" onclick="startTransfer()" id="startTransferBtn">
-                Start Transfer
-            </button>
-            <button class="simple-btn" onclick="pauseTransfer()" id="pauseBtn" style="display: none;">
-                Pause
-            </button>
-            <button class="simple-btn" onclick="cancelTransfer()" style="background: rgba(255,100,100,0.3); margin-top: 10px;">
-                Cancel
+            
+            <div class="file-list" id="fileList"></div>
+            
+            <button class="glass-btn success" id="sendBtn" onclick="sendFiles()" disabled>
+                🚀 Launch Transfer
             </button>
         </div>
-    </div>
-
-    <!-- Receive Modal -->
-    <div class="modal" id="receiveModal">
-        <div class="modal-content">
-            <button class="close-btn" onclick="closeReceiveModal()">✕</button>
+        
+        <!-- Rocket Progress Section -->
+        <div class="rocket-section">
+            <div class="progress-info">
+                <div class="progress-text" id="rocketStatus">Ready for launch...</div>
+                <div class="progress-percent" id="rocketPercent">0%</div>
+            </div>
             
-            <div style="text-align: center; margin-bottom: 20px;">
-                <div style="color: white; font-size: 20px; font-weight: 600;">Receiving Files</div>
-                <div style="color: rgba(255,255,255,0.6); font-size: 14px;">From: <span id="modalSenderId"></span></div>
-            </div>
-
-            <!-- File Info -->
-            <div class="file-info">
-                <div class="file-name" id="receiveFileName">Waiting for files...</div>
-                <div class="file-details" id="receiveFileDetails">--</div>
-            </div>
-
-            <!-- Circular Progress -->
-            <div class="circle-progress">
-                <svg viewBox="0 0 200 200">
-                    <circle class="circle-bg" cx="100" cy="100" r="90"></circle>
-                    <circle class="circle-prog" id="receiveProgressCircle" cx="100" cy="100" r="90"></circle>
-                </svg>
-                <div class="circle-inner">
-                    <div class="circle-percent" id="receivePercent">0%</div>
-                    <div class="circle-label" id="receiveStatus">Waiting</div>
-                    <div class="circle-time" id="receiveTime">--:--</div>
+            <div class="rocket-container">
+                <div class="rocket-track"></div>
+                <div class="progress-markers">
+                    <div class="marker" data-percent="0%"></div>
+                    <div class="marker" data-percent="25%"></div>
+                    <div class="marker" data-percent="50%"></div>
+                    <div class="marker" data-percent="75%"></div>
+                    <div class="marker" data-percent="100%"></div>
                 </div>
+                <div class="rocket-progress" id="rocketProgress"></div>
+                <div class="rocket" id="rocket">🚀</div>
+                <div class="exhaust"></div>
+                <div class="stars" id="stars"></div>
             </div>
-
-            <!-- Status -->
-            <div class="status" id="receiveStatusText">
-                Ready to receive files
-            </div>
-
-            <button class="simple-btn" onclick="closeReceiveModal()">
-                Close
+        </div>
+        
+        <!-- Controls -->
+        <div class="controls">
+            <button class="glass-btn" id="pauseBtn" onclick="togglePause()" disabled>
+                ⏸️ Pause
             </button>
+            <button class="glass-btn danger" id="cancelBtn" onclick="cancelTransfer()" disabled>
+                ✖️ Abort
+            </button>
+        </div>
+        
+        <!-- Log -->
+        <div class="log" id="transferLog">
+            <div class="log-item">[System] Initializing connection to PeerJS Cloud...</div>
         </div>
     </div>
 
@@ -516,141 +744,150 @@
         let selectedFiles = [];
         let isSending = false;
         let isPaused = false;
-        let currentQuality = 'high';
-        let transferInterval = null;
-        let currentProgress = 0;
-        let timeRemaining = 0;
-        let currentFile = null;
-
+        let currentTransfer = null;
+        let receivingFile = null;
+        let receivedChunks = [];
+        let currentRocketPercent = 0;
+        
         // Initialize on load
         document.addEventListener('DOMContentLoaded', function() {
+            createStars();
             initializePeer();
             setupEventListeners();
         });
-
-        // Initialize PeerJS
+        
+        // Create stars for background
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            for (let i = 0; i < 20; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.width = Math.random() * 3 + 1 + 'px';
+                star.style.height = star.style.width;
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 2 + 's';
+                star.style.animationDuration = Math.random() * 2 + 1 + 's';
+                starsContainer.appendChild(star);
+            }
+        }
+        
+        // Initialize PeerJS with CLOUD SERVER
         function initializePeer() {
             const simpleId = "CS-" + Math.floor(10000 + Math.random() * 90000);
             
+            // Using PeerJS Cloud Server for reliable connections
             peer = new Peer(simpleId, {
-                host: '0.peerjs.com',
+                debug: 2, // Set to 2 for warnings and errors, 3 for all logs
+                host: '0.peerjs.com', // Official PeerJS cloud server
                 port: 443,
                 path: '/',
                 secure: true,
                 config: {
                     'iceServers': [
-                        { urls: 'stun:stun.l.google.com:19302' }
+                        { urls: 'stun:stun.l.google.com:19302' },
+                        { urls: 'stun:global.stun.twilio.com:3478' },
+                        { 
+                            urls: 'turn:numb.viagenie.ca',
+                            credential: 'muazkh',
+                            username: 'webrtc@live.com'
+                        }
                     ]
                 }
             });
             
+            // Peer event handlers
             peer.on('open', function(id) {
+                console.log('✅ Connected to PeerJS Cloud with ID:', id);
                 document.getElementById('myId').textContent = id;
-                console.log('Connected with ID:', id);
+                updateStatus(true, '✅ Connected to PeerJS Cloud');
+                addLog(`✅ Connected to PeerJS Cloud with ID: ${id}`);
             });
             
+            peer.on('error', function(err) {
+                console.error('❌ PeerJS Error:', err);
+                
+                let errorMessage = 'Connection Error';
+                switch(err.type) {
+                    case 'peer-unavailable':
+                        errorMessage = 'Peer not found';
+                        break;
+                    case 'network':
+                        errorMessage = 'Network error';
+                        break;
+                    case 'server-error':
+                        errorMessage = 'Server error - retrying...';
+                        // Auto-reconnect after 3 seconds
+                        setTimeout(initializePeer, 3000);
+                        break;
+                    case 'browser-incompatible':
+                        errorMessage = 'Browser not supported. Use Chrome/Firefox';
+                        break;
+                    default:
+                        errorMessage = err.type;
+                }
+                
+                updateStatus(false, `❌ ${errorMessage}`);
+                addLog(`❌ Error: ${errorMessage}`);
+            });
+            
+            // Handle incoming connections
             peer.on('connection', function(conn) {
-                console.log('Incoming connection:', conn.peer);
+                console.log('📡 Incoming connection from:', conn.peer);
                 connection = conn;
                 setupConnection(conn);
-                showReceiveModal(conn.peer);
+                addLog(`📡 Incoming connection from: ${conn.peer}`);
             });
         }
-
+        
         // Setup connection
         function setupConnection(conn) {
             conn.on('open', function() {
-                console.log('Connection opened');
+                console.log('✅ Connection opened with peer');
+                updateStatus(true, '✅ Connected to peer');
+                addLog('✅ Peer connection established');
             });
             
             conn.on('data', function(data) {
+                console.log('📨 Received data:', data.type);
                 handleIncomingData(data);
             });
             
             conn.on('close', function() {
-                console.log('Connection closed');
+                console.log('🔌 Connection closed');
+                addLog('🔌 Connection closed');
+                updateStatus(false, 'Disconnected');
                 connection = null;
             });
+            
+            conn.on('error', function(err) {
+                console.error('❌ Connection error:', err);
+                addLog(`❌ Connection error: ${err.message || err.type}`);
+            });
         }
-
+        
         // Handle incoming data
         function handleIncomingData(data) {
-            console.log('Received data:', data.type);
-            
             switch(data.type) {
-                case 'transfer_start':
-                    handleTransferStart(data);
-                    break;
                 case 'file_start':
-                    handleFileStart(data);
+                    startReceivingFile(data);
                     break;
                 case 'chunk':
-                    handleChunk(data);
+                    receiveChunk(data);
                     break;
                 case 'file_end':
-                    handleFileEnd(data);
+                    finishReceivingFile(data);
                     break;
-                case 'transfer_complete':
-                    handleTransferComplete();
-                    break;
-                case 'transfer_cancel':
+                case 'cancel':
                     handleTransferCancel();
                     break;
             }
         }
-
-        // Handle transfer start
-        function handleTransferStart(data) {
-            document.getElementById('receiveFileName').textContent = `${data.fileCount} files`;
-            document.getElementById('receiveFileDetails').textContent = `Total: ${formatSize(data.totalSize)}`;
-            updateReceiveProgress(0, 'Receiving...');
-        }
-
-        // Handle file start
-        function handleFileStart(data) {
-            document.getElementById('receiveFileName').textContent = data.name;
-            document.getElementById('receiveFileDetails').textContent = 
-                `${formatSize(data.size)} • ${data.quality} quality`;
-            updateReceiveProgress(0, 'Receiving file...');
-        }
-
-        // Handle chunk
-        function handleChunk(data) {
-            const percent = Math.round((data.offset / data.total) * 100);
-            updateReceiveProgress(percent, 'Receiving...');
-            
-            // Calculate time remaining
-            if (data.offset > 0) {
-                const elapsed = (Date.now() - data.timestamp) / 1000;
-                const speed = data.offset / elapsed;
-                const remaining = data.total - data.offset;
-                const seconds = Math.round(remaining / speed);
-                updateReceiveTime(seconds);
-            }
-        }
-
-        // Handle file end
-        function handleFileEnd(data) {
-            updateReceiveProgress(100, 'File received');
-            showToast(`Received: ${data.name}`);
-        }
-
-        // Handle transfer complete
-        function handleTransferComplete() {
-            updateReceiveProgress(100, 'Transfer complete');
-            showToast('All files received successfully!');
-        }
-
-        // Handle transfer cancel
-        function handleTransferCancel() {
-            updateReceiveProgress(0, 'Transfer cancelled');
-            showToast('Transfer cancelled by sender');
-        }
-
+        
         // Setup event listeners
         function setupEventListeners() {
             const fileInput = document.getElementById('fileInput');
-            const uploadArea = document.querySelector('.upload-area');
+            const uploadZone = document.querySelector('.upload-zone');
             
             fileInput.addEventListener('change', function(e) {
                 selectedFiles = Array.from(e.target.files);
@@ -658,213 +895,175 @@
             });
             
             // Drag and drop
-            uploadArea.addEventListener('dragover', function(e) {
+            uploadZone.addEventListener('dragover', function(e) {
                 e.preventDefault();
                 this.style.borderColor = 'rgba(102, 126, 234, 0.5)';
+                this.style.transform = 'translateY(-5px)';
             });
             
-            uploadArea.addEventListener('drop', function(e) {
+            uploadZone.addEventListener('dragleave', function() {
+                this.style.borderColor = '';
+                this.style.transform = '';
+            });
+            
+            uploadZone.addEventListener('drop', function(e) {
                 e.preventDefault();
                 this.style.borderColor = '';
+                this.style.transform = '';
                 selectedFiles = Array.from(e.dataTransfer.files);
                 updateFileList();
             });
+            
+            // Auto-focus receiver ID input
+            document.getElementById('receiverId').focus();
         }
-
+        
         // Update file list
         function updateFileList() {
             const fileList = document.getElementById('fileList');
             const sendBtn = document.getElementById('sendBtn');
             
             if (selectedFiles.length === 0) {
-                fileList.textContent = 'No files selected';
+                fileList.innerHTML = '<div style="color: rgba(255,255,255,0.5); text-align: center; padding: 20px;">No files selected</div>';
                 sendBtn.disabled = true;
                 return;
             }
             
-            let text = `${selectedFiles.length} file(s) selected: `;
-            selectedFiles.forEach((file, i) => {
-                if (i < 2) {
-                    text += file.name + (i === selectedFiles.length - 1 ? '' : ', ');
-                } else if (i === 2) {
-                    text += `... +${selectedFiles.length - 2} more`;
-                }
+            let html = '';
+            let totalSize = 0;
+            
+            selectedFiles.forEach((file, index) => {
+                totalSize += file.size;
+                html += `
+                    <div class="file-item">
+                        <div class="file-info">
+                            <div class="file-name">${file.name}</div>
+                            <div class="file-size">${formatSize(file.size)}</div>
+                        </div>
+                        <button class="remove-btn" onclick="removeFile(${index})" title="Remove file">
+                            ✕
+                        </button>
+                    </div>
+                `;
             });
             
-            fileList.textContent = text;
-            sendBtn.disabled = false;
-            
-            // Update modal preview
-            if (selectedFiles[0]) {
-                document.getElementById('modalFileName').textContent = selectedFiles[0].name;
-                document.getElementById('modalFileDetails').textContent = 
-                    `${formatSize(selectedFiles[0].size)} • ${selectedFiles.length} files`;
+            if (selectedFiles.length > 1) {
+                html += `
+                    <div class="file-item" style="background: rgba(46, 213, 115, 0.1); border-color: rgba(46, 213, 115, 0.2);">
+                        <div class="file-info">
+                            <div class="file-name">🚀 Ready to launch: ${selectedFiles.length} files</div>
+                            <div class="file-size">${formatSize(totalSize)} total</div>
+                        </div>
+                    </div>
+                `;
             }
+            
+            fileList.innerHTML = html;
+            sendBtn.disabled = false;
         }
-
-        // Show send modal
-        function showSendModal() {
+        
+        // Remove file
+        function removeFile(index) {
+            selectedFiles.splice(index, 1);
+            updateFileList();
+        }
+        
+        // Send files
+        async function sendFiles() {
             const receiverId = document.getElementById('receiverId').value.trim();
             
             if (!receiverId) {
-                showToast('Please enter receiver ID');
+                alert('⚠️ Please enter receiver ID');
+                document.getElementById('receiverId').focus();
                 return;
             }
             
             if (selectedFiles.length === 0) {
-                showToast('Please select files');
+                alert('⚠️ Please select files');
                 return;
             }
             
-            document.getElementById('modalReceiverId').textContent = receiverId;
-            document.getElementById('sendModal').style.display = 'flex';
-            
-            // Reset progress
-            updateModalProgress(0, 'Ready to send');
-        }
-
-        // Close send modal
-        function closeSendModal() {
-            document.getElementById('sendModal').style.display = 'none';
-            if (isSending) {
-                cancelTransfer();
-            }
-        }
-
-        // Show receive modal
-        function showReceiveModal(senderId) {
-            document.getElementById('modalSenderId').textContent = senderId;
-            document.getElementById('receiveModal').style.display = 'flex';
-        }
-
-        // Close receive modal
-        function closeReceiveModal() {
-            document.getElementById('receiveModal').style.display = 'none';
-        }
-
-        // Set quality
-        function setQuality(quality) {
-            currentQuality = quality;
-            
-            // Update active state
-            document.querySelectorAll('.quality-option').forEach(option => {
-                option.classList.remove('active');
-            });
-            event.target.classList.add('active');
-            
-            // Update file size estimate
-            updateFileSizeEstimate();
-        }
-
-        // Update file size estimate
-        function updateFileSizeEstimate() {
-            if (selectedFiles.length === 0) return;
-            
-            const originalSize = selectedFiles.reduce((sum, file) => sum + file.size, 0);
-            let estimatedSize = originalSize;
-            
-            switch(currentQuality) {
-                case 'high':
-                    estimatedSize = originalSize * 0.7; // 70% of original
-                    break;
-                case 'medium':
-                    estimatedSize = originalSize * 0.5; // 50% of original
-                    break;
-                case 'low':
-                    estimatedSize = originalSize * 0.3; // 30% of original
-                    break;
-                case 'original':
-                    estimatedSize = originalSize;
-                    break;
-            }
-            
-            const details = document.getElementById('modalFileDetails');
-            const originalText = `${formatSize(originalSize)} • ${selectedFiles.length} files`;
-            const estimatedText = `Est: ${formatSize(estimatedSize)} • ${currentQuality} quality`;
-            
-            details.textContent = currentQuality === 'original' ? 
-                `${originalText} • Original quality` : 
-                `${originalText} • ${estimatedText}`;
-        }
-
-        // Start transfer
-        async function startTransfer() {
-            const receiverId = document.getElementById('receiverId').value.trim();
-            
-            if (!receiverId) {
-                showToast('Please enter receiver ID');
-                return;
+            // Validate receiver ID format
+            if (!receiverId.startsWith('CS-')) {
+                if (!confirm(`Receiver ID "${receiverId}" doesn't look like a Cube Share ID.\nContinue anyway?`)) {
+                    return;
+                }
             }
             
             // Connect to receiver
+            addLog(`🔗 Connecting to ${receiverId}...`);
             connection = peer.connect(receiverId);
             setupConnection(connection);
             
             connection.on('open', async function() {
                 isSending = true;
-                updateModalProgress(0, 'Connecting...');
-                
-                // Show pause button
-                document.getElementById('startTransferBtn').style.display = 'none';
-                document.getElementById('pauseBtn').style.display = 'block';
+                updateControls(true);
+                updateRocket(0, 'Launching...');
+                addLog('🚀 Launching transfer...');
                 
                 try {
-                    // Send transfer info
-                    connection.send({
-                        type: 'transfer_start',
-                        fileCount: selectedFiles.length,
-                        totalSize: selectedFiles.reduce((sum, file) => sum + file.size, 0),
-                        quality: currentQuality
-                    });
-                    
                     // Send all files
                     for (let i = 0; i < selectedFiles.length; i++) {
-                        if (isPaused) await waitForResume();
-                        await sendFile(selectedFiles[i], i);
+                        if (isPaused) {
+                            await waitForResume();
+                        }
+                        
+                        await sendFile(selectedFiles[i], i + 1, selectedFiles.length);
                     }
                     
-                    // Transfer complete
-                    connection.send({ type: 'transfer_complete' });
-                    updateModalProgress(100, 'Transfer complete');
-                    showToast('Transfer completed successfully!');
+                    addLog('✅ All files delivered successfully!');
+                    updateRocket(100, 'Mission Complete!');
+                    updateStatus(true, 'Transfer Complete');
                     
                 } catch (error) {
-                    console.error('Transfer error:', error);
-                    updateModalProgress(0, 'Transfer failed');
-                    showToast('Transfer failed');
+                    console.error('❌ Transfer error:', error);
+                    addLog(`❌ Transfer failed: ${error.message}`);
+                    updateStatus(false, 'Transfer Failed');
                 } finally {
                     isSending = false;
-                    document.getElementById('startTransferBtn').style.display = 'block';
-                    document.getElementById('pauseBtn').style.display = 'none';
+                    updateControls(false);
+                    selectedFiles = [];
+                    updateFileList();
+                    
+                    // Reset rocket after 3 seconds
+                    setTimeout(() => {
+                        updateRocket(0, 'Ready for launch...');
+                    }, 3000);
                 }
             });
+            
+            connection.on('error', function(err) {
+                console.error('❌ Connection error:', err);
+                addLog(`❌ Failed to connect: ${err.message || err.type}`);
+                alert(`Failed to connect to ${receiverId}\nCheck the ID and try again.`);
+                isSending = false;
+                updateControls(false);
+            });
         }
-
-        // Send file with quality optimization
-        async function sendFile(file, index) {
+        
+        // Send single file
+        async function sendFile(file, current, total) {
             return new Promise((resolve, reject) => {
-                // Update modal with current file
-                document.getElementById('modalFileName').textContent = file.name;
-                document.getElementById('modalFileDetails').textContent = 
-                    `${formatSize(file.size)} • ${currentQuality} quality`;
+                addLog(`📤 Sending: ${file.name} (${current}/${total})`);
                 
                 // Send file info
                 connection.send({
                     type: 'file_start',
                     name: file.name,
                     size: file.size,
-                    quality: currentQuality,
-                    index: index + 1,
-                    total: selectedFiles.length
+                    current: current,
+                    total: total,
+                    timestamp: Date.now()
                 });
                 
                 let offset = 0;
-                const chunkSize = getChunkSizeForQuality(currentQuality);
+                const chunkSize = 64 * 1024; // 64KB chunks
                 const reader = new FileReader();
-                const startTime = Date.now();
                 
                 reader.onload = async function(e) {
-                    if (isPaused) await waitForResume();
+                    if (isPaused) {
+                        await waitForResume();
+                    }
                     
                     try {
                         const chunk = e.target.result;
@@ -875,23 +1074,17 @@
                             data: chunk,
                             offset: offset,
                             total: file.size,
-                            timestamp: startTime
+                            fileId: file.name + '_' + Date.now()
                         });
                         
                         offset += chunk.byteLength;
                         
-                        // Update progress
+                        // Update rocket progress
                         const percent = Math.round((offset / file.size) * 100);
-                        updateModalProgress(percent, `Sending: ${file.name}`);
+                        updateRocket(percent, `Transferring: ${file.name}`);
                         
-                        // Update time remaining
-                        if (offset > 0) {
-                            const elapsed = (Date.now() - startTime) / 1000;
-                            const speed = offset / elapsed;
-                            const remaining = file.size - offset;
-                            const seconds = Math.round(remaining / speed);
-                            updateModalTime(seconds);
-                        }
+                        // Animate rocket
+                        animateRocket(percent);
                         
                         if (offset < file.size) {
                             readNextChunk();
@@ -903,6 +1096,7 @@
                                 size: file.size
                             });
                             
+                            addLog(`✅ Sent: ${file.name}`);
                             resolve();
                         }
                     } catch (error) {
@@ -922,56 +1116,130 @@
                 readNextChunk();
             });
         }
-
-        // Get chunk size based on quality
-        function getChunkSizeForQuality(quality) {
-            switch(quality) {
-                case 'original':
-                    return 256 * 1024; // 256KB
-                case 'high':
-                    return 128 * 1024; // 128KB
-                case 'medium':
-                    return 64 * 1024; // 64KB
-                case 'low':
-                    return 32 * 1024; // 32KB
-                default:
-                    return 64 * 1024;
+        
+        // Receiving functions
+        function startReceivingFile(data) {
+            receivingFile = {
+                name: data.name,
+                size: data.size,
+                received: 0,
+                current: data.current,
+                total: data.total,
+                startTime: Date.now()
+            };
+            
+            receivedChunks = [];
+            
+            // Ask for confirmation for large files
+            if (data.size > 100 * 1024 * 1024) { // 100MB
+                if (!confirm(`Receive file "${data.name}" (${formatSize(data.size)})?`)) {
+                    connection.send({ type: 'cancel' });
+                    return;
+                }
+            }
+            
+            updateRocket(0, `Incoming: ${data.name}`);
+            addLog(`📥 Receiving: ${data.name} (${formatSize(data.size)})`);
+        }
+        
+        function receiveChunk(data) {
+            if (!receivingFile) return;
+            
+            receivedChunks.push(data.data);
+            receivingFile.received += data.data.byteLength;
+            
+            const percent = Math.round((receivingFile.received / receivingFile.size) * 100);
+            
+            // Update rocket
+            updateRocket(percent, `Receiving: ${receivingFile.name}`);
+            animateRocket(percent);
+            
+            // Update markers
+            updateMarkers(percent);
+            
+            // Calculate and display speed
+            const elapsed = (Date.now() - receivingFile.startTime) / 1000;
+            if (elapsed > 1) {
+                const speed = receivingFile.received / elapsed;
+                document.getElementById('rocketStatus').textContent = 
+                    `Receiving: ${receivingFile.name} (${formatSize(speed)}/s)`;
             }
         }
-
-        // Pause transfer
-        function pauseTransfer() {
+        
+        function finishReceivingFile(data) {
+            if (!receivingFile) return;
+            
+            // Combine chunks and save file
+            const blob = new Blob(receivedChunks);
+            const url = URL.createObjectURL(blob);
+            
+            // Create download link
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = receivingFile.name;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            
+            // Clean up
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
+            
+            const totalTime = (Date.now() - receivingFile.startTime) / 1000;
+            const speed = receivingFile.size / totalTime;
+            
+            addLog(`✅ Downloaded: ${receivingFile.name} (${formatSize(speed)}/s)`);
+            updateRocket(100, 'Download Complete!');
+            
+            // Reset after delay
+            setTimeout(() => {
+                receivingFile = null;
+                receivedChunks = [];
+                updateRocket(0, 'Ready for launch...');
+            }, 2000);
+        }
+        
+        function handleTransferCancel() {
+            addLog('❌ Transfer cancelled by sender');
+            updateRocket(0, 'Transfer Cancelled');
+            updateStatus(false, 'Transfer Cancelled');
+            receivingFile = null;
+            receivedChunks = [];
+        }
+        
+        // Control functions
+        function togglePause() {
             isPaused = !isPaused;
             const btn = document.getElementById('pauseBtn');
             
             if (isPaused) {
-                btn.textContent = 'Resume';
-                updateModalProgress(currentProgress, 'Paused');
+                btn.innerHTML = '▶️ Resume';
+                btn.classList.remove('glass-btn');
+                btn.classList.add('glass-btn', 'success');
+                addLog('⏸️ Transfer paused');
+                updateRocket(currentRocketPercent, 'PAUSED');
             } else {
-                btn.textContent = 'Pause';
-                updateModalProgress(currentProgress, 'Sending...');
+                btn.innerHTML = '⏸️ Pause';
+                btn.classList.remove('success');
+                addLog('▶️ Transfer resumed');
             }
         }
-
-        // Cancel transfer
+        
         function cancelTransfer() {
-            if (isSending && confirm('Cancel transfer?')) {
+            if (confirm('Abort transfer?')) {
                 if (connection) {
-                    connection.send({ type: 'transfer_cancel' });
+                    connection.send({ type: 'cancel' });
                     connection.close();
                 }
                 
                 isSending = false;
                 isPaused = false;
-                updateModalProgress(0, 'Cancelled');
-                showToast('Transfer cancelled');
-                
-                document.getElementById('startTransferBtn').style.display = 'block';
-                document.getElementById('pauseBtn').style.display = 'none';
+                updateControls(false);
+                updateRocket(0, 'Transfer Aborted');
+                addLog('❌ Transfer aborted');
+                updateStatus(false, 'Transfer Cancelled');
             }
         }
-
-        // Wait for resume
+        
         function waitForResume() {
             return new Promise(resolve => {
                 const check = setInterval(() => {
@@ -982,60 +1250,76 @@
                 }, 100);
             });
         }
-
-        // Update modal progress
-        function updateModalProgress(percent, status) {
-            currentProgress = percent;
+        
+        // Rocket animation functions
+        function updateRocket(percent, message) {
+            currentRocketPercent = percent;
+            const rocketProgress = document.getElementById('rocketProgress');
+            const rocket = document.getElementById('rocket');
             
-            // Update text
-            document.getElementById('modalPercent').textContent = percent + '%';
-            document.getElementById('modalStatus').textContent = status;
-            
-            // Update circle
-            const circle = document.getElementById('progressCircle');
-            const circumference = 565;
-            const offset = circumference - (percent / 100) * circumference;
-            circle.style.strokeDashoffset = offset;
+            if (rocketProgress && rocket) {
+                rocketProgress.style.width = percent + '%';
+                rocket.style.left = percent + '%';
+                document.getElementById('rocketPercent').textContent = percent + '%';
+                document.getElementById('rocketStatus').textContent = message;
+                
+                // Update markers
+                updateMarkers(percent);
+            }
         }
-
-        // Update modal time
-        function updateModalTime(seconds) {
-            const minutes = Math.floor(seconds / 60);
-            const remainingSeconds = seconds % 60;
-            document.getElementById('modalTime').textContent = 
-                `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+        
+        function animateRocket(percent) {
+            const rocket = document.getElementById('rocket');
+            if (rocket) {
+                const scale = 1 + Math.sin(Date.now() / 100) * 0.1;
+                rocket.style.transform = `translate(-50%, -50%) scale(${scale})`;
+            }
         }
-
-        // Update receive progress
-        function updateReceiveProgress(percent, status) {
-            document.getElementById('receivePercent').textContent = percent + '%';
-            document.getElementById('receiveStatus').textContent = status;
-            
-            const circle = document.getElementById('receiveProgressCircle');
-            const circumference = 565;
-            const offset = circumference - (percent / 100) * circumference;
-            circle.style.strokeDashoffset = offset;
-        }
-
-        // Update receive time
-        function updateReceiveTime(seconds) {
-            const minutes = Math.floor(seconds / 60);
-            const remainingSeconds = seconds % 60;
-            document.getElementById('receiveTime').textContent = 
-                `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
-        }
-
-        // Copy my ID
-        function copyMyId() {
-            const id = document.getElementById('myId').textContent;
-            if (id === 'Connecting...') return;
-            
-            navigator.clipboard.writeText(id).then(() => {
-                showToast('ID copied!');
+        
+        function updateMarkers(percent) {
+            const markers = document.querySelectorAll('.marker');
+            markers.forEach(marker => {
+                const markerPercent = parseInt(marker.dataset.percent);
+                if (percent >= markerPercent) {
+                    marker.classList.add('active');
+                } else {
+                    marker.classList.remove('active');
+                }
             });
         }
-
-        // Format size
+        
+        // UI Helper functions
+        function copyMyId() {
+            const id = document.getElementById('myId').textContent;
+            if (id === 'Generating...') {
+                alert('Please wait for ID to generate');
+                return;
+            }
+            
+            navigator.clipboard.writeText(id).then(() => {
+                const btn = document.querySelector('#myId').nextElementSibling;
+                const original = btn.innerHTML;
+                btn.innerHTML = '✅ Copied!';
+                setTimeout(() => btn.innerHTML = original, 2000);
+                addLog('📋 ID copied to clipboard');
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = id;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                const btn = document.querySelector('#myId').nextElementSibling;
+                const original = btn.innerHTML;
+                btn.innerHTML = '✅ Copied!';
+                setTimeout(() => btn.innerHTML = original, 2000);
+                addLog('📋 ID copied to clipboard');
+            });
+        }
+        
         function formatSize(bytes) {
             if (bytes === 0) return '0 B';
             const k = 1024;
@@ -1043,12 +1327,65 @@
             const i = Math.floor(Math.log(bytes) / Math.log(k));
             return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
         }
-
-        // Show toast
-        function showToast(message) {
-            // Simple toast implementation
-            alert(message); // Replace with actual toast if needed
+        
+        function updateStatus(connected, message) {
+            const dot = document.getElementById('statusDot');
+            const text = document.getElementById('statusText');
+            
+            if (dot && text) {
+                text.textContent = message;
+                dot.className = 'status-dot';
+                if (connected) {
+                    dot.classList.add('connected');
+                }
+            }
         }
+        
+        function updateControls(transferring) {
+            document.getElementById('pauseBtn').disabled = !transferring;
+            document.getElementById('cancelBtn').disabled = !transferring;
+            document.getElementById('sendBtn').disabled = transferring;
+        }
+        
+        function addLog(message) {
+            const log = document.getElementById('transferLog');
+            if (!log) return;
+            
+            const item = document.createElement('div');
+            item.className = 'log-item';
+            
+            const time = new Date().toLocaleTimeString([], { 
+                hour: '2-digit', 
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            
+            item.textContent = `[${time}] ${message}`;
+            
+            log.appendChild(item);
+            log.scrollTop = log.scrollHeight;
+            
+            // Keep last 20 messages
+            if (log.children.length > 20) {
+                log.removeChild(log.firstChild);
+            }
+        }
+        
+        // Start rocket animation loop
+        setInterval(() => {
+            if (isSending && !isPaused) {
+                animateRocket(currentRocketPercent);
+            }
+        }, 100);
+        
+        // Auto-refresh connection if it fails
+        setInterval(() => {
+            if (peer && peer.disconnected) {
+                console.log('♻️ Attempting to reconnect...');
+                addLog('♻️ Attempting to reconnect...');
+                initializePeer();
+            }
+        }, 10000); // Check every 10 seconds
     </script>
 </body>
-</html>
+</html>     this code perfectly works this code to handle modal circle loading
