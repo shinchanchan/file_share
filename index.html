@@ -1592,9 +1592,6 @@
     <!-- Notification System -->
     <div id="notificationContainer"></div>
 
-    <!-- QR Code Library -->
-    <!--script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script-->
-
     <script>
         // Global variables
         let peer = null;
@@ -1612,6 +1609,14 @@
         
         // Store whether we have a pending URL parameter
         let hasAutoFilled = false;
+        
+        // User Identity System
+        const USER_IDENTITY = {
+            permanentUserId: null,
+            currentPeerId: null,
+            peerIdHistory: [],
+            lastUpdated: null
+        };
         
         // Cloud PeerJS Configuration
         const PEER_CONFIG = {
@@ -1641,8 +1646,11 @@
         };
         
         // Initialize on load
-        document.addEventListener('DOMContentLoaded', function() {
-            // Check for URL parameters first
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Initialize user identity system
+            await initializeUserIdentity();
+            
+            // Check for URL parameters
             checkUrlParameters();
             
             // Initialize peer connection
@@ -1655,32 +1663,277 @@
             updateStatus('peerStatus', false);
             updateStatus('relayStatus', false);
             
-            // Prevent page refresh during transfer
+            // Setup page protection
             setupPageProtection();
         });
+        
+        // ============================
+        // USER IDENTITY SYSTEM
+        // ============================
+        
+        // Initialize or load permanent user ID
+        async function initializeUserIdentity() {
+            try {
+                // Try to load existing user ID from localStorage
+                let savedIdentity = localStorage.getItem('cubeShareUserIdentity');
+                
+                if (savedIdentity) {
+                    const identity = JSON.parse(savedIdentity);
+                    USER_IDENTITY.permanentUserId = identity.userId;
+                    USER_IDENTITY.peerIdHistory = identity.peerIdHistory || [];
+                    USER_IDENTITY.lastUpdated = identity.lastUpdated;
+                    
+                    console.log('Loaded existing user ID:', USER_IDENTITY.permanentUserId.substring(0, 8) + '...');
+                    addLog('Loaded user profile');
+                } else {
+                    // Generate new permanent user ID
+                    await generateNewUserIdentity();
+                }
+                
+                // Display user ID
+                displayUserIdentity();
+                
+            } catch (error) {
+                console.error('Error initializing user identity:', error);
+                // Fallback: generate new ID
+                await generateNewUserIdentity();
+                displayUserIdentity();
+            }
+        }
+        
+        // Generate new permanent user identity
+        async function generateNewUserIdentity() {
+            // Generate a UUID-like permanent ID
+            const permanentId = 'USER-' + 
+                Date.now().toString(36) + 
+                '-' + 
+                Math.random().toString(36).substr(2, 9).toUpperCase();
+            
+            USER_IDENTITY.permanentUserId = permanentId;
+            USER_IDENTITY.peerIdHistory = [];
+            USER_IDENTITY.lastUpdated = Date.now();
+            
+            // Save to localStorage
+            saveUserIdentity();
+            
+            console.log('Generated new user ID:', permanentId);
+            addLog('Created new user profile');
+        }
+        
+        // Save user identity to localStorage
+        function saveUserIdentity() {
+            try {
+                localStorage.setItem('cubeShareUserIdentity', JSON.stringify({
+                    userId: USER_IDENTITY.permanentUserId,
+                    peerIdHistory: USER_IDENTITY.peerIdHistory,
+                    lastUpdated: USER_IDENTITY.lastUpdated,
+                    created: localStorage.getItem('cubeShareUserIdentity') ? 
+                        JSON.parse(localStorage.getItem('cubeShareUserIdentity')).created : 
+                        Date.now()
+                }));
+            } catch (error) {
+                console.error('Error saving user identity:', error);
+            }
+        }
+        
+        // Display user identity in UI
+        function displayUserIdentity() {
+            if (!USER_IDENTITY.permanentUserId) return;
+            
+            // Update the ID display section
+            const idElement = document.getElementById('myId');
+            if (idElement) {
+                // Show permanent ID initially
+                idElement.innerHTML = `
+                    <div style="margin-bottom: 8px; font-size: 18px; color: var(--text);">
+                        ${USER_IDENTITY.permanentUserId}
+                    </div>
+                    <div style="font-size: 14px; color: var(--text-secondary);">
+                        Peer ID: <span id="currentPeerId">Generating...</span>
+                    </div>
+                `;
+            }
+            
+            // Update any other UI elements that show user ID
+            updateUserProfileUI();
+        }
+        
+        // Update user profile in UI
+        function updateUserProfileUI() {
+            // Update connection status with user info
+            const serverStatus = document.getElementById('serverStatus');
+            if (serverStatus && USER_IDENTITY.permanentUserId) {
+                serverStatus.innerHTML = `Connected as: ${USER_IDENTITY.permanentUserId.substring(0, 12)}...`;
+            }
+        }
+        
+        // ============================
+        // PEER ID MANAGEMENT
+        // ============================
+        
+        // Initialize PeerJS with dynamic peer ID
+        function initializePeer() {
+            try {
+                // Generate a new peer ID for this session
+                const sessionPeerId = generateSessionPeerId();
+                USER_IDENTITY.currentPeerId = sessionPeerId;
+                
+                // Store in history
+                USER_IDENTITY.peerIdHistory.push({
+                    peerId: sessionPeerId,
+                    timestamp: Date.now(),
+                    sessionId: generateSessionId()
+                });
+                
+                // Keep only last 20 entries
+                if (USER_IDENTITY.peerIdHistory.length > 20) {
+                    USER_IDENTITY.peerIdHistory = USER_IDENTITY.peerIdHistory.slice(-20);
+                }
+                
+                // Save updated identity
+                saveUserIdentity();
+                
+                console.log('Initializing PeerJS with ID:', sessionPeerId);
+                
+                // Initialize PeerJS with the generated ID
+                peer = new Peer(sessionPeerId, PEER_CONFIG);
+                
+                // Setup peer event handlers
+                setupPeerEventHandlers();
+                
+            } catch (error) {
+                console.error('Failed to initialize peer:', error);
+                showNotification('Failed to initialize connection', 'error');
+            }
+        }
+        
+        // Generate a session-specific peer ID
+        function generateSessionPeerId() {
+            // Combine user ID with session-specific data
+            const sessionId = generateSessionId();
+            
+            // Format: USER-ABC123-SESSION-XYZ789
+            return `${USER_IDENTITY.permanentUserId}-${sessionId}`;
+        }
+        
+        // Generate a unique session ID
+        function generateSessionId() {
+            return Math.random().toString(36).substr(2, 8).toUpperCase();
+        }
+        
+        // Setup peer event handlers
+        function setupPeerEventHandlers() {
+            if (!peer) return;
+            
+            peer.on('open', function(peerId) {
+                console.log('PeerJS connected with ID:', peerId);
+                USER_IDENTITY.currentPeerId = peerId;
+                
+                // Update UI
+                updateStatus('peerStatus', true);
+                updateUserProfileUI();
+                
+                // Update current peer ID display
+                const peerIdElement = document.getElementById('currentPeerId');
+                if (peerIdElement) {
+                    peerIdElement.textContent = peerId.substring(0, 16) + '...';
+                }
+                
+                showNotification('Connected to signaling server', 'success');
+                addLog('Connected with new peer ID');
+            });
+            
+            peer.on('error', function(err) {
+                console.error('Peer error:', err);
+                updateStatus('peerStatus', false);
+                
+                let message = 'Connection error';
+                if (err.type === 'peer-unavailable') {
+                    message = 'Peer unavailable';
+                } else if (err.type === 'network') {
+                    message = 'Network error';
+                }
+                
+                updateServerStatus(message);
+                showNotification(message, 'error');
+                addLog('Error: ' + message);
+                
+                // Try to reconnect with new peer ID
+                setTimeout(() => {
+                    if (peer && peer.disconnected) {
+                        refreshConnection();
+                    }
+                }, 3000);
+            });
+            
+            peer.on('connection', function(conn) {
+                handleIncomingConnection(conn);
+            });
+            
+            peer.on('iceStateChanged', function(state) {
+                const relayStatus = document.getElementById('relayStatus');
+                if (state === 'connected') {
+                    updateStatus('relayStatus', true);
+                    document.getElementById('connectionType').textContent = 'Relay';
+                    addLog('Using TURN relay');
+                } else if (state === 'disconnected') {
+                    updateStatus('relayStatus', false);
+                    document.getElementById('connectionType').textContent = 'Direct';
+                }
+            });
+            
+            peer.on('disconnected', function() {
+                console.log('Peer disconnected');
+                addLog('Disconnected from signaling server');
+                updateStatus('peerStatus', false);
+                
+                // Try to reconnect with new peer ID
+                setTimeout(() => {
+                    refreshConnection();
+                }, 2000);
+            });
+        }
+        
+        // ============================
+        // CONNECTION ENHANCEMENTS
+        // ============================
         
         // Check URL parameters for auto-fill
         function checkUrlParameters() {
             const urlParams = new URLSearchParams(window.location.search);
             const peerId = urlParams.get('peer');
+            const userId = urlParams.get('user');
             
-            if (peerId && peerId.trim() !== '') {
-                // Auto-fill the receiver ID field
-                document.getElementById('receiverId').value = peerId.trim();
+            if (userId && userId.trim() !== '' && userId.startsWith('USER-')) {
+                // Auto-fill with user ID
+                document.getElementById('receiverId').value = userId.trim();
                 
                 // Show auto-fill message
                 const message = document.getElementById('autoFillMessage');
                 const messageText = document.getElementById('autoFillText');
                 
-                messageText.textContent = `Receiver ID auto-filled from link: ${peerId.substring(0, 12)}...`;
+                messageText.textContent = `User ID detected: ${userId.substring(0, 12)}...`;
                 message.style.display = 'flex';
                 
                 hasAutoFilled = true;
                 
-                // Add log entry
-                addLog(`Auto-filled receiver ID from link`);
+                addLog(`Auto-filled with user ID from link`);
                 
-                // Scroll to input field
+            } else if (peerId && peerId.trim() !== '') {
+                // Legacy support for direct peer IDs
+                document.getElementById('receiverId').value = peerId.trim();
+                
+                const message = document.getElementById('autoFillMessage');
+                const messageText = document.getElementById('autoFillText');
+                
+                messageText.textContent = `Peer ID auto-filled from link`;
+                message.style.display = 'flex';
+                
+                hasAutoFilled = true;
+                addLog(`Auto-filled with peer ID from link`);
+            }
+            
+            if (hasAutoFilled) {
                 setTimeout(() => {
                     document.getElementById('receiverId').scrollIntoView({ behavior: 'smooth', block: 'center' });
                 }, 500);
@@ -1694,250 +1947,53 @@
             hasAutoFilled = false;
         }
         
-        // Generate shareable link
-        function generateShareLink() {
-            const myId = document.getElementById('myId').textContent;
+        // Enhanced connection initiation
+        function initiateSend() {
+            const receiverInput = document.getElementById('receiverId').value.trim();
             
-            if (myId === 'Generating...') {
-                showNotification('Please wait for ID generation', 'error');
+            if (!receiverInput) {
+                showNotification('Enter receiver ID or user ID', 'error');
                 return;
             }
             
-            // Create shareable link
-            const currentUrl = window.location.origin + window.location.pathname;
-            const shareUrl = `${currentUrl}?peer=${encodeURIComponent(myId)}`;
-            
-            // Update modal input
-            document.getElementById('shareLinkInput').value = shareUrl;
-            
-            // Generate QR code
-            //generateQRCode(shareUrl);
-            
-            // Show modal
-            showShareModal();
-        }
-        
-        // Show share modal
-        function showShareModal() {
-            document.getElementById('shareModal').classList.add('active');
-        }
-        
-        // Hide share modal
-        function hideShareModal() {
-            document.getElementById('shareModal').classList.remove('active');
-        }
-        
-        // Copy share link
-        function copyShareLink() {
-            const shareLink = document.getElementById('shareLinkInput').value;
-            navigator.clipboard.writeText(shareLink).then(() => {
-                showNotification('Link copied to clipboard!', 'success');
-            });
-        }
-        
-        // Generate QR code
-        function generateQRCode(text) {
-            try {
-                const canvas = document.getElementById('qrCodeCanvas');
-                QRCode.toCanvas(canvas, text, {
-                    width: 200,
-                    margin: 2,
-                    color: {
-                        dark: '#1e293b',
-                        light: '#ffffff'
-                    }
-                }, function(error) {
-                    if (error) {
-                        console.error('QR Code generation error:', error);
-                    }
-                });
-            } catch (error) {
-                console.error('QR Code error:', error);
-            }
-        }
-        
-        // Share via WhatsApp
-        function shareViaWhatsApp() {
-            const shareLink = document.getElementById('shareLinkInput').value;
-            const message = `Send me files via Cube Share: ${shareLink}`;
-            const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
-            
-            window.open(whatsappUrl, '_blank');
-        }
-        
-        // Share via Telegram
-        function shareViaTelegram() {
-            const shareLink = document.getElementById('shareLinkInput').value;
-            const message = `Send me files via Cube Share: ${shareLink}`;
-            const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(shareLink)}&text=${encodeURIComponent('Send me files via Cube Share')}`;
-            
-            window.open(telegramUrl, '_blank');
-        }
-        
-        // Initialize PeerJS
-        function initializePeer() {
-            try {
-                const simpleId = "CUBE-" + Math.floor(10000 + Math.random() * 90000);
-                
-                peer = new Peer(simpleId, PEER_CONFIG);
-                
-                peer.on('open', function(id) {
-                    document.getElementById('myId').textContent = id;
-                    updateStatus('peerStatus', true);
-                    updateServerStatus('Connected');
-                    showNotification('Connected to server', 'success');
-                    addLog('Connected to cloud server');
-                });
-                
-                peer.on('error', function(err) {
-                    console.error('Peer error:', err);
-                    updateStatus('peerStatus', false);
-                    
-                    let message = 'Connection error';
-                    if (err.type === 'peer-unavailable') {
-                        message = 'Peer unavailable';
-                    } else if (err.type === 'network') {
-                        message = 'Network error';
-                    }
-                    
-                    updateServerStatus(message);
-                    showNotification(message, 'error');
-                    addLog('Error: ' + message);
-                });
-                
-                peer.on('connection', function(conn) {
-                    handleIncomingConnection(conn);
-                });
-                
-                peer.on('iceStateChanged', function(state) {
-                    const relayStatus = document.getElementById('relayStatus');
-                    if (state === 'connected') {
-                        updateStatus('relayStatus', true);
-                        document.getElementById('connectionType').textContent = 'Relay';
-                        addLog('Using TURN relay');
-                    } else if (state === 'disconnected') {
-                        updateStatus('relayStatus', false);
-                        document.getElementById('connectionType').textContent = 'Direct';
-                    }
-                });
-                
-            } catch (error) {
-                console.error('Failed to initialize:', error);
-                showNotification('Failed to initialize', 'error');
-            }
-        }
-        
-        // Setup page protection to prevent accidental refresh
-        function setupPageProtection() {
-            // Warn before leaving during transfer
-            window.addEventListener('beforeunload', function(e) {
-                if (isSending || (connection && connection.open)) {
-                    e.preventDefault();
-                    e.returnValue = 'A file transfer is in progress. Are you sure you want to leave?';
-                    
-                    // Show custom warning modal
-                    showTransferWarning();
-                    return e.returnValue;
-                }
-            });
-            
-            // Prevent back button during transfer
-            window.addEventListener('popstate', function(e) {
-                if (isSending || (connection && connection.open)) {
-                    e.preventDefault();
-                    showTransferWarning();
-                }
-            });
-        }
-        
-        // Show transfer warning modal
-        function showTransferWarning() {
-            const warning = document.getElementById('transferWarning');
-            const message = document.getElementById('warningMessage');
-            
-            if (isSending) {
-                message.textContent = 'A file transfer is currently in progress. If you leave this page, the transfer will be interrupted and cannot be resumed.';
-            } else if (connection && connection.open) {
-                message.textContent = 'You are connected to a peer. Leaving this page will disconnect you.';
+            if (selectedFiles.length === 0) {
+                showNotification('Select files first', 'error');
+                return;
             }
             
-            warning.classList.add('active');
-        }
-        
-        // Stay on page
-        function stayOnPage() {
-            document.getElementById('transferWarning').classList.remove('active');
-        }
-        
-        // Leave page (user confirms)
-        function leavePage() {
-            document.getElementById('transferWarning').classList.remove('active');
-            
-            // Allow the page to unload
-            isSending = false;
-            if (connection) {
-                connection.close();
-                connection = null;
+            if (!peer || peer.disconnected) {
+                showNotification('Not connected to server', 'error');
+                return;
             }
             
-            // Remove the beforeunload handler temporarily
-            const tempHandler = window.onbeforeunload;
-            window.onbeforeunload = null;
-            
-            // Go back or reload
-            setTimeout(() => {
-                window.history.back();
-            }, 100);
+            showProgressModal();
+            startTransfer(receiverInput);
         }
         
-        // Handle incoming connection
+        // Handle incoming connection with user info
         function handleIncomingConnection(conn) {
             connection = conn;
+            
+            // Extract user ID from peer ID if possible
+            const peerId = conn.peer;
+            let userId = 'Unknown User';
+            
+            if (peerId && peerId.includes('-')) {
+                const parts = peerId.split('-');
+                if (parts[0] === 'USER' && parts.length >= 2) {
+                    userId = `${parts[0]}-${parts[1]}`;
+                }
+            }
+            
+            addLog(`Incoming connection from: ${userId}`);
+            showNotification(`Incoming connection from ${userId.substring(0, 12)}...`, 'info');
+            
             setupIncomingConnection(conn);
-            
-            addLog('Incoming connection');
-            showNotification('Incoming connection', 'info');
         }
         
-        // Setup incoming connection
-        function setupIncomingConnection(conn) {
-            conn.on('open', function() {
-                addLog('Connection established with peer');
-                updateStatus('relayStatus', true);
-            });
-            
-            conn.on('data', handleIncomingData);
-            
-            conn.on('close', function() {
-                addLog('Connection closed');
-                connection = null;
-            });
-            
-            conn.on('error', function(err) {
-                console.error('Connection error:', err);
-                addLog('Connection error');
-            });
-        }
-        
-        // Setup outgoing connection
-        function setupOutgoingConnection(conn) {
-            conn.on('open', function() {
-                addLog('Connected to receiver');
-                updateStatus('relayStatus', true);
-            });
-            
-            conn.on('data', handleIncomingData);
-            
-            conn.on('close', function() {
-                addLog('Connection closed');
-                connection = null;
-            });
-            
-            conn.on('error', function(err) {
-                console.error('Connection error:', err);
-                addLog('Connection error');
-            });
-        }
+        // ============================
+        // EXISTING FUNCTIONALITY
+        // ============================
         
         // Setup event listeners
         function setupEventListeners() {
@@ -1976,7 +2032,7 @@
                 setTimeout(() => {
                     const pastedText = this.value;
                     // Check if pasted text looks like a URL with peer parameter
-                    if (pastedText.includes('?peer=') || pastedText.includes('peer=')) {
+                    if (pastedText.includes('?peer=') || pastedText.includes('peer=') || pastedText.includes('?user=')) {
                         try {
                             let url;
                             // Try to parse as URL
@@ -1986,11 +2042,11 @@
                                 url = new URL(pastedText);
                             }
                             
-                            const peerParam = url.searchParams.get('peer');
+                            const peerParam = url.searchParams.get('peer') || url.searchParams.get('user');
                             if (peerParam) {
                                 this.value = peerParam;
-                                showNotification('Extracted peer ID from link', 'info');
-                                addLog('Extracted peer ID from pasted link');
+                                showNotification('Extracted ID from link', 'info');
+                                addLog('Extracted ID from pasted link');
                             }
                         } catch (error) {
                             // Not a valid URL, continue normally
@@ -2089,29 +2145,6 @@
         function removeFile(index) {
             selectedFiles.splice(index, 1);
             updateFileList();
-        }
-        
-        // Initiate send
-        function initiateSend() {
-            const receiverId = document.getElementById('receiverId').value.trim();
-            
-            if (!receiverId) {
-                showNotification('Enter receiver ID', 'error');
-                return;
-            }
-            
-            if (selectedFiles.length === 0) {
-                showNotification('Select files first', 'error');
-                return;
-            }
-            
-            if (!peer || peer.disconnected) {
-                showNotification('Not connected to server', 'error');
-                return;
-            }
-            
-            showProgressModal();
-            startTransfer(receiverId);
         }
         
         // Start transfer - NO COMPRESSION, exact file transfer
@@ -2235,6 +2268,46 @@
                     addLog(`Failed to send: ${file.name}`);
                     resolve(); // Continue with next file
                 }
+            });
+        }
+        
+        // Setup outgoing connection
+        function setupOutgoingConnection(conn) {
+            conn.on('open', function() {
+                addLog('Connected to receiver');
+                updateStatus('relayStatus', true);
+            });
+            
+            conn.on('data', handleIncomingData);
+            
+            conn.on('close', function() {
+                addLog('Connection closed');
+                connection = null;
+            });
+            
+            conn.on('error', function(err) {
+                console.error('Connection error:', err);
+                addLog('Connection error');
+            });
+        }
+        
+        // Setup incoming connection
+        function setupIncomingConnection(conn) {
+            conn.on('open', function() {
+                addLog('Connection established with peer');
+                updateStatus('relayStatus', true);
+            });
+            
+            conn.on('data', handleIncomingData);
+            
+            conn.on('close', function() {
+                addLog('Connection closed');
+                connection = null;
+            });
+            
+            conn.on('error', function(err) {
+                console.error('Connection error:', err);
+                addLog('Connection error');
             });
         }
         
@@ -2503,6 +2576,60 @@
             document.getElementById('progressModal').classList.remove('active');
         }
         
+        // Generate shareable link
+        function generateShareLink() {
+            const myId = USER_IDENTITY.permanentUserId || document.getElementById('myId').textContent;
+            
+            if (myId === 'Generating...') {
+                showNotification('Please wait for ID generation', 'error');
+                return;
+            }
+            
+            // Create shareable link with permanent user ID
+            const currentUrl = window.location.origin + window.location.pathname;
+            const shareUrl = `${currentUrl}?user=${encodeURIComponent(myId)}`;
+            
+            // Update modal input
+            document.getElementById('shareLinkInput').value = shareUrl;
+            
+            // Show modal
+            showShareModal();
+        }
+        
+        function showShareModal() {
+            document.getElementById('shareModal').classList.add('active');
+        }
+        
+        function hideShareModal() {
+            document.getElementById('shareModal').classList.remove('active');
+        }
+        
+        // Copy share link
+        function copyShareLink() {
+            const shareLink = document.getElementById('shareLinkInput').value;
+            navigator.clipboard.writeText(shareLink).then(() => {
+                showNotification('Link copied to clipboard!', 'success');
+            });
+        }
+        
+        // Share via WhatsApp
+        function shareViaWhatsApp() {
+            const shareLink = document.getElementById('shareLinkInput').value;
+            const message = `Send me files via Cube Share: ${shareLink}`;
+            const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
+            
+            window.open(whatsappUrl, '_blank');
+        }
+        
+        // Share via Telegram
+        function shareViaTelegram() {
+            const shareLink = document.getElementById('shareLinkInput').value;
+            const message = `Send me files via Cube Share: ${shareLink}`;
+            const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(shareLink)}&text=${encodeURIComponent('Send me files via Cube Share')}`;
+            
+            window.open(telegramUrl, '_blank');
+        }
+        
         function showHelp() {
             document.getElementById('helpModal').classList.add('active');
         }
@@ -2513,10 +2640,20 @@
         
         // Utility functions
         function copyMyId() {
-            const id = document.getElementById('myId').textContent;
-            navigator.clipboard.writeText(id).then(() => {
-                showNotification('ID copied to clipboard!', 'success');
-                addLog('ID copied');
+            const permanentId = USER_IDENTITY.permanentUserId;
+            const currentPeerId = USER_IDENTITY.currentPeerId;
+            
+            if (!permanentId) {
+                showNotification('User ID not available', 'error');
+                return;
+            }
+            
+            // Copy both IDs with explanation
+            const textToCopy = `Cube Share User ID: ${permanentId}\nCurrent Peer ID: ${currentPeerId || 'Not connected'}\n\nShare the User ID with friends - it stays the same!`;
+            
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                showNotification('User ID copied to clipboard!', 'success');
+                addLog('User ID copied');
             });
         }
         
@@ -2543,7 +2680,14 @@
         }
         
         function updateServerStatus(message) {
-            document.getElementById('serverStatus').textContent = message;
+            const element = document.getElementById('serverStatus');
+            if (element) {
+                if (USER_IDENTITY.permanentUserId) {
+                    element.innerHTML = `${message}<br><small>User: ${USER_IDENTITY.permanentUserId.substring(0, 12)}...</small>`;
+                } else {
+                    element.textContent = message;
+                }
+            }
         }
         
         function addLog(message) {
@@ -2597,11 +2741,74 @@
             updateServerStatus('Reconnecting...');
             updateStatus('peerStatus', false);
             updateStatus('relayStatus', false);
-            addLog('Reconnecting...');
+            addLog('Reconnecting with new session...');
             
             setTimeout(() => {
                 initializePeer();
             }, 1000);
+        }
+        
+        // Setup page protection to prevent accidental refresh
+        function setupPageProtection() {
+            // Warn before leaving during transfer
+            window.addEventListener('beforeunload', function(e) {
+                if (isSending || (connection && connection.open)) {
+                    e.preventDefault();
+                    e.returnValue = 'A file transfer is in progress. Are you sure you want to leave?';
+                    
+                    // Show custom warning modal
+                    showTransferWarning();
+                    return e.returnValue;
+                }
+            });
+            
+            // Prevent back button during transfer
+            window.addEventListener('popstate', function(e) {
+                if (isSending || (connection && connection.open)) {
+                    e.preventDefault();
+                    showTransferWarning();
+                }
+            });
+        }
+        
+        // Show transfer warning modal
+        function showTransferWarning() {
+            const warning = document.getElementById('transferWarning');
+            const message = document.getElementById('warningMessage');
+            
+            if (isSending) {
+                message.textContent = 'A file transfer is currently in progress. If you leave this page, the transfer will be interrupted and cannot be resumed.';
+            } else if (connection && connection.open) {
+                message.textContent = 'You are connected to a peer. Leaving this page will disconnect you.';
+            }
+            
+            warning.classList.add('active');
+        }
+        
+        // Stay on page
+        function stayOnPage() {
+            document.getElementById('transferWarning').classList.remove('active');
+        }
+        
+        // Leave page (user confirms)
+        function leavePage() {
+            document.getElementById('transferWarning').classList.remove('active');
+            
+            // Allow the page to unload
+            isSending = false;
+            if (connection) {
+                connection.close();
+                connection = null;
+            }
+            
+            // Remove the beforeunload handler temporarily
+            const tempHandler = window.onbeforeunload;
+            window.onbeforeunload = null;
+            
+            // Go back or reload
+            setTimeout(() => {
+                window.history.back();
+            }, 100);
         }
         
         // Auto-reconnect
@@ -2610,6 +2817,63 @@
                 refreshConnection();
             }
         }, 30000);
+        
+        // User management functions
+        function resetUserIdentity() {
+            if (confirm('This will create a new user identity. All connections will be reset. Continue?')) {
+                localStorage.removeItem('cubeShareUserIdentity');
+                localStorage.removeItem('cubeShareLastPeerUpdate');
+                
+                // Refresh page to reinitialize
+                window.location.reload();
+            }
+        }
+        
+        function showUserProfile() {
+            const profileInfo = `
+                <div style="background: rgba(15, 23, 42, 0.6); border-radius: 16px; padding: 20px; margin-bottom: 20px;">
+                    <h3 style="color: var(--text); margin-bottom: 16px;">Your Profile</h3>
+                    
+                    <div style="margin-bottom: 12px;">
+                        <div style="font-size: 13px; color: var(--text-secondary);">Permanent User ID:</div>
+                        <div style="font-size: 16px; font-weight: 500; color: var(--text); word-break: break-all;">
+                            ${USER_IDENTITY.permanentUserId || 'Not set'}
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 12px;">
+                        <div style="font-size: 13px; color: var(--text-secondary);">Current Peer ID:</div>
+                        <div style="font-size: 14px; color: var(--text); word-break: break-all;">
+                            ${USER_IDENTITY.currentPeerId || 'Not connected'}
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 12px;">
+                        <div style="font-size: 13px; color: var(--text-secondary);">Session History:</div>
+                        <div style="font-size: 13px; color: var(--text-secondary);">
+                            ${USER_IDENTITY.peerIdHistory.length} recent sessions
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; gap: 10px; margin-top: 20px;">
+                        <button class="btn btn-secondary" style="flex: 1; padding: 12px;" onclick="copyMyId()">
+                            <i class="fas fa-copy"></i> Copy ID
+                        </button>
+                        <button class="btn btn-secondary" style="flex: 1; padding: 12px;" onclick="refreshConnection()">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+                    
+                    <button class="btn btn-danger" style="width: 100%; margin-top: 12px; padding: 12px;" onclick="resetUserIdentity()">
+                        <i class="fas fa-user-slash"></i> Reset Identity
+                    </button>
+                </div>
+            `;
+            
+            // For now, we'll log it and show a notification
+            console.log('User Profile:', USER_IDENTITY);
+            showNotification('Profile info logged to console', 'info');
+        }
     </script>
 </body>
 </html>
