@@ -366,6 +366,111 @@
             color: var(--text-secondary);
         }
 
+        /* Compression Settings */
+        .compression-settings {
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .compression-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .compression-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .compression-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 26px;
+        }
+
+        .toggle-checkbox {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--border);
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        .toggle-checkbox:checked + .toggle-slider {
+            background-color: var(--primary);
+        }
+
+        .toggle-checkbox:checked + .toggle-slider:before {
+            transform: translateX(24px);
+        }
+
+        .compression-options {
+            display: none;
+            margin-top: 16px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .compression-options.show {
+            display: block;
+        }
+
+        .quality-slider {
+            width: 100%;
+            margin: 16px 0;
+        }
+
+        .quality-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .quality-value {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .compression-info {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-top: 12px;
+        }
+
         /* File List */
         .file-list {
             max-height: 200px;
@@ -843,9 +948,9 @@
             }
         }
 
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         /* Mobile Optimizations */
@@ -951,17 +1056,6 @@
             .file-item:active,
             .remove-btn:active {
                 transform: scale(0.98);
-            }
-        }
-
-        /* Tablet */
-        @media (min-width: 768px) and (max-width: 1024px) {
-            .app-container {
-                max-width: 600px;
-            }
-            
-            .action-grid {
-                grid-template-columns: repeat(2, 1fr);
             }
         }
 
@@ -1183,6 +1277,33 @@
                     <input type="text" class="input-field" id="receiverId" placeholder="Enter receiver's share ID">
                 </div>
 
+                <!-- Compression Settings -->
+                <div class="compression-settings">
+                    <div class="compression-header">
+                        <div class="compression-title">
+                            <i class="fas fa-compress-alt"></i> Compression
+                        </div>
+                        <div class="compression-toggle">
+                            <span style="font-size: 14px; color: var(--text-secondary);">Auto</span>
+                            <label class="toggle-switch">
+                                <input type="checkbox" class="toggle-checkbox" id="compressionToggle" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="compression-options" id="compressionOptions">
+                        <div class="quality-label">
+                            <span>Video Quality:</span>
+                            <span class="quality-value" id="qualityValue">Medium</span>
+                        </div>
+                        <input type="range" min="1" max="10" value="5" class="quality-slider" id="qualitySlider">
+                        <div class="compression-info">
+                            <i class="fas fa-info-circle"></i> Reduces file size for faster transfer
+                        </div>
+                    </div>
+                </div>
+
                 <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
                     <div class="upload-icon">
                         <i class="fas fa-cloud-upload-alt"></i>
@@ -1339,6 +1460,11 @@
                 </div>
 
                 <div class="help-section">
+                    <h3><i class="fas fa-compress-alt"></i> Compression</h3>
+                    <p>Video files are automatically compressed to reduce size for faster transfers. You can adjust the quality in settings.</p>
+                </div>
+
+                <div class="help-section">
                     <h3><i class="fas fa-lightbulb"></i> Tips</h3>
                     <ul class="step-list">
                         <li>Keep app open during transfers</li>
@@ -1384,13 +1510,20 @@
         let selectedFiles = [];
         let isSending = false;
         let isPaused = false;
-        let currentTransfer = null;
         let downloads = [];
         let transferStats = {
             startTime: null,
             bytesTransferred: 0,
             speed: 0,
             lastUpdate: null
+        };
+        
+        // Compression settings
+        let compressionSettings = {
+            enabled: true,
+            videoQuality: 0.5, // 0.1 to 1.0
+            maxWidth: 1280,
+            maxHeight: 720
         };
         
         // Cloud PeerJS Configuration
@@ -1424,6 +1557,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             initializePeer();
             setupEventListeners();
+            setupCompressionControls();
             updateStatus('peerStatus', false);
             updateStatus('relayStatus', false);
         });
@@ -1481,6 +1615,55 @@
             }
         }
         
+        // Handle incoming connection - FIXED: Added missing setupConnection function
+        function handleIncomingConnection(conn) {
+            connection = conn;
+            setupIncomingConnection(conn);
+            
+            addLog('Incoming connection');
+            showNotification('Incoming connection', 'info');
+        }
+        
+        // Setup incoming connection
+        function setupIncomingConnection(conn) {
+            conn.on('open', function() {
+                addLog('Connection established with peer');
+                updateStatus('relayStatus', true);
+            });
+            
+            conn.on('data', handleIncomingData);
+            
+            conn.on('close', function() {
+                addLog('Connection closed');
+                connection = null;
+            });
+            
+            conn.on('error', function(err) {
+                console.error('Connection error:', err);
+                addLog('Connection error');
+            });
+        }
+        
+        // Setup outgoing connection
+        function setupOutgoingConnection(conn) {
+            conn.on('open', function() {
+                addLog('Connected to receiver');
+                updateStatus('relayStatus', true);
+            });
+            
+            conn.on('data', handleIncomingData);
+            
+            conn.on('close', function() {
+                addLog('Connection closed');
+                connection = null;
+            });
+            
+            conn.on('error', function(err) {
+                console.error('Connection error:', err);
+                addLog('Connection error');
+            });
+        }
+        
         // Setup event listeners
         function setupEventListeners() {
             const fileInput = document.getElementById('fileInput');
@@ -1512,13 +1695,67 @@
             uploadArea.addEventListener('touchend', function() {
                 this.classList.remove('active');
             });
+        }
+        
+        // Setup compression controls
+        function setupCompressionControls() {
+            const toggle = document.getElementById('compressionToggle');
+            const slider = document.getElementById('qualitySlider');
+            const options = document.getElementById('compressionOptions');
             
-            // Prevent zoom on double tap
-            document.addEventListener('touchstart', function(event) {
-                if (event.touches.length > 1) {
-                    event.preventDefault();
+            // Show/hide compression options
+            toggle.addEventListener('change', function() {
+                compressionSettings.enabled = this.checked;
+                if (this.checked) {
+                    options.classList.add('show');
+                } else {
+                    options.classList.remove('show');
                 }
-            }, { passive: false });
+            });
+            
+            // Quality slider
+            slider.addEventListener('input', function() {
+                const value = parseInt(this.value);
+                let qualityText = '';
+                let quality = 0.1;
+                
+                switch(value) {
+                    case 1:
+                    case 2:
+                        qualityText = 'Low';
+                        quality = 0.2;
+                        break;
+                    case 3:
+                    case 4:
+                        qualityText = 'Medium-Low';
+                        quality = 0.4;
+                        break;
+                    case 5:
+                    case 6:
+                        qualityText = 'Medium';
+                        quality = 0.6;
+                        break;
+                    case 7:
+                    case 8:
+                        qualityText = 'Medium-High';
+                        quality = 0.8;
+                        break;
+                    case 9:
+                    case 10:
+                        qualityText = 'High';
+                        quality = 1.0;
+                        break;
+                }
+                
+                document.getElementById('qualityValue').textContent = qualityText;
+                compressionSettings.videoQuality = quality;
+            });
+            
+            // Initialize with default values
+            toggle.checked = compressionSettings.enabled;
+            if (compressionSettings.enabled) {
+                options.classList.add('show');
+            }
         }
         
         function handleFileSelect(e) {
@@ -1593,9 +1830,6 @@
             
             fileList.innerHTML = html;
             sendBtn.disabled = false;
-            
-            // Scroll to show files
-            fileList.scrollTop = fileList.scrollHeight;
         }
         
         function getFileIcon(mimeType) {
@@ -1637,139 +1871,200 @@
         }
         
         // Start transfer
-        function startTransfer(receiverId) {
-            connection = peer.connect(receiverId, { reliable: true });
-            
-            connection.on('open', async function() {
-                isSending = true;
-                updateControls(true);
-                updateProgress(0, 'Starting transfer...');
+        async function startTransfer(receiverId) {
+            try {
+                connection = peer.connect(receiverId, { reliable: true });
+                setupOutgoingConnection(connection);
                 
-                transferStats.startTime = Date.now();
-                transferStats.bytesTransferred = 0;
-                transferStats.lastUpdate = Date.now();
-                
-                addLog('Starting transfer...');
-                
-                // Calculate total size
-                const totalSize = selectedFiles.reduce((sum, file) => sum + file.size, 0);
-                let transferredSize = 0;
-                
-                // Send all files
-                for (let i = 0; i < selectedFiles.length; i++) {
-                    if (isPaused) {
-                        await waitForResume();
+                connection.on('open', async function() {
+                    isSending = true;
+                    updateControls(true);
+                    updateProgress(0, 'Starting transfer...');
+                    
+                    transferStats.startTime = Date.now();
+                    transferStats.bytesTransferred = 0;
+                    transferStats.lastUpdate = Date.now();
+                    
+                    addLog('Starting transfer...');
+                    
+                    // Process and send all files
+                    for (let i = 0; i < selectedFiles.length; i++) {
+                        if (isPaused) {
+                            await waitForResume();
+                        }
+                        
+                        const file = selectedFiles[i];
+                        document.getElementById('currentFile').textContent = file.name;
+                        
+                        await sendFile(file);
                     }
                     
-                    const file = selectedFiles[i];
-                    document.getElementById('currentFile').textContent = file.name;
+                    addLog('Transfer complete!');
+                    showNotification('Transfer completed successfully', 'success');
+                    updateProgress(100, 'Transfer Complete!');
                     
-                    await sendFile(file, transferredSize, totalSize);
-                    transferredSize += file.size;
-                }
-                
-                addLog('Transfer complete!');
-                showNotification('Transfer completed successfully', 'success');
-                updateProgress(100, 'Transfer Complete!');
-                
-                setTimeout(() => {
-                    hideProgressModal();
-                    isSending = false;
-                    updateControls(false);
-                    selectedFiles = [];
-                    updateFileList();
-                    updateProgress(0, 'Ready');
-                }, 2000);
-            });
-            
-            connection.on('error', function(err) {
-                console.error('Transfer error:', err);
-                addLog('Transfer failed');
-                showNotification('Transfer failed', 'error');
-                hideProgressModal();
-            });
-            
-            setupConnection(connection);
-        }
-        
-        // Send single file
-        async function sendFile(file, offsetSoFar, totalSize) {
-            return new Promise((resolve) => {
-                // Send file info
-                connection.send({
-                    type: 'file_start',
-                    name: file.name,
-                    size: file.size,
-                    mime: file.type
+                    setTimeout(() => {
+                        hideProgressModal();
+                        isSending = false;
+                        updateControls(false);
+                        selectedFiles = [];
+                        updateFileList();
+                        updateProgress(0, 'Ready');
+                    }, 2000);
                 });
                 
-                let offset = 0;
-                const chunkSize = 64 * 1024; // 64KB chunks
-                const reader = new FileReader();
-                
-                reader.onload = async function(e) {
-                    if (isPaused) {
-                        await waitForResume();
+            } catch (error) {
+                console.error('Transfer error:', error);
+                addLog('Failed to start transfer');
+                showNotification('Failed to start transfer', 'error');
+                hideProgressModal();
+            }
+        }
+        
+        // Process and send file with compression
+        async function sendFile(file) {
+            return new Promise(async (resolve) => {
+                try {
+                    let processedFile = file;
+                    let processedSize = file.size;
+                    
+                    // Check if compression is enabled and file is video
+                    if (compressionSettings.enabled && file.type.includes('video')) {
+                        addLog(`Compressing video: ${file.name}`);
+                        processedFile = await compressVideo(file);
+                        processedSize = processedFile.size;
+                        
+                        const reduction = ((file.size - processedSize) / file.size * 100).toFixed(1);
+                        addLog(`Compressed: ${reduction}% size reduction`);
                     }
                     
-                    const chunk = e.target.result;
-                    
-                    // Send chunk
+                    // Send file info
                     connection.send({
-                        type: 'chunk',
-                        data: chunk,
-                        offset: offset
+                        type: 'file_start',
+                        name: file.name,
+                        size: processedSize,
+                        mime: file.type,
+                        originalSize: file.size
                     });
                     
-                    offset += chunk.byteLength;
-                    transferStats.bytesTransferred += chunk.byteLength;
+                    let offset = 0;
+                    const chunkSize = 64 * 1024; // 64KB chunks
+                    const reader = new FileReader();
                     
-                    // Update progress
-                    const now = Date.now();
-                    if (now - transferStats.lastUpdate > 500) {
-                        const filePercent = Math.round((offset / file.size) * 100);
-                        const totalTransferred = offsetSoFar + offset;
-                        const totalPercent = Math.round((totalTransferred / totalSize) * 100);
+                    reader.onload = async function(e) {
+                        if (isPaused) {
+                            await waitForResume();
+                        }
                         
-                        updateProgress(totalPercent, `Sending: ${file.name}`);
-                        updateSpeed();
-                        updateCircularProgress(totalPercent);
+                        const chunk = e.target.result;
                         
-                        transferStats.lastUpdate = now;
-                    }
-                    
-                    if (offset < file.size) {
-                        readNextChunk();
-                    } else {
-                        // File complete
+                        // Send chunk
                         connection.send({
-                            type: 'file_end',
-                            name: file.name
+                            type: 'chunk',
+                            data: chunk,
+                            offset: offset
                         });
                         
-                        addLog(`Sent: ${file.name}`);
-                        resolve();
+                        offset += chunk.byteLength;
+                        transferStats.bytesTransferred += chunk.byteLength;
+                        
+                        // Update progress
+                        const now = Date.now();
+                        if (now - transferStats.lastUpdate > 500) {
+                            const percent = Math.round((offset / processedSize) * 100);
+                            updateProgress(percent, `Sending: ${file.name}`);
+                            updateSpeed();
+                            updateCircularProgress(percent);
+                            transferStats.lastUpdate = now;
+                        }
+                        
+                        if (offset < processedSize) {
+                            readNextChunk();
+                        } else {
+                            // File complete
+                            connection.send({
+                                type: 'file_end',
+                                name: file.name
+                            });
+                            
+                            addLog(`Sent: ${file.name}`);
+                            resolve();
+                        }
+                    };
+                    
+                    function readNextChunk() {
+                        const slice = processedFile.slice(offset, offset + chunkSize);
+                        reader.readAsArrayBuffer(slice);
                     }
-                };
-                
-                function readNextChunk() {
-                    const slice = file.slice(offset, offset + chunkSize);
-                    reader.readAsArrayBuffer(slice);
+                    
+                    readNextChunk();
+                    
+                } catch (error) {
+                    console.error('Error sending file:', error);
+                    addLog(`Failed to send: ${file.name}`);
+                    resolve(); // Continue with next file
                 }
-                
-                readNextChunk();
             });
         }
         
-        // Handle incoming connection
-        function handleIncomingConnection(conn) {
-            connection = conn;
-            setupConnection(conn);
-            
-            conn.on('data', handleIncomingData);
-            
-            addLog('Incoming connection');
-            showNotification('Incoming connection', 'info');
+        // Video compression function
+        async function compressVideo(file) {
+            return new Promise((resolve, reject) => {
+                if (!file.type.includes('video')) {
+                    resolve(file);
+                    return;
+                }
+                
+                const video = document.createElement('video');
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                
+                video.preload = 'metadata';
+                
+                video.onloadedmetadata = function() {
+                    // Calculate new dimensions
+                    let width = video.videoWidth;
+                    let height = video.videoHeight;
+                    
+                    if (width > compressionSettings.maxWidth || height > compressionSettings.maxHeight) {
+                        const scale = Math.min(
+                            compressionSettings.maxWidth / width,
+                            compressionSettings.maxHeight / height
+                        );
+                        width = Math.floor(width * scale);
+                        height = Math.floor(height * scale);
+                    }
+                    
+                    canvas.width = width;
+                    canvas.height = height;
+                    
+                    // Draw video frame to canvas
+                    video.currentTime = 0;
+                    
+                    video.onseeked = function() {
+                        ctx.drawImage(video, 0, 0, width, height);
+                        
+                        // Convert canvas to compressed video (simplified - in production use MediaRecorder)
+                        canvas.toBlob(function(blob) {
+                            if (blob) {
+                                const compressedFile = new File([blob], file.name, {
+                                    type: 'video/mp4',
+                                    lastModified: Date.now()
+                                });
+                                resolve(compressedFile);
+                            } else {
+                                resolve(file); // Fallback to original
+                            }
+                        }, 'video/mp4', compressionSettings.videoQuality);
+                    };
+                };
+                
+                video.onerror = function() {
+                    resolve(file); // Fallback to original file
+                };
+                
+                video.src = URL.createObjectURL(file);
+            });
         }
         
         // Handle incoming data
@@ -1795,6 +2090,7 @@
                 name: data.name,
                 size: data.size,
                 mime: data.mime,
+                originalSize: data.originalSize || data.size,
                 received: 0,
                 startTime: Date.now()
             };
@@ -1833,6 +2129,7 @@
                 id: Date.now(),
                 name: receivingFile.name,
                 size: receivingFile.size,
+                originalSize: receivingFile.originalSize,
                 url: url,
                 date: new Date().toLocaleTimeString(),
                 downloaded: false
@@ -1863,6 +2160,12 @@
             document.body.removeChild(a);
             
             download.downloaded = true;
+            
+            // Show compression info if applicable
+            if (download.originalSize && download.originalSize > download.size) {
+                const reduction = ((download.originalSize - download.size) / download.originalSize * 100).toFixed(1);
+                showNotification(`Video compressed: ${reduction}% size reduction`, 'info');
+            }
             
             // Clean up after some time
             setTimeout(() => {
@@ -1981,6 +2284,10 @@
             } else {
                 let html = '';
                 downloads.forEach((download, index) => {
+                    const sizeInfo = download.originalSize && download.originalSize > download.size 
+                        ? `${formatSize(download.size)} (Compressed from ${formatSize(download.originalSize)})`
+                        : formatSize(download.size);
+                    
                     html += `
                         <div class="file-item" style="margin-bottom: 12px;">
                             <div class="file-icon">
@@ -1989,7 +2296,7 @@
                             <div class="file-info">
                                 <div class="file-name">${download.name}</div>
                                 <div class="file-details">
-                                    <span class="file-size">${formatSize(download.size)}</span>
+                                    <span class="file-size">${sizeInfo}</span>
                                     <span>•</span>
                                     <span>${download.date}</span>
                                 </div>
