@@ -1,1391 +1,189 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🚀 Cube Share</title>
-    <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
-    <style>
-        /* Reset & Base */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            min-height: 100vh;
-            background: linear-gradient(135deg, 
-                #0f0c29 0%, 
-                #302b63 25%, 
-                #24243e 50%, 
-                #1a1a2e 75%, 
-                #16213e 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            overflow-x: hidden;
-        }
-
-        /* Glass Container */
-        .glass-container {
-            width: 100%;
-            max-width: 600px;
-            background: rgba(255, 255, 255, 0.07);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border-radius: 24px;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            box-shadow: 
-                0 20px 40px rgba(0, 0, 0, 0.3),
-                inset 0 1px 0 rgba(255, 255, 255, 0.1);
-            padding: 35px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        /* Animated Background Elements */
-        .container-bg {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            overflow: hidden;
-            z-index: -1;
-            border-radius: 24px;
-        }
-
-        .bg-circle {
-            position: absolute;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-            animation: float 20s infinite linear;
-        }
-
-        .bg-circle:nth-child(1) {
-            width: 300px;
-            height: 300px;
-            top: -150px;
-            right: -100px;
-            animation-delay: 0s;
-        }
-
-        .bg-circle:nth-child(2) {
-            width: 200px;
-            height: 200px;
-            bottom: -100px;
-            left: -50px;
-            animation-delay: -5s;
-            animation-duration: 25s;
-        }
-
-        .bg-circle:nth-child(3) {
-            width: 150px;
-            height: 150px;
-            top: 50%;
-            right: 20%;
-            animation-delay: -10s;
-            animation-duration: 30s;
-        }
-
-        @keyframes float {
-            0% {
-                transform: translate(0, 0) rotate(0deg);
-            }
-            33% {
-                transform: translate(30px, -20px) rotate(120deg);
-            }
-            66% {
-                transform: translate(-20px, 30px) rotate(240deg);
-            }
-            100% {
-                transform: translate(0, 0) rotate(360deg);
-            }
-        }
-
-        /* Header */
-        .header {
-            text-align: center;
-            margin-bottom: 35px;
-            position: relative;
-        }
-
-        h1 {
-            color: white;
-            font-size: 42px;
-            margin-bottom: 12px;
-            font-weight: 700;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            text-shadow: 0 2px 10px rgba(102, 126, 234, 0.3);
-        }
-
-        .subtitle {
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 16px;
-            font-weight: 400;
-        }
-
-        /* ID Section */
-        .id-section {
-            background: rgba(255, 255, 255, 0.08);
-            border-radius: 16px;
-            padding: 25px;
-            margin-bottom: 25px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .id-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, #667eea, transparent);
-        }
-
-        .id-label {
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 14px;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        #myId {
-            color: white;
-            font-size: 24px;
-            font-weight: 600;
-            margin: 15px 0;
-            word-break: break-all;
-            font-family: 'Monaco', 'Courier New', monospace;
-            background: rgba(0, 0, 0, 0.2);
-            padding: 12px;
-            border-radius: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        /* Status */
-        .status {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            margin: 15px 0;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
-
-        .status-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: #ff4757;
-            animation: pulse 2s infinite;
-        }
-
-        .status-dot.connected {
-            background: #2ed573;
-            animation: pulse-green 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
-        @keyframes pulse-green {
-            0%, 100% { 
-                opacity: 1;
-                box-shadow: 0 0 0 0 rgba(46, 213, 115, 0.7);
-            }
-            50% { 
-                opacity: 0.8;
-                box-shadow: 0 0 0 10px rgba(46, 213, 115, 0);
-            }
-        }
-
-        /* Inputs */
-        .glass-input {
-            width: 100%;
-            padding: 16px 20px;
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 12px;
-            color: white;
-            font-size: 16px;
-            margin-bottom: 20px;
-            transition: all 0.3s ease;
-            font-family: inherit;
-        }
-
-        .glass-input:focus {
-            outline: none;
-            border-color: rgba(102, 126, 234, 0.5);
-            background: rgba(255, 255, 255, 0.12);
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .glass-input::placeholder {
-            color: rgba(255, 255, 255, 0.4);
-        }
-
-        /* File Upload */
-        .upload-zone {
-            border: 2px dashed rgba(255, 255, 255, 0.2);
-            border-radius: 16px;
-            padding: 40px 20px;
-            text-align: center;
-            cursor: pointer;
-            margin-bottom: 20px;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .upload-zone:hover {
-            border-color: rgba(102, 126, 234, 0.5);
-            background: rgba(255, 255, 255, 0.05);
-            transform: translateY(-2px);
-        }
-
-        .upload-icon {
-            font-size: 48px;
-            color: rgba(255, 255, 255, 0.3);
-            margin-bottom: 15px;
-        }
-
-        .upload-text {
-            color: rgba(255, 255, 255, 0.9);
-            font-size: 18px;
-            margin-bottom: 8px;
-            font-weight: 500;
-        }
-
-        .upload-subtext {
-            color: rgba(255, 255, 255, 0.5);
-            font-size: 14px;
-        }
-
-        /* File List */
-        .file-list {
-            max-height: 200px;
-            overflow-y: auto;
-            margin-bottom: 20px;
-        }
-
-        .file-list::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .file-list::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 3px;
-        }
-
-        .file-list::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 3px;
-        }
-
-        .file-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-            margin-bottom: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            transition: all 0.3s ease;
-        }
-
-        .file-item:hover {
-            background: rgba(255, 255, 255, 0.08);
-            transform: translateX(5px);
-        }
-
-        .file-info {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .file-name {
-            color: white;
-            font-size: 15px;
-            font-weight: 500;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .file-size {
-            color: rgba(255, 255, 255, 0.5);
-            font-size: 13px;
-            margin-top: 4px;
-        }
-
-        .remove-btn {
-            background: rgba(255, 71, 87, 0.2);
-            border: 1px solid rgba(255, 71, 87, 0.3);
-            color: rgba(255, 255, 255, 0.9);
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            transition: all 0.3s ease;
-        }
-
-        .remove-btn:hover {
-            background: rgba(255, 71, 87, 0.3);
-            transform: scale(1.1);
-        }
-
-        /* Buttons */
-        .glass-btn {
-            width: 100%;
-            padding: 18px 24px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 17px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .glass-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: 0.5s;
-        }
-
-        .glass-btn:hover::before {
-            left: 100%;
-        }
-
-        .glass-btn:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
-        }
-
-        .glass-btn:active:not(:disabled) {
-            transform: translateY(0);
-        }
-
-        .glass-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-
-        .glass-btn.success {
-            background: linear-gradient(135deg, #2ed573 0%, #1e90ff 100%);
-        }
-
-        .glass-btn.danger {
-            background: linear-gradient(135deg, #ff4757 0%, #ff6348 100%);
-        }
-
-        /* Rocket Progress Section */
-        .rocket-section {
-            margin: 30px 0;
-            padding: 25px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .rocket-container {
-            position: relative;
-            height: 120px;
-            margin: 20px 0;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 10px;
-            overflow: hidden;
-        }
-
-        .rocket-track {
-            position: absolute;
-            top: 50%;
-            left: 20px;
-            right: 20px;
-            height: 2px;
-            background: rgba(255, 255, 255, 0.1);
-            transform: translateY(-50%);
-        }
-
-        .rocket {
-            position: absolute;
-            left: 0;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 40px;
-            transition: left 0.3s ease;
-            filter: drop-shadow(0 5px 15px rgba(255, 255, 255, 0.3));
-            z-index: 2;
-        }
-
-        .rocket-progress {
-            position: absolute;
-            left: 0;
-            top: 50%;
-            height: 4px;
-            background: linear-gradient(90deg, #667eea, #764ba2);
-            border-radius: 2px;
-            transform: translateY(-50%);
-            transition: width 0.3s ease;
-            box-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
-        }
-
-        .progress-markers {
-            position: absolute;
-            top: 50%;
-            left: 20px;
-            right: 20px;
-            display: flex;
-            justify-content: space-between;
-            transform: translateY(-50%);
-            pointer-events: none;
-        }
-
-        .marker {
-            width: 8px;
-            height: 8px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
-            position: relative;
-        }
-
-        .marker.active {
-            background: #2ed573;
-            box-shadow: 0 0 10px #2ed573;
-        }
-
-        .marker::after {
-            content: attr(data-percent);
-            position: absolute;
-            top: -25px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: rgba(255, 255, 255, 0.5);
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .progress-info {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
-        }
-
-        .progress-text {
-            color: white;
-            font-size: 16px;
-            font-weight: 500;
-        }
-
-        .progress-percent {
-            color: #667eea;
-            font-size: 28px;
-            font-weight: 700;
-            text-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
-        }
-
-        /* Exhaust Animation */
-        .exhaust {
-            position: absolute;
-            bottom: -20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 4px;
-            height: 30px;
-            background: linear-gradient(to bottom, transparent, #667eea);
-            filter: blur(2px);
-            animation: exhaust 0.5s infinite;
-            opacity: 0.7;
-        }
-
-        @keyframes exhaust {
-            0%, 100% {
-                height: 20px;
-                opacity: 0.7;
-            }
-            50% {
-                height: 40px;
-                opacity: 1;
-            }
-        }
-
-        /* Stars Animation */
-        .stars {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            pointer-events: none;
-        }
-
-        .star {
-            position: absolute;
-            background: white;
-            border-radius: 50%;
-            animation: twinkle 2s infinite;
-        }
-
-        @keyframes twinkle {
-            0%, 100% { opacity: 0.2; }
-            50% { opacity: 1; }
-        }
-
-        /* Log */
-        .log {
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 12px;
-            padding: 20px;
-            margin-top: 20px;
-            max-height: 150px;
-            overflow-y: auto;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .log::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .log::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 3px;
-        }
-
-        .log::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 3px;
-        }
-
-        .log-item {
-            color: rgba(255, 255, 255, 0.8);
-            padding: 8px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            font-size: 14px;
-            font-family: 'Monaco', 'Courier New', monospace;
-        }
-
-        .log-item:last-child {
-            border-bottom: none;
-        }
-
-        /* Controls */
-        .controls {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-top: 25px;
-        }
-
-        /* Responsive */
-        @media (max-width: 640px) {
-            .glass-container {
-                padding: 25px;
-            }
-            
-            h1 {
-                font-size: 32px;
-            }
-            
-            #myId {
-                font-size: 20px;
-            }
-            
-            .controls {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* Glow Effect */
-        .glow {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            background: radial-gradient(circle at 50% 0%, rgba(102, 126, 234, 0.3), transparent 50%);
-            pointer-events: none;
-            z-index: -1;
-        }
-    </style>
+<meta charset="UTF-8">
+<title>Cube Simple PeerJS Transfer</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+
+<!-- Semantic UI -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.5.0/dist/semantic.min.css">
+<script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.5.0/dist/semantic.min.js"></script>
+
+<!-- PeerJS -->
+<script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+
+<style>
+body {
+    background: #f5f7fa;
+    padding: 20px;
+}
+.loader-circle {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    border: 10px solid #ddd;
+    border-top: 10px solid #2185d0;
+    animation: spin 1s linear infinite;
+    margin: auto;
+    position: relative;
+}
+.loader-text {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+    font-weight: bold;
+}
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+</style>
 </head>
+
 <body>
-    <div class="glass-container">
-        <div class="container-bg">
-            <div class="bg-circle"></div>
-            <div class="bg-circle"></div>
-            <div class="bg-circle"></div>
-        </div>
-        
-        <div class="glow"></div>
-        
-        <div class="header">
-            <h1>🚀 Cube File's Share</h1>
-            <p class="subtitle">Lightning-fast P2P file transfer</p>
-        </div>
-        
-        <!-- Your ID Section -->
-        <div class="id-section">
-            <div class="id-label">
-                <span>🔑</span>
-                <span>Your ID - Share this to receive files</span>
-            </div>
-            <div id="myId">Generating...</div>
-            <button class="glass-btn" onclick="copyMyId()">
-                📋 Copy My ID
-            </button>
-            
-            <div class="status">
-                <div class="status-dot" id="statusDot"></div>
-                <span id="statusText">Connecting to PeerJS Cloud...</span>
-            </div>
-        </div>
-        
-        <!-- Send Section -->
-        <div class="section">
-            <input type="text" 
-                   class="glass-input" 
-                   id="receiverId" 
-                   placeholder="📨 Enter receiver's ID">
-            
-            <div class="upload-zone" onclick="document.getElementById('fileInput').click()">
-                <div class="upload-icon">📁</div>
-                <div class="upload-text">Select Files to Launch</div>
-                <div class="upload-subtext">Click or drag & drop files here</div>
-                <input type="file" id="fileInput" multiple style="display: none;">
-            </div>
-            
-            <div class="file-list" id="fileList"></div>
-            
-            <button class="glass-btn success" id="sendBtn" onclick="sendFiles()" disabled>
-                🚀 Launch Transfer
-            </button>
-        </div>
-        
-        <!-- Rocket Progress Section -->
-        <div class="rocket-section">
-            <div class="progress-info">
-                <div class="progress-text" id="rocketStatus">Ready for launch...</div>
-                <div class="progress-percent" id="rocketPercent">0%</div>
-            </div>
-            
-            <div class="rocket-container">
-                <div class="rocket-track"></div>
-                <div class="progress-markers">
-                    <div class="marker" data-percent="0%"></div>
-                    <div class="marker" data-percent="25%"></div>
-                    <div class="marker" data-percent="50%"></div>
-                    <div class="marker" data-percent="75%"></div>
-                    <div class="marker" data-percent="100%"></div>
-                </div>
-                <div class="rocket-progress" id="rocketProgress"></div>
-                <div class="rocket" id="rocket">🚀</div>
-                <div class="exhaust"></div>
-                <div class="stars" id="stars"></div>
-            </div>
-        </div>
-        
-        <!-- Controls -->
-        <div class="controls">
-            <button class="glass-btn" id="pauseBtn" onclick="togglePause()" disabled>
-                ⏸️ Pause
-            </button>
-            <button class="glass-btn danger" id="cancelBtn" onclick="cancelTransfer()" disabled>
-                ✖️ Abort
-            </button>
-        </div>
-        
-        <!-- Log -->
-        <div class="log" id="transferLog">
-            <div class="log-item">[System] Initializing connection to PeerJS Cloud...</div>
-        </div>
+
+<div class="ui container">
+    <h2 class="ui header">📂 Cube PeerJS File Transfer</h2>
+
+    <div class="ui segment">
+        <div><b>Your ID</b></div>
+        <div class="ui label" id="myId">Generating...</div>
+        <button class="ui mini button" onclick="copyId()">Copy</button>
     </div>
 
-    <script>
-        // Initialize variables
-        let peer = null;
-        let connection = null;
-        let selectedFiles = [];
-        let isSending = false;
-        let isPaused = false;
-        let currentTransfer = null;
-        let receivingFile = null;
-        let receivedChunks = [];
-        let currentRocketPercent = 0;
-        
-        // Initialize on load
-        document.addEventListener('DOMContentLoaded', function() {
-            createStars();
-            initializePeer();
-            setupEventListeners();
-        });
-        
-        // Create stars for background
-        function createStars() {
-            const starsContainer = document.getElementById('stars');
-            for (let i = 0; i < 20; i++) {
-                const star = document.createElement('div');
-                star.className = 'star';
-                star.style.width = Math.random() * 3 + 1 + 'px';
-                star.style.height = star.style.width;
-                star.style.left = Math.random() * 100 + '%';
-                star.style.top = Math.random() * 100 + '%';
-                star.style.animationDelay = Math.random() * 2 + 's';
-                star.style.animationDuration = Math.random() * 2 + 1 + 's';
-                starsContainer.appendChild(star);
-            }
+    <div class="ui segment">
+        <div class="ui input fluid">
+            <input id="receiverId" placeholder="Enter Receiver ID (CS-XXXXX)">
+        </div>
+        <br>
+        <input type="file" id="fileInput">
+        <br><br>
+        <button class="ui primary fluid button" onclick="startTransfer()">Transfer</button>
+    </div>
+
+    <div class="ui message" id="status">Idle</div>
+</div>
+
+<!-- Transfer Modal -->
+<div class="ui modal" id="transferModal">
+    <div class="header">Preparing Transfer</div>
+    <div class="content" style="text-align:center">
+        <div class="loader-circle">
+            <div class="loader-text" id="countdown">3</div>
+        </div>
+        <p id="modalStatus" style="margin-top:15px">Waiting…</p>
+    </div>
+</div>
+
+<script>
+/* ---------- PeerJS Setup ---------- */
+
+const simpleId = "CS-" + Math.floor(10000 + Math.random() * 90000);
+
+const peer = new Peer(simpleId, {
+    debug: 2,
+    host: '0.peerjs.com',
+    port: 443,
+    path: '/',
+    secure: true,
+    config: {
+        iceServers: [
+            { urls: 'stun:stun.l.google.com:19302' }
+        ]
+    }
+});
+
+let conn;
+let file;
+
+/* ---------- Peer Events ---------- */
+
+peer.on('open', id => {
+    document.getElementById('myId').innerText = id;
+});
+
+peer.on('connection', c => {
+    conn = c;
+    setupReceiver();
+});
+
+/* ---------- UI Helpers ---------- */
+
+function copyId() {
+    navigator.clipboard.writeText(document.getElementById('myId').innerText);
+}
+
+function showModal() {
+    $('#transferModal').modal({ closable:false }).modal('show');
+}
+
+function hideModal() {
+    $('#transferModal').modal('hide');
+}
+
+/* ---------- Transfer Logic ---------- */
+
+function startTransfer() {
+    const rid = document.getElementById('receiverId').value.trim();
+    file = document.getElementById('fileInput').files[0];
+
+    if (!rid || !file) {
+        alert("Receiver ID and file required");
+        return;
+    }
+
+    conn = peer.connect(rid);
+
+    conn.on('open', () => {
+        showModal();
+        startCountdown(3, sendFile);
+    });
+}
+
+function startCountdown(sec, cb) {
+    let n = sec;
+    document.getElementById('countdown').innerText = n;
+
+    const timer = setInterval(() => {
+        n--;
+        document.getElementById('countdown').innerText = n;
+        if (n === 0) {
+            clearInterval(timer);
+            cb();
         }
-        
-        // Initialize PeerJS with CLOUD SERVER
-        function initializePeer() {
-            const simpleId = "CS-" + Math.floor(10000 + Math.random() * 90000);
-            
-            // Using PeerJS Cloud Server for reliable connections
-            peer = new Peer(simpleId, {
-                debug: 2, // Set to 2 for warnings and errors, 3 for all logs
-                host: '0.peerjs.com', // Official PeerJS cloud server
-                port: 443,
-                path: '/',
-                secure: true,
-                config: {
-                    'iceServers': [
-                        { urls: 'stun:stun.l.google.com:19302' },
-                        { urls: 'stun:global.stun.twilio.com:3478' },
-                        { 
-                            urls: 'turn:numb.viagenie.ca',
-                            credential: 'muazkh',
-                            username: 'webrtc@live.com'
-                        }
-                    ]
-                }
-            });
-            
-            // Peer event handlers
-            peer.on('open', function(id) {
-                console.log('✅ Connected to PeerJS Cloud with ID:', id);
-                document.getElementById('myId').textContent = id;
-                updateStatus(true, '✅ Connected to PeerJS Cloud');
-                addLog(`✅ Connected to PeerJS Cloud with ID: ${id}`);
-            });
-            
-            peer.on('error', function(err) {
-                console.error('❌ PeerJS Error:', err);
-                
-                let errorMessage = 'Connection Error';
-                switch(err.type) {
-                    case 'peer-unavailable':
-                        errorMessage = 'Peer not found';
-                        break;
-                    case 'network':
-                        errorMessage = 'Network error';
-                        break;
-                    case 'server-error':
-                        errorMessage = 'Server error - retrying...';
-                        // Auto-reconnect after 3 seconds
-                        setTimeout(initializePeer, 3000);
-                        break;
-                    case 'browser-incompatible':
-                        errorMessage = 'Browser not supported. Use Chrome/Firefox';
-                        break;
-                    default:
-                        errorMessage = err.type;
-                }
-                
-                updateStatus(false, `❌ ${errorMessage}`);
-                addLog(`❌ Error: ${errorMessage}`);
-            });
-            
-            // Handle incoming connections
-            peer.on('connection', function(conn) {
-                console.log('📡 Incoming connection from:', conn.peer);
-                connection = conn;
-                setupConnection(conn);
-                addLog(`📡 Incoming connection from: ${conn.peer}`);
-            });
-        }
-        
-        // Setup connection
-        function setupConnection(conn) {
-            conn.on('open', function() {
-                console.log('✅ Connection opened with peer');
-                updateStatus(true, '✅ Connected to peer');
-                addLog('✅ Peer connection established');
-            });
-            
-            conn.on('data', function(data) {
-                console.log('📨 Received data:', data.type);
-                handleIncomingData(data);
-            });
-            
-            conn.on('close', function() {
-                console.log('🔌 Connection closed');
-                addLog('🔌 Connection closed');
-                updateStatus(false, 'Disconnected');
-                connection = null;
-            });
-            
-            conn.on('error', function(err) {
-                console.error('❌ Connection error:', err);
-                addLog(`❌ Connection error: ${err.message || err.type}`);
-            });
-        }
-        
-        // Handle incoming data
-        function handleIncomingData(data) {
-            switch(data.type) {
-                case 'file_start':
-                    startReceivingFile(data);
-                    break;
-                case 'chunk':
-                    receiveChunk(data);
-                    break;
-                case 'file_end':
-                    finishReceivingFile(data);
-                    break;
-                case 'cancel':
-                    handleTransferCancel();
-                    break;
-            }
-        }
-        
-        // Setup event listeners
-        function setupEventListeners() {
-            const fileInput = document.getElementById('fileInput');
-            const uploadZone = document.querySelector('.upload-zone');
-            
-            fileInput.addEventListener('change', function(e) {
-                selectedFiles = Array.from(e.target.files);
-                updateFileList();
-            });
-            
-            // Drag and drop
-            uploadZone.addEventListener('dragover', function(e) {
-                e.preventDefault();
-                this.style.borderColor = 'rgba(102, 126, 234, 0.5)';
-                this.style.transform = 'translateY(-5px)';
-            });
-            
-            uploadZone.addEventListener('dragleave', function() {
-                this.style.borderColor = '';
-                this.style.transform = '';
-            });
-            
-            uploadZone.addEventListener('drop', function(e) {
-                e.preventDefault();
-                this.style.borderColor = '';
-                this.style.transform = '';
-                selectedFiles = Array.from(e.dataTransfer.files);
-                updateFileList();
-            });
-            
-            // Auto-focus receiver ID input
-            document.getElementById('receiverId').focus();
-        }
-        
-        // Update file list
-        function updateFileList() {
-            const fileList = document.getElementById('fileList');
-            const sendBtn = document.getElementById('sendBtn');
-            
-            if (selectedFiles.length === 0) {
-                fileList.innerHTML = '<div style="color: rgba(255,255,255,0.5); text-align: center; padding: 20px;">No files selected</div>';
-                sendBtn.disabled = true;
-                return;
-            }
-            
-            let html = '';
-            let totalSize = 0;
-            
-            selectedFiles.forEach((file, index) => {
-                totalSize += file.size;
-                html += `
-                    <div class="file-item">
-                        <div class="file-info">
-                            <div class="file-name">${file.name}</div>
-                            <div class="file-size">${formatSize(file.size)}</div>
-                        </div>
-                        <button class="remove-btn" onclick="removeFile(${index})" title="Remove file">
-                            ✕
-                        </button>
-                    </div>
-                `;
-            });
-            
-            if (selectedFiles.length > 1) {
-                html += `
-                    <div class="file-item" style="background: rgba(46, 213, 115, 0.1); border-color: rgba(46, 213, 115, 0.2);">
-                        <div class="file-info">
-                            <div class="file-name">🚀 Ready to launch: ${selectedFiles.length} files</div>
-                            <div class="file-size">${formatSize(totalSize)} total</div>
-                        </div>
-                    </div>
-                `;
-            }
-            
-            fileList.innerHTML = html;
-            sendBtn.disabled = false;
-        }
-        
-        // Remove file
-        function removeFile(index) {
-            selectedFiles.splice(index, 1);
-            updateFileList();
-        }
-        
-        // Send files
-        async function sendFiles() {
-            const receiverId = document.getElementById('receiverId').value.trim();
-            
-            if (!receiverId) {
-                alert('⚠️ Please enter receiver ID');
-                document.getElementById('receiverId').focus();
-                return;
-            }
-            
-            if (selectedFiles.length === 0) {
-                alert('⚠️ Please select files');
-                return;
-            }
-            
-            // Validate receiver ID format
-            if (!receiverId.startsWith('CS-')) {
-                if (!confirm(`Receiver ID "${receiverId}" doesn't look like a Cube Share ID.\nContinue anyway?`)) {
-                    return;
-                }
-            }
-            
-            // Connect to receiver
-            addLog(`🔗 Connecting to ${receiverId}...`);
-            connection = peer.connect(receiverId);
-            setupConnection(connection);
-            
-            connection.on('open', async function() {
-                isSending = true;
-                updateControls(true);
-                updateRocket(0, 'Launching...');
-                addLog('🚀 Launching transfer...');
-                
-                try {
-                    // Send all files
-                    for (let i = 0; i < selectedFiles.length; i++) {
-                        if (isPaused) {
-                            await waitForResume();
-                        }
-                        
-                        await sendFile(selectedFiles[i], i + 1, selectedFiles.length);
-                    }
-                    
-                    addLog('✅ All files delivered successfully!');
-                    updateRocket(100, 'Mission Complete!');
-                    updateStatus(true, 'Transfer Complete');
-                    
-                } catch (error) {
-                    console.error('❌ Transfer error:', error);
-                    addLog(`❌ Transfer failed: ${error.message}`);
-                    updateStatus(false, 'Transfer Failed');
-                } finally {
-                    isSending = false;
-                    updateControls(false);
-                    selectedFiles = [];
-                    updateFileList();
-                    
-                    // Reset rocket after 3 seconds
-                    setTimeout(() => {
-                        updateRocket(0, 'Ready for launch...');
-                    }, 3000);
-                }
-            });
-            
-            connection.on('error', function(err) {
-                console.error('❌ Connection error:', err);
-                addLog(`❌ Failed to connect: ${err.message || err.type}`);
-                alert(`Failed to connect to ${receiverId}\nCheck the ID and try again.`);
-                isSending = false;
-                updateControls(false);
-            });
-        }
-        
-        // Send single file
-        async function sendFile(file, current, total) {
-            return new Promise((resolve, reject) => {
-                addLog(`📤 Sending: ${file.name} (${current}/${total})`);
-                
-                // Send file info
-                connection.send({
-                    type: 'file_start',
-                    name: file.name,
-                    size: file.size,
-                    current: current,
-                    total: total,
-                    timestamp: Date.now()
-                });
-                
-                let offset = 0;
-                const chunkSize = 64 * 1024; // 64KB chunks
-                const reader = new FileReader();
-                
-                reader.onload = async function(e) {
-                    if (isPaused) {
-                        await waitForResume();
-                    }
-                    
-                    try {
-                        const chunk = e.target.result;
-                        
-                        // Send chunk
-                        connection.send({
-                            type: 'chunk',
-                            data: chunk,
-                            offset: offset,
-                            total: file.size,
-                            fileId: file.name + '_' + Date.now()
-                        });
-                        
-                        offset += chunk.byteLength;
-                        
-                        // Update rocket progress
-                        const percent = Math.round((offset / file.size) * 100);
-                        updateRocket(percent, `Transferring: ${file.name}`);
-                        
-                        // Animate rocket
-                        animateRocket(percent);
-                        
-                        if (offset < file.size) {
-                            readNextChunk();
-                        } else {
-                            // File complete
-                            connection.send({
-                                type: 'file_end',
-                                name: file.name,
-                                size: file.size
-                            });
-                            
-                            addLog(`✅ Sent: ${file.name}`);
-                            resolve();
-                        }
-                    } catch (error) {
-                        reject(error);
-                    }
-                };
-                
-                reader.onerror = function() {
-                    reject(new Error('Failed to read file'));
-                };
-                
-                function readNextChunk() {
-                    const slice = file.slice(offset, offset + chunkSize);
-                    reader.readAsArrayBuffer(slice);
-                }
-                
-                readNextChunk();
-            });
-        }
-        
-        // Receiving functions
-        function startReceivingFile(data) {
-            receivingFile = {
-                name: data.name,
-                size: data.size,
-                received: 0,
-                current: data.current,
-                total: data.total,
-                startTime: Date.now()
-            };
-            
-            receivedChunks = [];
-            
-            // Ask for confirmation for large files
-            if (data.size > 100 * 1024 * 1024) { // 100MB
-                if (!confirm(`Receive file "${data.name}" (${formatSize(data.size)})?`)) {
-                    connection.send({ type: 'cancel' });
-                    return;
-                }
-            }
-            
-            updateRocket(0, `Incoming: ${data.name}`);
-            addLog(`📥 Receiving: ${data.name} (${formatSize(data.size)})`);
-        }
-        
-        function receiveChunk(data) {
-            if (!receivingFile) return;
-            
-            receivedChunks.push(data.data);
-            receivingFile.received += data.data.byteLength;
-            
-            const percent = Math.round((receivingFile.received / receivingFile.size) * 100);
-            
-            // Update rocket
-            updateRocket(percent, `Receiving: ${receivingFile.name}`);
-            animateRocket(percent);
-            
-            // Update markers
-            updateMarkers(percent);
-            
-            // Calculate and display speed
-            const elapsed = (Date.now() - receivingFile.startTime) / 1000;
-            if (elapsed > 1) {
-                const speed = receivingFile.received / elapsed;
-                document.getElementById('rocketStatus').textContent = 
-                    `Receiving: ${receivingFile.name} (${formatSize(speed)}/s)`;
-            }
-        }
-        
-        function finishReceivingFile(data) {
-            if (!receivingFile) return;
-            
-            // Combine chunks and save file
-            const blob = new Blob(receivedChunks);
-            const url = URL.createObjectURL(blob);
-            
-            // Create download link
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = receivingFile.name;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            
-            // Clean up
-            setTimeout(() => URL.revokeObjectURL(url), 1000);
-            
-            const totalTime = (Date.now() - receivingFile.startTime) / 1000;
-            const speed = receivingFile.size / totalTime;
-            
-            addLog(`✅ Downloaded: ${receivingFile.name} (${formatSize(speed)}/s)`);
-            updateRocket(100, 'Download Complete!');
-            
-            // Reset after delay
-            setTimeout(() => {
-                receivingFile = null;
-                receivedChunks = [];
-                updateRocket(0, 'Ready for launch...');
-            }, 2000);
-        }
-        
-        function handleTransferCancel() {
-            addLog('❌ Transfer cancelled by sender');
-            updateRocket(0, 'Transfer Cancelled');
-            updateStatus(false, 'Transfer Cancelled');
-            receivingFile = null;
-            receivedChunks = [];
-        }
-        
-        // Control functions
-        function togglePause() {
-            isPaused = !isPaused;
-            const btn = document.getElementById('pauseBtn');
-            
-            if (isPaused) {
-                btn.innerHTML = '▶️ Resume';
-                btn.classList.remove('glass-btn');
-                btn.classList.add('glass-btn', 'success');
-                addLog('⏸️ Transfer paused');
-                updateRocket(currentRocketPercent, 'PAUSED');
-            } else {
-                btn.innerHTML = '⏸️ Pause';
-                btn.classList.remove('success');
-                addLog('▶️ Transfer resumed');
-            }
-        }
-        
-        function cancelTransfer() {
-            if (confirm('Abort transfer?')) {
-                if (connection) {
-                    connection.send({ type: 'cancel' });
-                    connection.close();
-                }
-                
-                isSending = false;
-                isPaused = false;
-                updateControls(false);
-                updateRocket(0, 'Transfer Aborted');
-                addLog('❌ Transfer aborted');
-                updateStatus(false, 'Transfer Cancelled');
-            }
-        }
-        
-        function waitForResume() {
-            return new Promise(resolve => {
-                const check = setInterval(() => {
-                    if (!isPaused) {
-                        clearInterval(check);
-                        resolve();
-                    }
-                }, 100);
-            });
-        }
-        
-        // Rocket animation functions
-        function updateRocket(percent, message) {
-            currentRocketPercent = percent;
-            const rocketProgress = document.getElementById('rocketProgress');
-            const rocket = document.getElementById('rocket');
-            
-            if (rocketProgress && rocket) {
-                rocketProgress.style.width = percent + '%';
-                rocket.style.left = percent + '%';
-                document.getElementById('rocketPercent').textContent = percent + '%';
-                document.getElementById('rocketStatus').textContent = message;
-                
-                // Update markers
-                updateMarkers(percent);
-            }
-        }
-        
-        function animateRocket(percent) {
-            const rocket = document.getElementById('rocket');
-            if (rocket) {
-                const scale = 1 + Math.sin(Date.now() / 100) * 0.1;
-                rocket.style.transform = `translate(-50%, -50%) scale(${scale})`;
-            }
-        }
-        
-        function updateMarkers(percent) {
-            const markers = document.querySelectorAll('.marker');
-            markers.forEach(marker => {
-                const markerPercent = parseInt(marker.dataset.percent);
-                if (percent >= markerPercent) {
-                    marker.classList.add('active');
-                } else {
-                    marker.classList.remove('active');
-                }
-            });
-        }
-        
-        // UI Helper functions
-        function copyMyId() {
-            const id = document.getElementById('myId').textContent;
-            if (id === 'Generating...') {
-                alert('Please wait for ID to generate');
-                return;
-            }
-            
-            navigator.clipboard.writeText(id).then(() => {
-                const btn = document.querySelector('#myId').nextElementSibling;
-                const original = btn.innerHTML;
-                btn.innerHTML = '✅ Copied!';
-                setTimeout(() => btn.innerHTML = original, 2000);
-                addLog('📋 ID copied to clipboard');
-            }).catch(err => {
-                console.error('Failed to copy:', err);
-                // Fallback for older browsers
-                const textArea = document.createElement('textarea');
-                textArea.value = id;
-                document.body.appendChild(textArea);
-                textArea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textArea);
-                
-                const btn = document.querySelector('#myId').nextElementSibling;
-                const original = btn.innerHTML;
-                btn.innerHTML = '✅ Copied!';
-                setTimeout(() => btn.innerHTML = original, 2000);
-                addLog('📋 ID copied to clipboard');
-            });
-        }
-        
-        function formatSize(bytes) {
-            if (bytes === 0) return '0 B';
-            const k = 1024;
-            const sizes = ['B', 'KB', 'MB', 'GB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
-        }
-        
-        function updateStatus(connected, message) {
-            const dot = document.getElementById('statusDot');
-            const text = document.getElementById('statusText');
-            
-            if (dot && text) {
-                text.textContent = message;
-                dot.className = 'status-dot';
-                if (connected) {
-                    dot.classList.add('connected');
-                }
-            }
-        }
-        
-        function updateControls(transferring) {
-            document.getElementById('pauseBtn').disabled = !transferring;
-            document.getElementById('cancelBtn').disabled = !transferring;
-            document.getElementById('sendBtn').disabled = transferring;
-        }
-        
-        function addLog(message) {
-            const log = document.getElementById('transferLog');
-            if (!log) return;
-            
-            const item = document.createElement('div');
-            item.className = 'log-item';
-            
-            const time = new Date().toLocaleTimeString([], { 
-                hour: '2-digit', 
-                minute: '2-digit',
-                second: '2-digit'
-            });
-            
-            item.textContent = `[${time}] ${message}`;
-            
-            log.appendChild(item);
-            log.scrollTop = log.scrollHeight;
-            
-            // Keep last 20 messages
-            if (log.children.length > 20) {
-                log.removeChild(log.firstChild);
-            }
-        }
-        
-        // Start rocket animation loop
-        setInterval(() => {
-            if (isSending && !isPaused) {
-                animateRocket(currentRocketPercent);
-            }
-        }, 100);
-        
-        // Auto-refresh connection if it fails
-        setInterval(() => {
-            if (peer && peer.disconnected) {
-                console.log('♻️ Attempting to reconnect...');
-                addLog('♻️ Attempting to reconnect...');
-                initializePeer();
-            }
-        }, 10000); // Check every 10 seconds
-    </script>
+    }, 1000);
+}
+
+function sendFile() {
+    document.getElementById('modalStatus').innerText = "Sending file...";
+    conn.send({
+        name: file.name,
+        data: file
+    });
+
+    setTimeout(() => {
+        hideModal();
+        document.getElementById('status').innerText = "File sent successfully";
+    }, 1000);
+}
+
+/* ---------- Receiver ---------- */
+
+function setupReceiver() {
+    conn.on('data', data => {
+        const blob = new Blob([data.data]);
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = data.name;
+        a.click();
+        document.getElementById('status').innerText = "File received";
+    });
+}
+</script>
+
 </body>
 </html>
