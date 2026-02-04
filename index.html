@@ -1184,6 +1184,78 @@
             grid-template-columns: 1fr 1fr;
             gap: 12px;
         }
+
+        /* Mobile Lock Screen Overlay */
+        .mobile-lock-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 23, 42, 0.98);
+            backdrop-filter: blur(20px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 3000;
+            padding: 20px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-lock-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .lock-content {
+            text-align: center;
+            max-width: 300px;
+        }
+
+        .lock-icon {
+            font-size: 64px;
+            color: var(--primary);
+            margin-bottom: 24px;
+            animation: pulse 2s infinite;
+        }
+
+        .lock-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text);
+        }
+
+        .lock-message {
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+
+        .lock-progress {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+
+        .lock-progress-fill {
+            height: 100%;
+            background: var(--cube-gradient);
+            border-radius: 3px;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .lock-status {
+            font-size: 14px;
+            color: var(--primary);
+            font-weight: 500;
+        }
     </style>
 </head>
 <body>
@@ -1237,13 +1309,13 @@
                             <div class="status-name">Relay</div>
                             <div class="status-value">Available</div>
                         </div>
-                </div>
+                    </div>
                 </div>
 
                 <div class="connection-info" style="display:none;">
                     <div class="connection-type">Connection Type:</div>
                     <div class="connection-badge" id="connectionType">Direct</div>
-            </div>
+                </div>
             </div>
 
             <!-- Your ID Section -->
@@ -1265,7 +1337,7 @@
                         </button>
                         <button class="share-btn link" style="display:none;" onclick="generateShareLink()">
                             <i class="fas fa-link"></i> Share Link
-                    </button>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -1589,11 +1661,25 @@
         </div>
     </div>
 
+    <!-- Mobile Lock Screen Overlay -->
+    <div class="mobile-lock-overlay" id="mobileLockOverlay">
+        <div class="lock-content">
+            <div class="lock-icon">
+                <i class="fas fa-lock"></i>
+            </div>
+            <div class="lock-title">Transfer in Progress</div>
+            <div class="lock-message">
+                Please keep this screen active. Switching apps or locking your device may interrupt the transfer.
+            </div>
+            <div class="lock-progress">
+                <div class="lock-progress-fill" id="lockProgressFill"></div>
+            </div>
+            <div class="lock-status" id="lockStatus">0% Complete</div>
+        </div>
+    </div>
+
     <!-- Notification System -->
     <div id="notificationContainer"></div>
-
-    <!-- QR Code Library -->
-    <!--script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script-->
 
     <script>
         // Global variables
@@ -1612,6 +1698,12 @@
         
         // Store whether we have a pending URL parameter
         let hasAutoFilled = false;
+        
+        // Mobile detection and wake lock
+        let isMobile = false;
+        let wakeLock = null;
+        let visibilityTimeout = null;
+        let wasTransferringWhenHidden = false;
         
         // Cloud PeerJS Configuration
         const PEER_CONFIG = {
@@ -1645,6 +1737,9 @@
             // Check for URL parameters first
             checkUrlParameters();
             
+            // Detect mobile
+            detectMobile();
+            
             // Initialize peer connection
             initializePeer();
             
@@ -1655,9 +1750,155 @@
             updateStatus('peerStatus', false);
             updateStatus('relayStatus', false);
             
-            // Prevent page refresh during transfer
+            // Setup page protection
             setupPageProtection();
+            
+            // Setup mobile-specific handlers
+            setupMobileHandlers();
         });
+        
+        // Detect mobile device
+        function detectMobile() {
+            isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            if (isMobile) {
+                addLog('Mobile device detected');
+            }
+        }
+        
+        // Setup mobile-specific handlers
+        function setupMobileHandlers() {
+            if (!isMobile) return;
+            
+            // Request wake lock when transfer starts
+            document.addEventListener('visibilitychange', handleVisibilityChange);
+            
+            // Handle page show/hide events
+            window.addEventListener('pageshow', handlePageShow);
+            window.addEventListener('pagehide', handlePageHide);
+            
+            // Handle beforeunload specifically for mobile
+            window.addEventListener('beforeunload', handleBeforeUnload);
+        }
+        
+        // Handle visibility change
+        function handleVisibilityChange() {
+            if (document.hidden) {
+                // Page is hidden
+                if (isSending || (connection && connection.open)) {
+                    wasTransferringWhenHidden = true;
+                    
+                    // Show lock overlay if transfer is active
+                    if (isSending) {
+                        showMobileLockOverlay();
+                    }
+                    
+                    // Release wake lock if we have it
+                    releaseWakeLock();
+                    
+                    addLog('App backgrounded - transfer may pause');
+                }
+            } else {
+                // Page is visible again
+                if (wasTransferringWhenHidden) {
+                    wasTransferringWhenHidden = false;
+                    hideMobileLockOverlay();
+                    
+                    // Check if transfer was interrupted
+                    if (isSending && (!connection || !connection.open)) {
+                        showNotification('Transfer interrupted - connection lost', 'error');
+                        addLog('Transfer interrupted due to app backgrounding');
+                        cancelTransfer(true);
+                    } else if (isSending) {
+                        // Request wake lock again
+                        requestWakeLock();
+                        addLog('App resumed - transfer continuing');
+                    }
+                }
+            }
+        }
+        
+        // Handle page show (iOS specific)
+        function handlePageShow(event) {
+            if (event.persisted) {
+                // Page was restored from bfcache
+                addLog('Page restored from cache');
+                if (isSending) {
+                    // Check connection status
+                    setTimeout(() => {
+                        if (!connection || !connection.open) {
+                            showNotification('Transfer interrupted - please restart', 'error');
+                            cancelTransfer(true);
+                        }
+                    }, 1000);
+                }
+            }
+        }
+        
+        // Handle page hide
+        function handlePageHide() {
+            if (isSending) {
+                addLog('Page hiding - attempting to keep transfer alive');
+            }
+        }
+        
+        // Handle beforeunload on mobile
+        function handleBeforeUnload(e) {
+            if (isSending || (connection && connection.open)) {
+                // On mobile, we can't show custom dialogs, but we can try to warn
+                e.preventDefault();
+                e.returnValue = 'Transfer in progress. Leave?';
+                return e.returnValue;
+            }
+        }
+        
+        // Request wake lock to prevent screen from sleeping
+        async function requestWakeLock() {
+            if (!isMobile || !navigator.wakeLock) return;
+            
+            try {
+                wakeLock = await navigator.wakeLock.request('screen');
+                addLog('Screen wake lock acquired');
+                
+                wakeLock.addEventListener('release', () => {
+                    addLog('Screen wake lock released');
+                });
+            } catch (err) {
+                console.error('Wake lock error:', err);
+            }
+        }
+        
+        // Release wake lock
+        function releaseWakeLock() {
+            if (wakeLock) {
+                wakeLock.release().then(() => {
+                    wakeLock = null;
+                });
+            }
+        }
+        
+        // Show mobile lock overlay
+        function showMobileLockOverlay() {
+            document.getElementById('mobileLockOverlay').classList.add('active');
+            updateMobileLockProgress();
+        }
+        
+        // Hide mobile lock overlay
+        function hideMobileLockOverlay() {
+            document.getElementById('mobileLockOverlay').classList.remove('active');
+        }
+        
+        // Update mobile lock overlay progress
+        function updateMobileLockProgress() {
+            if (!isSending) return;
+            
+            const percent = document.getElementById('progressPercent').textContent;
+            document.getElementById('lockProgressFill').style.width = percent;
+            document.getElementById('lockStatus').textContent = percent + ' Complete';
+            
+            if (document.getElementById('mobileLockOverlay').classList.contains('active')) {
+                requestAnimationFrame(updateMobileLockProgress);
+            }
+        }
         
         // Check URL parameters for auto-fill
         function checkUrlParameters() {
@@ -1710,9 +1951,6 @@
             // Update modal input
             document.getElementById('shareLinkInput').value = shareUrl;
             
-            // Generate QR code
-            //generateQRCode(shareUrl);
-            
             // Show modal
             showShareModal();
         }
@@ -1735,27 +1973,6 @@
             });
         }
         
-        // Generate QR code
-        function generateQRCode(text) {
-            try {
-                const canvas = document.getElementById('qrCodeCanvas');
-                QRCode.toCanvas(canvas, text, {
-                    width: 200,
-                    margin: 2,
-                    color: {
-                        dark: '#1e293b',
-                        light: '#ffffff'
-                    }
-                }, function(error) {
-                    if (error) {
-                        console.error('QR Code generation error:', error);
-                    }
-                });
-            } catch (error) {
-                console.error('QR Code error:', error);
-            }
-        }
-        
         // Share via WhatsApp
         function shareViaWhatsApp() {
             const shareLink = document.getElementById('shareLinkInput').value;
@@ -1768,7 +1985,6 @@
         // Share via Telegram
         function shareViaTelegram() {
             const shareLink = document.getElementById('shareLinkInput').value;
-            const message = `Send me files via Cube Share: ${shareLink}`;
             const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(shareLink)}&text=${encodeURIComponent('Send me files via Cube Share')}`;
             
             window.open(telegramUrl, '_blank');
@@ -1911,11 +2127,21 @@
             conn.on('close', function() {
                 addLog('Connection closed');
                 connection = null;
+                
+                // If transfer was active, cancel it
+                if (isSending) {
+                    cancelTransfer(true);
+                }
             });
             
             conn.on('error', function(err) {
                 console.error('Connection error:', err);
                 addLog('Connection error');
+                
+                // Cancel transfer on error
+                if (isSending) {
+                    cancelTransfer(true);
+                }
             });
         }
         
@@ -1931,11 +2157,21 @@
             conn.on('close', function() {
                 addLog('Connection closed');
                 connection = null;
+                
+                // If transfer was active, cancel it
+                if (isSending) {
+                    cancelTransfer(true);
+                }
             });
             
             conn.on('error', function(err) {
                 console.error('Connection error:', err);
                 addLog('Connection error');
+                
+                // Cancel transfer on error
+                if (isSending) {
+                    cancelTransfer(true);
+                }
             });
         }
         
@@ -2125,6 +2361,11 @@
                     updateControls(true);
                     updateProgress(0, 'Starting transfer...');
                     
+                    // Request wake lock on mobile
+                    if (isMobile) {
+                        await requestWakeLock();
+                    }
+                    
                     transferStats.startTime = Date.now();
                     transferStats.bytesTransferred = 0;
                     transferStats.lastUpdate = Date.now();
@@ -2147,6 +2388,9 @@
                     showNotification('Transfer completed successfully', 'success');
                     updateProgress(100, 'Transfer Complete!');
                     
+                    // Release wake lock
+                    releaseWakeLock();
+                    
                     setTimeout(() => {
                         hideProgressModal();
                         isSending = false;
@@ -2162,6 +2406,7 @@
                 addLog('Failed to start transfer');
                 showNotification('Failed to start transfer', 'error');
                 hideProgressModal();
+                releaseWakeLock();
             }
         }
         
@@ -2393,17 +2638,26 @@
             }
         }
         
-        function cancelTransfer() {
-            if (confirm('Cancel transfer?')) {
-                if (connection) {
-                    connection.close();
-                }
-                
-                isSending = false;
-                isPaused = false;
-                updateControls(false);
-                hideProgressModal();
-                updateProgress(0, 'Cancelled');
+        function cancelTransfer(silent = false) {
+            if (!silent && !confirm('Cancel transfer?')) {
+                return;
+            }
+            
+            if (connection) {
+                connection.close();
+            }
+            
+            isSending = false;
+            isPaused = false;
+            updateControls(false);
+            hideProgressModal();
+            hideMobileLockOverlay();
+            updateProgress(0, 'Cancelled');
+            
+            // Release wake lock
+            releaseWakeLock();
+            
+            if (!silent) {
                 addLog('Transfer cancelled');
                 showNotification('Transfer cancelled', 'error');
             }
